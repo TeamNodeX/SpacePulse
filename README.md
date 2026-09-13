@@ -1,9 +1,9 @@
-## 📊 Demographics & Methodology
+## Demographics & Methodology
 *   **Target Audience:** UoM undergraduates and regular users of university shared spaces.
 *   **Methodology:** Anonymous digital questionnaire prioritizing user privacy (no personally identifiable information collected).
 *   **Total Responses:** 37
 
-## 🔍 Key Findings
+## Key Findings
 
 ### 1. The Problem: Overcrowded Spaces
 
