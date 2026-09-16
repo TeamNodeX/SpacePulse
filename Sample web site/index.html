@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Vacancy Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="images.jpeg" alt="Space Plus Logo" class="sidebar-logo">
+                <h2>Space Plus</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" data-target="home" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#" data-target="library"><i class="fas fa-book-reader"></i> Library</a></li>
+                <li><a href="#" data-target="canteen"><i class="fas fa-utensils"></i> Canteens</a></li>
+                <li><a href="#" data-target="atm"><i class="fas fa-money-check-alt"></i> ATMs</a></li>
+                <li><a href="#" data-target="bookshop"><i class="fas fa-book"></i> Book Shops</a></li>
+            </ul>
+            <div class="sidebar-footer">A project by NodeX</div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <h1 id="page-title">Home</h1>
+            </header>
+            
+            <div class="content-area" id="content-area">
+                <!-- Content will be injected here by app.js -->
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
