@@ -1,5 +1,5 @@
-// Mock Data
-const mockData = {
+// Local Data (Changed to 'let' so the backend can overwrite it)
+let mockData = {
     library: [
         { floor: 'Second Down Floor', totalSeats: 100, availableSeats: 45 },
         { floor: 'First Down Floor', totalSeats: 150, availableSeats: 10 },
@@ -50,7 +50,7 @@ function renderHome() {
             </button>
         </div>
     `;
-    
+
     // Attach listeners to newly created home buttons
     document.querySelectorAll('.home-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -63,10 +63,10 @@ function renderHome() {
 function renderLibrary() {
     pageTitle.textContent = 'Library Status';
     let html = '<div class="dashboard-grid">';
-    
+
     mockData.library.forEach(floor => {
         const occupancyRate = ((floor.totalSeats - floor.availableSeats) / floor.totalSeats) * 100;
-        
+
         html += `
             <div class="card">
                 <div class="card-header">
@@ -87,7 +87,7 @@ function renderLibrary() {
             </div>
         `;
     });
-    
+
     html += '</div>';
     contentArea.innerHTML = html;
 }
@@ -95,12 +95,12 @@ function renderLibrary() {
 function renderCanteen() {
     pageTitle.textContent = 'Canteen Status';
     let html = '<div class="dashboard-grid">';
-    
+
     mockData.canteen.forEach(c => {
         const isOpen = c.status === 'Open';
         const badgeClass = isOpen ? 'status-open' : 'status-closed';
         const occupancyRate = (c.personCount / c.maxCapacity) * 100;
-        
+
         html += `
             <div class="card">
                 <div class="card-header">
@@ -119,7 +119,7 @@ function renderCanteen() {
             </div>
         `;
     });
-    
+
     html += '</div>';
     contentArea.innerHTML = html;
 }
@@ -127,11 +127,11 @@ function renderCanteen() {
 function renderAtm() {
     pageTitle.textContent = 'ATM Status';
     let html = '<div class="dashboard-grid">';
-    
+
     mockData.atm.forEach(atm => {
         const isWorking = atm.status === 'Working';
         const badgeClass = isWorking ? 'status-open' : 'status-closed';
-        
+
         html += `
             <div class="card">
                 <div class="card-header">
@@ -147,7 +147,7 @@ function renderAtm() {
             </div>
         `;
     });
-    
+
     html += '</div>';
     contentArea.innerHTML = html;
 }
@@ -155,11 +155,11 @@ function renderAtm() {
 function renderBookshop() {
     pageTitle.textContent = 'Book Shops Status';
     let html = '<div class="dashboard-grid">';
-    
+
     mockData.bookshop.forEach(shop => {
         const isOpen = shop.status === 'Open';
         const badgeClass = isOpen ? 'status-open' : 'status-closed';
-        
+
         html += `
             <div class="card">
                 <div class="card-header">
@@ -175,7 +175,7 @@ function renderBookshop() {
             </div>
         `;
     });
-    
+
     html += '</div>';
     contentArea.innerHTML = html;
 }
@@ -226,3 +226,29 @@ navLinks.forEach(link => {
 document.addEventListener('DOMContentLoaded', () => {
     navigateTo('home');
 });
+
+
+// --- SPACEPULSE BACKEND API INTEGRATION ---
+async function fetchLiveTelemetry() {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/occupancy");
+        
+        if (response.ok) {
+            // Overwrite the local data with the live server state
+            mockData = await response.json();
+            
+            // Identify which tab the user is currently viewing
+            const activeLink = document.querySelector('.nav-links a.active');
+            if (activeLink) {
+                const activeTab = activeLink.getAttribute('data-target');
+                // Redraw the UI to reflect the new numbers without reloading the page
+                navigateTo(activeTab);
+            }
+        }
+    } catch (error) {
+        console.error("Waiting for backend connection...", error);
+    }
+}
+
+// Poll the FastAPI backend every 1000ms
+setInterval(fetchLiveTelemetry, 1000);
