@@ -1,0 +1,15 @@
+
+
+
+███╗   ██╗ ██████╗ ██████╗ ███████╗██╗  ██╗
+████╗  ██║██╔═══██╗██╔══██╗██╔════╝╚██╗██╔╝
+██╔██╗ ██║██║   ██║██║   ██║█████╗   ╚███╔╝ 
+██║╚██╗██║██║   ██║██║   ██║██╔══╝   ██╔██╗ 
+██║ ╚████║╚██████╔╝██████╔╝███████╗██╔╝ ██╗
+╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝
+
+
+The LastestFrameStream class within the stream_ingestion.py acts as a drop-in replacement to OpenCV's
+cv2.VideoCapture method by handling the VideoCapture within the LatestFrameStream class.
+
+Import the class by typing "from stream_ingestion import LatestFrameStream" and treat "VideoCapture" as "LatestFrameStream"
