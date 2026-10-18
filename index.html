@@ -28,7 +28,7 @@
             <div class="sidebar-header">
                 <div class="logo-wrapper">
                     <img src="assets/images/logo.jpeg" alt="SpacePulse Logo" class="sidebar-logo" onerror="this.src='images.jpeg'">
-                    <span class="live-pulse-dot" title="Live System Active"></span>
+                    <span class="live-pulse-dot" title="Live Telemetry Online"></span>
                 </div>
                 <div class="brand-text">
                     <h2>SpacePulse</h2>
@@ -39,8 +39,20 @@
                 </button>
             </div>
 
+            <!-- Student Account Mini-Bar in Sidebar -->
+            <div class="sidebar-student-bar" id="sidebar-student-card" onclick="openStudentAuthModal()">
+                <div class="student-mini-avatar" id="sidebar-avatar-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="student-mini-info">
+                    <span class="student-name" id="sidebar-student-name">Student Login</span>
+                    <span class="student-status" id="sidebar-student-dept"><i class="fas fa-lock"></i> Verify @uom.lk</span>
+                </div>
+                <i class="fas fa-chevron-right mini-arrow"></i>
+            </div>
+
             <nav class="nav-menu">
-                <div class="nav-section-label">MAIN MENU</div>
+                <div class="nav-section-label">CAMPUS HUBS</div>
                 <ul class="nav-links">
                     <li><a href="#home" data-target="home" class="active"><i class="fas fa-house"></i> <span>Home Dashboard</span></a></li>
                     <li><a href="#maps" data-target="maps"><i class="fas fa-map-location-dot"></i> <span>Campus & Floor Maps</span> <span class="nav-badge hot">2D & GPS</span></a></li>
@@ -50,14 +62,20 @@
                     <li><a href="#bookshop" data-target="bookshop"><i class="fas fa-book-bookmark"></i> <span>Book Shops</span></a></li>
                     <li><a href="#trends" data-target="trends"><i class="fas fa-chart-line"></i> <span>Historical Trends</span></a></li>
                 </ul>
+
+                <div class="nav-section-label" style="margin-top: 14px;">SYSTEM & TELEMETRY</div>
+                <ul class="nav-links">
+                    <li><a href="javascript:void(0)" id="sidebar-student-auth-link" onclick="openStudentAuthModal()"><i class="fas fa-id-card"></i> <span>UoM ID Verification</span></a></li>
+                    <li><a href="javascript:void(0)" id="sidebar-stream-link" onclick="openSettingsModal()"><i class="fas fa-video"></i> <span>Camera Stream Ingestion</span></a></li>
+                </ul>
             </nav>
 
             <div class="sidebar-footer">
-                <div class="footer-card">
+                <div class="footer-card" onclick="openSettingsModal()" style="cursor: pointer;">
                     <i class="fas fa-shield-halved"></i>
                     <div>
                         <strong>Team NodeX</strong>
-                        <p>Real-Time Campus Telemetry</p>
+                        <p>Stream Telemetry & Sensors</p>
                     </div>
                 </div>
             </div>
@@ -79,15 +97,26 @@
 
                 <div class="topbar-actions">
                     <!-- Live Simulation Sync Badge -->
-                    <div class="sync-indicator-btn" id="sync-toggle-btn" title="Click to toggle live foot-traffic simulation">
+                    <div class="sync-indicator-btn" id="sync-toggle-btn" title="Toggle live foot-traffic simulation">
                         <span class="pulse-beacon"></span>
                         <span class="sync-text">LIVE SYNC</span>
                     </div>
+
+                    <!-- UoM Student Verification Topbar Badge -->
+                    <button class="student-topbar-btn" id="topbar-student-btn" onclick="openStudentAuthModal()" title="UoM Student Verification">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span id="topbar-student-label">Student Login</span>
+                    </button>
 
                     <!-- Alerts Threshold Modal Trigger -->
                     <button class="topbar-icon-btn" id="alerts-modal-btn" title="Vacancy & Crowd Threshold Alerts">
                         <i class="fas fa-bell"></i>
                         <span class="badge-counter" id="alert-badge-count" style="display: none;">0</span>
+                    </button>
+
+                    <!-- Settings & Stream Diagnostics -->
+                    <button class="topbar-icon-btn" id="settings-modal-btn" onclick="openSettingsModal()" title="Settings & Stream Ingestion">
+                        <i class="fas fa-gear"></i>
                     </button>
 
                     <!-- Theme Switcher -->
@@ -164,6 +193,88 @@
         </div>
     </div>
     <div class="chatbot-overlay" id="chatbot-overlay"></div>
+
+    <!-- UoM Student Verification & Profile Modal -->
+    <div class="modal-backdrop" id="student-auth-modal" style="display: none;">
+        <div class="modal-box student-auth-box">
+            <div class="modal-header uom-crimson-header">
+                <div class="modal-title-group">
+                    <div class="modal-crest-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div>
+                        <h3>University of Moratuwa</h3>
+                        <p id="student-modal-header-sub">Official Student Identity & Privileges Verification</p>
+                    </div>
+                </div>
+                <button class="modal-close-btn" id="student-modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="student-modal-body">
+                <!-- Dynamically rendered: Step 1 (Email), Step 2 (OTP), or Step 3 (Verified Card) -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings & Stream Ingestion Diagnostics Modal -->
+    <div class="modal-backdrop" id="settings-modal" style="display: none;">
+        <div class="modal-box settings-modal-box">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon-circle"><i class="fas fa-sliders"></i></div>
+                    <div>
+                        <h3>Settings & Stream Diagnostics</h3>
+                        <p>SpacePulse Telemetry Engine by Team NodeX</p>
+                    </div>
+                </div>
+                <button class="modal-close-btn" id="settings-modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Stream Ingestion Status (Linked to stream_ingestion.py) -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div class="settings-icon-pill green"><i class="fas fa-video"></i></div>
+                        <div>
+                            <h4>LatestFrameStream Ingestion</h4>
+                            <p>Threaded buffer flush pipeline (stream_ingestion.py)</p>
+                        </div>
+                        <span class="status-badge open">Online</span>
+                    </div>
+                    <div class="stream-stats-grid">
+                        <div class="stat-row"><span>Buffer Queue:</span><strong>Latest Frame (maxsize=1)</strong></div>
+                        <div class="stat-row"><span>Drop Stale Frames:</span><strong class="text-success"><i class="fas fa-check"></i> Enabled</strong></div>
+                        <div class="stat-row"><span>Sensor Ingestion Latency:</span><strong>&lt; 38ms</strong></div>
+                        <div class="stat-row"><span>Telemetry Influx:</span><strong>Active (8s pulse tick)</strong></div>
+                    </div>
+                </div>
+
+                <!-- Student Verification Quick Overview -->
+                <div class="settings-card" style="margin-top: 14px;">
+                    <div class="settings-card-header">
+                        <div class="settings-icon-pill crimson"><i class="fas fa-id-card"></i></div>
+                        <div>
+                            <h4>Student Verification</h4>
+                            <p id="settings-student-status-text">Guest exploration mode</p>
+                        </div>
+                        <button class="card-action-btn" style="flex: initial; padding: 6px 12px;" onclick="document.getElementById('settings-modal').style.display='none'; openStudentAuthModal();">
+                            Manage
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Theme & Storage -->
+                <div class="settings-card" style="margin-top: 14px;">
+                    <div class="settings-card-header">
+                        <div class="settings-icon-pill blue"><i class="fas fa-database"></i></div>
+                        <div>
+                            <h4>Local Telemetry Storage</h4>
+                            <p>Stored reservations, favorites, and alert triggers</p>
+                        </div>
+                        <button class="card-action-btn" style="flex: initial; padding: 6px 12px; color: var(--danger);" onclick="resetAllData()">
+                            Reset Cache
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Threshold Alert Configuration Modal -->
     <div class="modal-backdrop" id="alerts-modal" style="display: none;">

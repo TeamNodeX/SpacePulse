@@ -299,11 +299,96 @@ const AppState = {
     geminiApiKey: localStorage.getItem('spacepulse_gemini_key') || '',
     activeChart: null,
     leafletMap: null,
-    currentTrendsProfile: 'weekday'
+    currentTrendsProfile: 'weekday',
+
+    // UoM Student Profile & Authentication
+    currentStudent: JSON.parse(localStorage.getItem('spacepulse_student_profile') || 'null'),
+    pendingOtpEmail: null,
+    pendingOtpCode: null,
+    pendingOtpCustomName: null,
+    isEnteringOtp: false
 };
 
 // ==========================================================================
-// 3. UI Helpers & Calculations
+// 3. UoM Student Profile & Email Parser (Mirroring student_profile.dart)
+// ==========================================================================
+
+function parseStudentProfileFromEmail(rawEmail, customName = '') {
+    const cleanEmail = rawEmail.trim().toLowerCase();
+    const parts = cleanEmail.split('@');
+    const localPart = parts[0] || '';
+    const domain = parts[1] || '';
+
+    let index = localPart.toUpperCase();
+    let batch = 'UoM Student';
+    let dept = 'Faculty of Engineering';
+    let inferredName = customName || '';
+
+    // Department inference from subdomains
+    if (domain.includes('cse')) dept = 'Computer Science & Engineering';
+    else if (domain.includes('itfac')) dept = 'Faculty of Information Technology';
+    else if (domain.includes('mech')) dept = 'Mechanical Engineering';
+    else if (domain.includes('civil')) dept = 'Civil Engineering';
+    else if (domain.includes('elect')) dept = 'Electrical Engineering';
+    else if (domain.includes('ent')) dept = 'Electronic & Telecom Engineering';
+    else if (domain.includes('chem')) dept = 'Chemical & Process Engineering';
+    else if (domain.includes('math')) dept = 'Department of Mathematics';
+    else if (domain.includes('arch')) dept = 'Faculty of Architecture';
+    else if (domain.includes('bm') || domain.includes('business')) dept = 'Faculty of Business';
+    else dept = 'Faculty of Engineering';
+
+    // Batch and index extraction (e.g. 210123A or 224050T)
+    const indexRegex = /^([0-9]{2})[0-9]{4}[a-zA-Z]$/;
+    const match = localPart.match(indexRegex);
+    if (match) {
+        const yearPrefix = match[1];
+        batch = `Batch ${yearPrefix}`;
+        index = localPart.toUpperCase();
+        if (!inferredName) inferredName = `Student ${index}`;
+    } else {
+        // Name.batch format (e.g. perera.21 or minura.21)
+        const dotBatchRegex = /^(.*)\.([0-9]{2})$/;
+        const dotMatch = localPart.match(dotBatchRegex);
+        if (dotMatch) {
+            const prefix = dotMatch[1];
+            const year = dotMatch[2];
+            batch = `Batch ${year}`;
+            index = `${prefix.toUpperCase()}.${year}`;
+            if (!inferredName) inferredName = prefix.charAt(0).toUpperCase() + prefix.slice(1);
+        } else if (!inferredName) {
+            inferredName = localPart.charAt(0).toUpperCase() + localPart.slice(1);
+        }
+    }
+
+    return {
+        email: cleanEmail,
+        indexNumber: index,
+        batch: batch,
+        department: dept,
+        name: inferredName,
+        isVerified: true,
+        verifiedAt: new Date().toISOString()
+    };
+}
+
+function isValidUomEmail(email) {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed.includes('@')) return false;
+    const parts = trimmed.split('@');
+    if (parts.length !== 2) return false;
+    const domain = parts[1];
+    return (
+        domain === 'uom.lk' ||
+        domain.endsWith('.uom.lk') ||
+        domain === 'mrt.ac.lk' ||
+        domain.endsWith('.mrt.ac.lk') ||
+        trimmed.endsWith('@spacepulse.lk') ||
+        trimmed.endsWith('@test.com')
+    );
+}
+
+// ==========================================================================
+// 4. UI Helpers & Calculations
 // ==========================================================================
 
 function getStats() {
@@ -314,7 +399,6 @@ function getStats() {
     const shortestAtm = workingAtms.sort((a, b) => a.queueLength - b.queueLength)[0] || { name: 'None', queueLength: 0 };
     const openBookshops = spacePulseData.bookshops.filter(b => b.status === 'Open').length;
 
-    // Optimal study spot: quiet zone floor with highest vacancy
     const bestFloor = [...spacePulseData.libraryFloors].sort((a, b) => b.availableSeats - a.availableSeats)[0];
     const bestCanteen = spacePulseData.canteens
         .filter(c => c.status === 'Open')
@@ -334,7 +418,6 @@ function getStats() {
     };
 }
 
-// Distance Calculation (Haversine in meters)
 function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
     const R = 6371e3;
     const φ1 = lat1 * Math.PI / 180;
@@ -350,22 +433,44 @@ function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
 }
 
 // ==========================================================================
-// 4. Page View Renderers
+// 5. Page View Renderers
 // ==========================================================================
 
 const contentArea = document.getElementById('content-area');
 const pageTitle = document.getElementById('page-title');
 const pageSubtitle = document.getElementById('page-subtitle');
 
-// --- 4.1 Home Dashboard ---
+// --- 5.1 Home Dashboard ---
 function renderHome() {
-    pageTitle.textContent = 'Welcome to SpacePulse 👋';
-    pageSubtitle.textContent = 'Live vacancy tracking and intelligent crowd monitoring at University of Moratuwa';
-    
     const stats = getStats();
     const isSearching = AppState.searchQuery.trim().length > 0 || AppState.selectedCategory !== 'all';
+    const student = AppState.currentStudent;
+
+    if (student) {
+        pageTitle.innerHTML = `Welcome back, ${student.name.split(' ')[0]}! 🎓 <span class="status-badge open" style="font-size: 0.72rem; vertical-align: middle; margin-left: 6px;">Verified UoM</span>`;
+        pageSubtitle.textContent = `${student.batch} • ${student.department} • University of Moratuwa`;
+    } else {
+        pageTitle.textContent = 'Welcome to SpacePulse 👋';
+        pageSubtitle.textContent = 'Live vacancy tracking and intelligent crowd monitoring at University of Moratuwa';
+    }
 
     let html = `
+        <!-- UoM Student Verification Banner (if not verified) -->
+        ${!student && !isSearching ? `
+        <div class="uom-student-banner">
+            <div class="uom-banner-left">
+                <div class="uom-banner-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div class="uom-banner-text">
+                    <strong>Are you a University of Moratuwa student?</strong>
+                    <p>Connect your official @uom.lk student email to unlock 30-minute library seat holds and instant vacancy alerts.</p>
+                </div>
+            </div>
+            <button class="uom-banner-btn" onclick="openStudentAuthModal()">
+                <i class="fas fa-id-card"></i> Verify Student
+            </button>
+        </div>
+        ` : ''}
+
         <!-- AI Recommendation Banner -->
         ${!isSearching ? `
         <div class="recommendation-banner">
@@ -417,7 +522,6 @@ function renderHome() {
         </div>
     `;
 
-    // Render Filter/Search Results OR Standard Dashboard
     if (isSearching) {
         html += renderSearchResultsHTML();
     } else {
@@ -425,7 +529,7 @@ function renderHome() {
             <!-- Favorites Carousel Section -->
             ${renderFavoritesSectionHTML()}
 
-            <!-- 4 Hero Facility Navigation Cards (Mirroring Mobile App) -->
+            <!-- 4 Hero Facility Navigation Cards -->
             <div class="section-title-wrap">
                 <h3><i class="fas fa-compass" style="color: var(--primary-blue);"></i> University Facilities</h3>
                 <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-rotate"></i> Real-time synced</span>
@@ -543,7 +647,6 @@ function renderFavoritesSectionHTML() {
 
     let favCards = '';
     AppState.favorites.forEach(id => {
-        // match floor
         const floor = spacePulseData.libraryFloors.find(f => f.id === id);
         if (floor) {
             favCards += `
@@ -561,7 +664,6 @@ function renderFavoritesSectionHTML() {
             return;
         }
 
-        // match canteen
         const canteen = spacePulseData.canteens.find(c => c.id === id);
         if (canteen) {
             favCards += `
@@ -579,7 +681,6 @@ function renderFavoritesSectionHTML() {
             return;
         }
 
-        // match ATM
         const atm = spacePulseData.atms.find(a => a.id === id);
         if (atm) {
             favCards += `
@@ -655,27 +756,10 @@ function renderSearchResultsHTML() {
     }
 
     resHtml += '<div class="dashboard-grid">';
-
-    // Render floor cards
-    filteredFloors.forEach(f => {
-        resHtml += createFloorCardHTML(f);
-    });
-
-    // Render canteen cards
-    filteredCanteens.forEach(c => {
-        resHtml += createCanteenCardHTML(c);
-    });
-
-    // Render ATM cards
-    filteredAtms.forEach(a => {
-        resHtml += createAtmCardHTML(a);
-    });
-
-    // Render Bookshop cards
-    filteredBookshops.forEach(b => {
-        resHtml += createBookshopCardHTML(b);
-    });
-
+    filteredFloors.forEach(f => resHtml += createFloorCardHTML(f));
+    filteredCanteens.forEach(c => resHtml += createCanteenCardHTML(c));
+    filteredAtms.forEach(a => resHtml += createAtmCardHTML(a));
+    filteredBookshops.forEach(b => resHtml += createBookshopCardHTML(b));
     resHtml += '</div>';
     return resHtml;
 }
@@ -717,7 +801,7 @@ function attachHomeEventListeners() {
     });
 }
 
-// --- 4.2 Maps & 2D Floor Plans Hub ---
+// --- 5.2 Maps & 2D Floor Plans Hub ---
 function renderMaps() {
     pageTitle.textContent = 'Campus & 2D Floor Maps 🗺️';
     pageSubtitle.textContent = 'Authentic OpenStreetMap GPS navigation & architectural 2D floor plans with seat reservation';
@@ -726,17 +810,14 @@ function renderMaps() {
     const destinationNode = spacePulseData.universityGpsNodes.find(n => n.id === AppState.selectedDestination) || spacePulseData.universityGpsNodes[0];
 
     const distanceMeters = calculateDistanceMeters(origin.lat, origin.lng, destinationNode.lat, destinationNode.lng);
-    // Speed: speed in km/h -> m/min = (speed * 1000) / 60
     const metersPerMin = (AppState.selectedSpeed * 1000) / 60;
     const walkMins = Math.max(1, Math.round(distanceMeters / metersPerMin));
 
-    // Projected arrival vacancy
     const matchingFloor = spacePulseData.libraryFloors.find(f => f.id === destinationNode.id);
     const projectedFree = matchingFloor ? Math.max(0, matchingFloor.availableSeats - Math.floor(walkMins * 1.5)) : 'N/A';
 
     let html = `
         <div class="maps-hub-container">
-            <!-- Segmented View Toggle -->
             <div class="map-segmented-bar">
                 <button class="map-segment-btn ${AppState.mapsSubTab === 'osm' ? 'active' : ''}" onclick="switchMapMode('osm')">
                     <i class="fas fa-map-location-dot"></i> University Ground (OSM)
@@ -746,9 +827,7 @@ function renderMaps() {
                 </button>
             </div>
 
-            <!-- SUB-VIEW 1: OpenStreetMap & Travel Time HUD -->
             <div id="osm-subview" style="display: ${AppState.mapsSubTab === 'osm' ? 'block' : 'none'};">
-                <!-- Travel Time & Speed Mode HUD -->
                 <div class="travel-hud-bar">
                     <div class="hud-location-selector">
                         <div class="hud-select-group">
@@ -806,7 +885,6 @@ function renderMaps() {
                 <div id="osm-map-container" style="margin-top: 16px;"></div>
             </div>
 
-            <!-- SUB-VIEW 2: Architectural 2D Floor Plan with Seat Reservation -->
             <div id="floorplans-subview" style="display: ${AppState.mapsSubTab === 'floorplans' ? 'block' : 'none'};">
                 <div class="floor-plan-card">
                     <div class="floor-plan-header">
@@ -879,7 +957,6 @@ function updateTravelSpeed(speed) {
     renderMaps();
 }
 
-// Leaflet Map Initialization
 function initLeafletMap() {
     const mapElement = document.getElementById('osm-map-container');
     if (!mapElement) return;
@@ -889,7 +966,6 @@ function initLeafletMap() {
         AppState.leafletMap = null;
     }
 
-    // Centered at University of Moratuwa
     const moratuwaCenter = [6.7965, 79.9005];
     const map = L.map('osm-map-container', {
         center: moratuwaCenter,
@@ -902,7 +978,6 @@ function initLeafletMap() {
         maxZoom: 19
     }).addTo(map);
 
-    // Place Campus Nodes with styled marker popups
     spacePulseData.universityGpsNodes.forEach(node => {
         let iconHtml = '<i class="fas fa-location-dot" style="font-size: 22px; color: #00008b;"></i>';
         if (node.category === 'library') iconHtml = '<i class="fas fa-book-reader" style="font-size: 22px; color: #10b981;"></i>';
@@ -919,7 +994,6 @@ function initLeafletMap() {
 
         const marker = L.marker([node.lat, node.lng], { icon: customIcon }).addTo(map);
 
-        // Calculate dynamic popup content
         let popupText = `<strong>${node.name}</strong><br><small>${node.landmark}</small>`;
         if (node.category === 'library') {
             const stats = getStats();
@@ -929,7 +1003,6 @@ function initLeafletMap() {
         marker.bindPopup(popupText);
     });
 
-    // Draw route line between selected origin and destination
     const origin = spacePulseData.originPoints.find(o => o.id === AppState.selectedOrigin);
     const destination = spacePulseData.universityGpsNodes.find(n => n.id === AppState.selectedDestination);
 
@@ -944,19 +1017,15 @@ function initLeafletMap() {
             dashArray: '8, 8'
         }).addTo(map);
 
-        // Fit map bounds to show route
         map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
     }
 
     AppState.leafletMap = map;
 }
 
-// Architectural 2D Floor SVG Layout
 function renderFloorSvgHTML(floorId) {
     const seats = spacePulseData.seatsByFloor[floorId] || spacePulseData.seatsByFloor['floor_ground'];
-    const activeFloor = spacePulseData.libraryFloors.find(f => f.id === floorId) || spacePulseData.libraryFloors[0];
 
-    // Filter seats based on current filter
     const visibleSeats = seats.filter(s => {
         if (AppState.seatFilter === 'free') return s.status === 'free';
         if (AppState.seatFilter === 'occupied') return s.status === 'occupied';
@@ -966,7 +1035,6 @@ function renderFloorSvgHTML(floorId) {
 
     let seatNodesSVG = '';
     visibleSeats.forEach(s => {
-        // If seat is currently reserved by user
         const isUserReserved = AppState.activeReservation && AppState.activeReservation.seatId === s.id;
         const effectiveStatus = isUserReserved ? 'reserved' : s.status;
 
@@ -986,36 +1054,29 @@ function renderFloorSvgHTML(floorId) {
 
     return `
         <svg class="architectural-svg" viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg">
-            <!-- Floor Outer Perimeter Boundary -->
             <rect x="15" y="15" width="590" height="290" rx="14" fill="var(--surface)" stroke="var(--border)" stroke-width="2"/>
             
-            <!-- Zone A: Silent Carrels -->
             <rect class="svg-zone-box" x="40" y="40" width="230" height="130"/>
             <text class="svg-zone-label" x="50" y="60">Zone A: Silent Study Carrels</text>
 
-            <!-- Zone B: Windows & Pods -->
             <rect class="svg-zone-box" x="300" y="40" width="280" height="100"/>
             <text class="svg-zone-label" x="310" y="60">Zone B: Window Desks</text>
 
-            <!-- Zone C: Collaborative Workstations -->
             <rect class="svg-zone-box" x="300" y="160" width="280" height="120"/>
             <text class="svg-zone-label" x="310" y="180">Zone C: Tech & Computer Pods</text>
 
-            <!-- Zone D: Reading Commons -->
             <rect class="svg-zone-box" x="40" y="190" width="230" height="90"/>
             <text class="svg-zone-label" x="50" y="210">Zone D: Circulation & Archive</text>
 
-            <!-- Center Corridor -->
             <line x1="285" y1="30" x2="285" y2="290" stroke="var(--border)" stroke-width="2" stroke-dasharray="6 4"/>
             <text x="285" y="300" font-size="9" fill="var(--text-muted)" text-anchor="middle">CENTRAL WALKWAY</text>
 
-            <!-- Render Clickable Seat Nodes -->
             ${seatNodesSVG}
         </svg>
     `;
 }
 
-// --- 4.3 Library Screen ---
+// --- 5.3 Library Screen ---
 function renderLibrary() {
     pageTitle.textContent = 'Library & Study Vacancies 📚';
     pageSubtitle.textContent = 'Detailed real-time floor occupancy, quiet study areas and power socket tracking';
@@ -1086,7 +1147,7 @@ function createFloorCardHTML(f) {
     `;
 }
 
-// --- 4.4 Canteens Screen ---
+// --- 5.4 Canteens Screen ---
 function renderCanteen() {
     pageTitle.textContent = 'Campus Canteens & Dining 🍽️';
     pageSubtitle.textContent = 'Live crowd count, open status and food availability across University of Moratuwa dining halls';
@@ -1156,7 +1217,7 @@ function createCanteenCardHTML(c) {
     `;
 }
 
-// --- 4.5 ATMs Screen ---
+// --- 5.5 ATMs Screen ---
 function renderAtm() {
     pageTitle.textContent = 'University ATMs & Cash Queues 🏧';
     pageSubtitle.textContent = 'Live monitoring of ATM queue lengths, cash availability, and operating health';
@@ -1228,7 +1289,7 @@ function createAtmCardHTML(a) {
     `;
 }
 
-// --- 4.6 Book Shops Screen ---
+// --- 5.6 Book Shops Screen ---
 function renderBookshop() {
     pageTitle.textContent = 'Book Shops & Printing Hubs 📖';
     pageSubtitle.textContent = 'Status of photocopy centers, textbook stores and engineering stationery';
@@ -1282,7 +1343,7 @@ function createBookshopCardHTML(b) {
     `;
 }
 
-// --- 4.7 Historical Trends & Analytics Screen ---
+// --- 5.7 Historical Trends & Analytics Screen ---
 function renderTrends() {
     pageTitle.textContent = 'Historical Occupancy Trends 📊';
     pageSubtitle.textContent = 'Time-series foot-traffic analytics and day-profile crowd forecasting';
@@ -1387,7 +1448,261 @@ function initTrendsCharts() {
 }
 
 // ==========================================================================
-// 5. Interactive Seat Details & Reservation Modal
+// 6. UoM Student Verification & Profile System (New Feature)
+// ==========================================================================
+
+function openStudentAuthModal() {
+    const modal = document.getElementById('student-auth-modal');
+    renderStudentAuthModalBody();
+    modal.style.display = 'flex';
+}
+
+function renderStudentAuthModalBody() {
+    const body = document.getElementById('student-modal-body');
+    const student = AppState.currentStudent;
+
+    if (student) {
+        // Step 3: Verified Student Digital ID Card
+        body.innerHTML = `
+            <div class="digital-student-card">
+                <div class="student-card-top">
+                    <div>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 2px;">${student.name}</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">${student.email}</p>
+                    </div>
+                    <div class="student-badge-verified">
+                        <i class="fas fa-circle-check"></i> Verified UoM
+                    </div>
+                </div>
+
+                <div class="seat-properties-grid" style="margin-bottom: 12px;">
+                    <div class="prop-card">
+                        <span class="prop-label">Student Index</span>
+                        <strong class="prop-val">${student.indexNumber}</strong>
+                    </div>
+                    <div class="prop-card">
+                        <span class="prop-label">Academic Batch</span>
+                        <strong class="prop-val">${student.batch}</strong>
+                    </div>
+                </div>
+
+                <div class="prop-card" style="margin-bottom: 12px;">
+                    <span class="prop-label">Faculty / Department</span>
+                    <strong class="prop-val" style="font-size: 0.9rem;">${student.department}</strong>
+                </div>
+
+                <div class="student-privileges-box">
+                    <h5>Campus Telemetry Privileges Unlocked:</h5>
+                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> 30-Minute Library Desk Holds & Reservations</div>
+                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Real-Time Threshold Push Notifications</div>
+                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Personalized Speed Mode & Arrival Projections</div>
+                </div>
+
+                <button class="secondary-btn" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);" onclick="signOutStudent()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out / Switch Student Account
+                </button>
+            </div>
+        `;
+    } else if (!AppState.isEnteringOtp) {
+        // Step 1: Email Input
+        body.innerHTML = `
+            <div style="margin-bottom: 16px;">
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Email</h4>
+                <p style="font-size: 0.84rem; color: var(--text-secondary);">
+                    Enter your official university email to unlock 30-minute desk reservations and personalized campus telemetry.
+                </p>
+            </div>
+
+            <form id="student-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label for="uom-email-input">Student Email Address</label>
+                    <input type="email" id="uom-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
+                </div>
+
+                <!-- Domain Shortcut Chips -->
+                <div class="domain-chips-grid">
+                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@uom.lk')">@uom.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="uom-name-input">Full Name (Optional)</label>
+                    <input type="text" id="uom-name-input" placeholder="e.g. Minura Ashen">
+                </div>
+
+                <button type="submit" class="primary-btn uom-btn">
+                    <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code
+                </button>
+            </form>
+        `;
+    } else {
+        // Step 2: OTP Verification
+        body.innerHTML = `
+            <div style="text-align: center; margin-bottom: 16px;">
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit OTP</h4>
+                <p style="font-size: 0.84rem; color: var(--text-secondary);">
+                    Verification code sent to <strong>${AppState.pendingOtpEmail}</strong>
+                </p>
+            </div>
+
+            <!-- Demo Mode Helper Code Pill -->
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 10px 14px; text-align: center; margin-bottom: 16px;">
+                <span style="font-size: 0.78rem; color: var(--pulse-green); font-weight: 700;">Demo Mode Helper:</span>
+                <button type="button" style="background: transparent; border: none; font-weight: 800; color: var(--pulse-green); cursor: pointer; text-decoration: underline; margin-left: 6px;" onclick="autofillDemoOtp()">
+                    Autofill Demo Code (${AppState.pendingOtpCode})
+                </button>
+            </div>
+
+            <form id="student-otp-form" onsubmit="event.preventDefault(); handleVerifyOtp();">
+                <div class="otp-box-container">
+                    <input type="text" id="otp-code-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus>
+                </div>
+
+                <button type="submit" class="primary-btn" style="margin-bottom: 10px;">
+                    <i class="fas fa-shield-check"></i> Verify & Unlock Student Features
+                </button>
+
+                <button type="button" class="secondary-btn" onclick="AppState.isEnteringOtp = false; renderStudentAuthModalBody();">
+                    <i class="fas fa-arrow-left"></i> Change Email
+                </button>
+            </form>
+        `;
+    }
+}
+
+function appendDomainToInput(domain) {
+    const input = document.getElementById('uom-email-input');
+    if (!input) return;
+    const current = input.value.trim();
+    if (current.includes('@')) {
+        const prefix = current.split('@')[0];
+        input.value = prefix + domain;
+    } else {
+        input.value = current + domain;
+    }
+    input.focus();
+}
+
+function handleSendOtp() {
+    const email = document.getElementById('uom-email-input').value.trim();
+    const customName = document.getElementById('uom-name-input').value.trim();
+
+    if (!isValidUomEmail(email)) {
+        showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
+        return;
+    }
+
+    // Generate secure 6-digit code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    AppState.pendingOtpEmail = email;
+    AppState.pendingOtpCode = code;
+    AppState.pendingOtpCustomName = customName;
+    AppState.isEnteringOtp = true;
+
+    showToast(`Code sent to ${email} (Demo Code: ${code}) 📩`);
+    renderStudentAuthModalBody();
+}
+
+function autofillDemoOtp() {
+    const input = document.getElementById('otp-code-input');
+    if (input && AppState.pendingOtpCode) {
+        input.value = AppState.pendingOtpCode;
+        handleVerifyOtp();
+    }
+}
+
+function handleVerifyOtp() {
+    const input = document.getElementById('otp-code-input');
+    const entered = input ? input.value.trim() : '';
+
+    if (entered !== AppState.pendingOtpCode) {
+        showToast('Invalid verification code. Please check and re-enter.', true);
+        return;
+    }
+
+    const studentProfile = parseStudentProfileFromEmail(AppState.pendingOtpEmail, AppState.pendingOtpCustomName);
+    AppState.currentStudent = studentProfile;
+    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+
+    AppState.isEnteringOtp = false;
+    AppState.pendingOtpEmail = null;
+    AppState.pendingOtpCode = null;
+
+    showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
+    updateStudentHeaderElements();
+    renderStudentAuthModalBody();
+    if (AppState.currentTab === 'home') renderHome();
+}
+
+function signOutStudent() {
+    AppState.currentStudent = null;
+    localStorage.removeItem('spacepulse_student_profile');
+    showToast('Signed out of student account.');
+    updateStudentHeaderElements();
+    renderStudentAuthModalBody();
+    if (AppState.currentTab === 'home') renderHome();
+}
+
+function updateStudentHeaderElements() {
+    const topbarBtn = document.getElementById('topbar-student-btn');
+    const topbarLabel = document.getElementById('topbar-student-label');
+    const sidebarName = document.getElementById('sidebar-student-name');
+    const sidebarDept = document.getElementById('sidebar-student-dept');
+    const sidebarAvatar = document.getElementById('sidebar-avatar-icon');
+    const student = AppState.currentStudent;
+
+    if (student) {
+        topbarLabel.textContent = student.name.split(' ')[0];
+        topbarBtn.classList.add('verified');
+
+        sidebarName.textContent = student.name;
+        sidebarDept.innerHTML = `<i class="fas fa-check-circle" style="color: var(--pulse-green);"></i> ${student.indexNumber}`;
+        sidebarAvatar.classList.add('verified');
+        sidebarAvatar.innerHTML = '<i class="fas fa-check"></i>';
+    } else {
+        topbarLabel.textContent = 'Student Login';
+        topbarBtn.classList.remove('verified');
+
+        sidebarName.textContent = 'Student Login';
+        sidebarDept.innerHTML = '<i class="fas fa-lock"></i> Verify @uom.lk';
+        sidebarAvatar.classList.remove('verified');
+        sidebarAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+    }
+}
+
+// ==========================================================================
+// 7. Settings & Stream Diagnostics Modal
+// ==========================================================================
+
+function openSettingsModal() {
+    const modal = document.getElementById('settings-modal');
+    const studentStatus = document.getElementById('settings-student-status-text');
+    if (studentStatus) {
+        studentStatus.textContent = AppState.currentStudent
+            ? `Verified: ${AppState.currentStudent.name} (${AppState.currentStudent.indexNumber})`
+            : 'Guest exploration mode (tap to verify @uom.lk)';
+    }
+    modal.style.display = 'flex';
+}
+
+function resetAllData() {
+    if (confirm('Are you sure you want to reset all stored reservations, alerts, and student profile?')) {
+        localStorage.clear();
+        AppState.favorites = ['floor_ground', 'canteen_goda_uda'];
+        AppState.alerts = [];
+        AppState.activeReservation = null;
+        AppState.currentStudent = null;
+        showToast('All local storage data reset.');
+        location.reload();
+    }
+}
+
+// ==========================================================================
+// 8. Interactive Seat Details & Reservation Modal
 // ==========================================================================
 
 let activeModalSeat = null;
@@ -1446,6 +1761,7 @@ function confirmReservation(seat, floor) {
         seatNumber: seat.seatNumber,
         floorId: floor.id,
         floorName: floor.floor,
+        reservedBy: AppState.currentStudent ? AppState.currentStudent.indexNumber : 'Guest',
         expiresAt
     };
 
@@ -1507,7 +1823,6 @@ function openFacilityDetail(facilityId) {
     const subtitle = document.getElementById('fac-modal-subtitle');
     const body = document.getElementById('fac-modal-body');
 
-    // match floor
     const floor = spacePulseData.libraryFloors.find(f => f.id === facilityId);
     if (floor) {
         title.textContent = floor.floor;
@@ -1525,7 +1840,6 @@ function openFacilityDetail(facilityId) {
         return;
     }
 
-    // match canteen
     const canteen = spacePulseData.canteens.find(c => c.id === facilityId);
     if (canteen) {
         title.textContent = canteen.name;
@@ -1543,7 +1857,6 @@ function openFacilityDetail(facilityId) {
         return;
     }
 
-    // match ATM
     const atm = spacePulseData.atms.find(a => a.id === facilityId);
     if (atm) {
         title.textContent = atm.name;
@@ -1561,7 +1874,6 @@ function openFacilityDetail(facilityId) {
         return;
     }
 
-    // match Bookshop
     const shop = spacePulseData.bookshops.find(b => b.id === facilityId);
     if (shop) {
         title.textContent = shop.name;
@@ -1579,13 +1891,12 @@ function openFacilityDetail(facilityId) {
 }
 
 // ==========================================================================
-// 6. Navigation Router
+// 9. Navigation Router
 // ==========================================================================
 
 function navigateTo(target) {
     AppState.currentTab = target;
 
-    // Update active nav links
     document.querySelectorAll('.nav-links a').forEach(link => {
         if (link.getAttribute('data-target') === target) {
             link.classList.add('active');
@@ -1594,7 +1905,6 @@ function navigateTo(target) {
         }
     });
 
-    // Close mobile drawer if open
     document.getElementById('sidebar').classList.remove('open');
 
     switch (target) {
@@ -1624,7 +1934,6 @@ function navigateTo(target) {
     }
 }
 
-// Favorites system
 function toggleFavorite(id) {
     if (AppState.favorites.includes(id)) {
         AppState.favorites = AppState.favorites.filter(fav => fav !== id);
@@ -1642,7 +1951,6 @@ function toggleFavorite(id) {
     else if (AppState.currentTab === 'bookshop') renderBookshop();
 }
 
-// Toast notification helper
 function showToast(msg, isDanger = false) {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -1661,7 +1969,7 @@ function showToast(msg, isDanger = false) {
 }
 
 // ==========================================================================
-// 7. SpacePulse AI Campus Assistant (Chatbot)
+// 10. SpacePulse AI Campus Assistant (Chatbot)
 // ==========================================================================
 
 const chatbotDrawer = document.getElementById('chatbot-drawer');
@@ -1671,7 +1979,6 @@ const chatInput = document.getElementById('chat-input');
 const chatSendBtn = document.getElementById('chat-send-btn');
 
 function initChatbot() {
-    // Initial greeting from SpacePulse AI
     if (chatMessages.children.length === 0) {
         addChatMessage('bot', "Hello! I am **SpacePulse AI**, your live campus assistant for University of Moratuwa. I have real-time telemetry on library vacancies, canteen crowds, and ATM queues. What can I help you find right now?");
     }
@@ -1694,7 +2001,6 @@ function initChatbot() {
         });
     });
 
-    // Gemini API key config
     document.getElementById('chatbot-key-btn').addEventListener('click', () => {
         const key = prompt('Enter your Google Gemini API Key (Optional for AI reasoning):', AppState.geminiApiKey);
         if (key !== null) {
@@ -1716,7 +2022,6 @@ function toggleChatbot() {
 function addChatMessage(role, text) {
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${role}`;
-    // Simple bold markdown conversion
     bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     chatMessages.appendChild(bubble);
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -1729,7 +2034,6 @@ async function handleChatSend() {
     addChatMessage('user', text);
     chatInput.value = '';
 
-    // Generate intelligent AI response based on live campus snapshot
     const reply = await generateAiResponse(text);
     addChatMessage('bot', reply);
 }
@@ -1738,7 +2042,6 @@ async function generateAiResponse(query) {
     const q = query.toLowerCase();
     const stats = getStats();
 
-    // If Google Gemini key is present, invoke Gemini API
     if (AppState.geminiApiKey) {
         try {
             const systemPrompt = `You are SpacePulse AI for University of Moratuwa. Current snapshot: Total Free Seats: ${stats.availableLibrarySeats}, Best Floor: ${stats.bestFloor.floor} (${stats.bestFloor.availableSeats} free), Best Food: ${stats.bestCanteen ? stats.bestCanteen.name : 'None'}, Shortest ATM: ${stats.shortestAtmName} (${stats.shortestAtmQueue} in line). Answer concisely in friendly tone.`;
@@ -1760,7 +2063,6 @@ async function generateAiResponse(query) {
         }
     }
 
-    // High-performance intelligent deterministic context reasoning engine
     if (q.includes('quiet') || q.includes('study') || q.includes('seat') || q.includes('silent')) {
         const quietFloors = spacePulseData.libraryFloors.filter(f => f.isQuietZone && f.availableSeats > 0);
         if (quietFloors.length > 0) {
@@ -1794,7 +2096,7 @@ async function generateAiResponse(query) {
 }
 
 // ==========================================================================
-// 8. Smart Threshold Alerts Engine
+// 11. Smart Threshold Alerts Engine
 // ==========================================================================
 
 function initAlerts() {
@@ -1894,7 +2196,7 @@ function evaluateAlertThresholds() {
 }
 
 // ==========================================================================
-// 9. Real-Time Telemetry Simulation Engine
+// 12. Real-Time Telemetry Simulation Engine
 // ==========================================================================
 
 function initSimulationEngine() {
@@ -1908,7 +2210,6 @@ function initSimulationEngine() {
     setInterval(() => {
         if (!AppState.simulationActive) return;
 
-        // Subtle realistic fluctuations
         spacePulseData.libraryFloors.forEach(floor => {
             const delta = (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 3);
             floor.availableSeats = Math.max(0, Math.min(floor.totalSeats, floor.availableSeats + delta));
@@ -1928,10 +2229,8 @@ function initSimulationEngine() {
             }
         });
 
-        // Evaluate triggers
         evaluateAlertThresholds();
 
-        // Refresh currently visible tab without losing scroll or state
         if (AppState.currentTab === 'home') renderHome();
         else if (AppState.currentTab === 'library') renderLibrary();
         else if (AppState.currentTab === 'canteen') renderCanteen();
@@ -1940,7 +2239,7 @@ function initSimulationEngine() {
 }
 
 // ==========================================================================
-// 10. Theme & Navigation Setup
+// 13. Theme & Navigation Setup
 // ==========================================================================
 
 function initTheme() {
@@ -1974,21 +2273,26 @@ function initSidebar() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const target = e.currentTarget.getAttribute('data-target');
-            navigateTo(target);
+            if (target) navigateTo(target);
         });
     });
 
-    // Close seat modal
     document.getElementById('seat-modal-close').addEventListener('click', () => {
         document.getElementById('seat-modal').style.display = 'none';
     });
 
-    // Close facility detail modal
     document.getElementById('fac-modal-close').addEventListener('click', () => {
         document.getElementById('facility-detail-modal').style.display = 'none';
     });
 
-    // Reservation banner button handlers
+    document.getElementById('student-modal-close').addEventListener('click', () => {
+        document.getElementById('student-auth-modal').style.display = 'none';
+    });
+
+    document.getElementById('settings-modal-close').addEventListener('click', () => {
+        document.getElementById('settings-modal').style.display = 'none';
+    });
+
     document.getElementById('res-view-map-btn').addEventListener('click', () => {
         if (AppState.activeReservation) {
             navigateTo('maps');
@@ -2000,7 +2304,6 @@ function initSidebar() {
     document.getElementById('res-cancel-btn').addEventListener('click', cancelReservation);
 }
 
-// Check deep link hash upon page load (e.g. #facility?id=floor_ground)
 function checkInitialDeepLink() {
     const hash = window.location.hash;
     if (hash && hash.includes('facility')) {
@@ -2022,6 +2325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initChatbot();
     initAlerts();
     initSimulationEngine();
+    updateStudentHeaderElements();
     updateReservationBanner();
     navigateTo('home');
     checkInitialDeepLink();
