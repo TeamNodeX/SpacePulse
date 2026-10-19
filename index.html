@@ -22,6 +22,116 @@
     <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
 </head>
 <body>
+    <!-- Dedicated First-Page Student Login Portal Screen -->
+    <div class="student-login-portal-screen" id="student-login-page">
+        <div class="portal-ambient-mesh">
+            <div class="portal-glow-orb orb-1"></div>
+            <div class="portal-glow-orb orb-2"></div>
+            <div class="portal-glow-orb orb-3"></div>
+            <div class="portal-grid-overlay"></div>
+        </div>
+
+        <div class="portal-container">
+            <!-- Portal Navigation Bar -->
+            <header class="portal-header">
+                <div class="portal-brand-left">
+                    <div class="portal-logo-group">
+                        <img src="assets/images/logo.jpeg" alt="SpacePulse Logo" class="portal-logo" onerror="this.src='images.jpeg'">
+                        <span class="portal-live-dot" title="Sensors Online"></span>
+                        <div class="portal-brand-text">
+                            <h2>SpacePulse</h2>
+                            <span class="portal-sub">Univ. of Moratuwa</span>
+                        </div>
+                    </div>
+                    <div class="portal-telemetry-badge">
+                        <span class="pulse-beacon"></span>
+                        <span>CAMPUS TELEMETRY LIVE</span>
+                    </div>
+                </div>
+
+                <div class="portal-header-right">
+                    <button class="portal-icon-btn" id="portal-theme-btn" onclick="togglePortalTheme()" title="Toggle Dark/Light Mode">
+                        <i class="fas fa-moon" id="portal-theme-icon"></i>
+                    </button>
+                    <button class="portal-guest-btn" onclick="hideStudentLoginPage()" title="Bypass login and explore as guest">
+                        <span>Continue as Guest</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Portal Center Auth Card -->
+            <div class="portal-main-wrapper">
+                <div class="portal-card">
+                    <!-- Crimson & Gold University Crest Top Strip -->
+                    <div class="portal-card-crest-strip">
+                        <div class="portal-crest-icon-box">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="portal-strip-info">
+                            <span class="portal-crest-kicker">University of Moratuwa</span>
+                            <h3 class="portal-card-heading">Student Access Portal</h3>
+                        </div>
+                        <div class="portal-secure-badge">
+                            <i class="fas fa-shield-halved"></i>
+                            <span>Official UoM SSO</span>
+                        </div>
+                    </div>
+
+                    <!-- Campus Privileges Value Bar -->
+                    <div class="portal-privileges-bar">
+                        <div class="portal-priv-pill">
+                            <i class="fas fa-chair text-success"></i>
+                            <span>30-Min Seat Holds</span>
+                        </div>
+                        <div class="portal-priv-pill">
+                            <i class="fas fa-bell text-warning"></i>
+                            <span>Real-Time Alerts</span>
+                        </div>
+                        <div class="portal-priv-pill">
+                            <i class="fas fa-map-location-dot text-primary"></i>
+                            <span>2D & GPS Navigation</span>
+                        </div>
+                        <div class="portal-priv-pill">
+                            <i class="fas fa-utensils text-purple"></i>
+                            <span>Canteen Queues</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Auth Body -->
+                    <div class="portal-auth-body" id="portal-auth-body">
+                        <!-- Populated dynamically by renderPortalAuthBody() in app.js -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portal Live Campus Telemetry Ticker -->
+            <footer class="portal-footer">
+                <div class="portal-ticker-track">
+                    <div class="portal-ticker-pill">
+                        <span class="ticker-dot live"></span>
+                        <span>Telemetry Sensors: <strong>14 Nodes Active</strong></span>
+                    </div>
+                    <div class="portal-ticker-pill">
+                        <i class="fas fa-book-reader" style="color: var(--primary-blue);"></i>
+                        <span>Library Vacancy: <strong id="portal-lib-stat">175 Free Seats</strong></span>
+                    </div>
+                    <div class="portal-ticker-pill">
+                        <i class="fas fa-utensils" style="color: var(--amber);"></i>
+                        <span>Dining: <strong id="portal-canteen-stat">4 Canteens Open</strong></span>
+                    </div>
+                    <div class="portal-ticker-pill">
+                        <i class="fas fa-money-check-dollar" style="color: var(--pulse-green);"></i>
+                        <span>ATMs: <strong id="portal-atm-stat">BOC & Peoples Cash OK</strong></span>
+                    </div>
+                </div>
+                <div class="portal-copyright">
+                    <span>Designed for UoM Undergraduates by <strong>Team NodeX</strong></span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar" id="sidebar">
@@ -65,7 +175,7 @@
 
                 <div class="nav-section-label" style="margin-top: 14px;">SYSTEM & TELEMETRY</div>
                 <ul class="nav-links">
-                    <li><a href="javascript:void(0)" id="sidebar-student-auth-link" onclick="openStudentAuthModal()"><i class="fas fa-id-card"></i> <span>UoM ID Verification</span></a></li>
+                    <li><a href="javascript:void(0)" id="sidebar-student-auth-link" onclick="showStudentLoginPage()"><i class="fas fa-id-card"></i> <span>Student Login Portal</span> <span class="nav-badge hot">Auth</span></a></li>
                     <li><a href="javascript:void(0)" id="sidebar-stream-link" onclick="openSettingsModal()"><i class="fas fa-video"></i> <span>Camera Stream Ingestion</span></a></li>
                 </ul>
             </nav>

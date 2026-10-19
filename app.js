@@ -1448,21 +1448,297 @@ function initTrendsCharts() {
 }
 
 // ==========================================================================
-// 6. UoM Student Verification & Profile System (New Feature)
+// 6. UoM Student Verification & Portal Login System
 // ==========================================================================
 
+function showStudentLoginPage() {
+    const page = document.getElementById('student-login-page');
+    if (!page) return;
+
+    // Update live telemetry ticker on portal
+    const stats = getStats();
+    const libStat = document.getElementById('portal-lib-stat');
+    const canteenStat = document.getElementById('portal-canteen-stat');
+    const atmStat = document.getElementById('portal-atm-stat');
+
+    if (libStat) libStat.textContent = `${stats.availableLibrarySeats} Free Seats`;
+    if (canteenStat) canteenStat.textContent = `${stats.openCanteensCount} Canteens Open`;
+    if (atmStat) atmStat.textContent = `${stats.shortestAtmName} (${stats.shortestAtmQueue} in line)`;
+
+    const portalThemeIcon = document.getElementById('portal-theme-icon');
+    if (portalThemeIcon) {
+        portalThemeIcon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    renderPortalAuthBody();
+    page.style.display = 'flex';
+}
+
+function hideStudentLoginPage() {
+    const page = document.getElementById('student-login-page');
+    if (page) {
+        page.style.display = 'none';
+    }
+}
+
+function togglePortalTheme() {
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+        themeBtn.click();
+    } else {
+        const nextTheme = AppState.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        AppState.theme = nextTheme;
+        localStorage.setItem('spacepulse_theme', nextTheme);
+    }
+    const portalThemeIcon = document.getElementById('portal-theme-icon');
+    if (portalThemeIcon) {
+        portalThemeIcon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+
 function openStudentAuthModal() {
-    const modal = document.getElementById('student-auth-modal');
+    showStudentLoginPage();
+}
+
+function renderPortalAuthBody() {
+    const body = document.getElementById('portal-auth-body');
+    if (!body) return;
+    const student = AppState.currentStudent;
+
+    if (student) {
+        // Authenticated Student Digital ID Card
+        body.innerHTML = `
+            <div class="digital-student-card">
+                <div class="student-card-top">
+                    <div>
+                        <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 2px;">${student.name}</h3>
+                        <p style="font-size: 0.84rem; color: var(--text-secondary);">${student.email}</p>
+                    </div>
+                    <div class="student-badge-verified">
+                        <i class="fas fa-circle-check"></i> Verified UoM
+                    </div>
+                </div>
+
+                <div class="seat-properties-grid" style="margin-bottom: 12px;">
+                    <div class="prop-card">
+                        <span class="prop-label">Student Index</span>
+                        <strong class="prop-val">${student.indexNumber}</strong>
+                    </div>
+                    <div class="prop-card">
+                        <span class="prop-label">Academic Batch</span>
+                        <strong class="prop-val">${student.batch}</strong>
+                    </div>
+                </div>
+
+                <div class="prop-card" style="margin-bottom: 12px;">
+                    <span class="prop-label">Faculty / Department</span>
+                    <strong class="prop-val" style="font-size: 0.9rem;">${student.department}</strong>
+                </div>
+
+                <div class="student-privileges-box">
+                    <h5>Campus Telemetry Privileges Active:</h5>
+                    <div class="privilege-item"><i class="fas fa-check-circle" style="color: var(--pulse-green);"></i> 30-Minute Library Desk Holds & Reservations</div>
+                    <div class="privilege-item"><i class="fas fa-check-circle" style="color: var(--pulse-green);"></i> Real-Time Threshold Push Notifications</div>
+                    <div class="privilege-item"><i class="fas fa-check-circle" style="color: var(--pulse-green);"></i> Personalized Speed Mode & GPS Navigation</div>
+                </div>
+
+                <button class="portal-enter-btn" onclick="hideStudentLoginPage()">
+                    <i class="fas fa-compass"></i> Enter Campus Dashboard <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <button class="portal-signout-btn" onclick="signOutStudent()">
+                    <i class="fas fa-arrow-right-from-bracket"></i> Sign In as Different Student
+                </button>
+            </div>
+        `;
+    } else if (!AppState.isEnteringOtp) {
+        // Step 1: Email Form + Domain Chips + One-Click Demo Button + Guest link
+        body.innerHTML = `
+            <div class="portal-section-intro">
+                <h4>Sign in with University Email</h4>
+                <p>Connect your official @uom.lk account to access real-time vacancy tracking and library reservations.</p>
+            </div>
+
+            <form id="portal-email-form" onsubmit="event.preventDefault(); handlePortalSendOtp();">
+                <div class="portal-form-group">
+                    <label for="portal-email-input">Official Student Email Address</label>
+                    <div class="portal-input-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="portal-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
+                    </div>
+                </div>
+
+                <!-- Domain Shortcut Chips -->
+                <div class="domain-chips-grid" style="margin-top: 4px; margin-bottom: 14px;">
+                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@uom.lk')">@uom.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
+                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
+                </div>
+
+                <div class="portal-form-group">
+                    <label for="portal-name-input">Full Name (Optional)</label>
+                    <div class="portal-input-wrap">
+                        <i class="fas fa-user-graduate"></i>
+                        <input type="text" id="portal-name-input" placeholder="e.g. Minura Ashen" value="${AppState.pendingOtpCustomName || ''}">
+                    </div>
+                </div>
+
+                <button type="submit" class="portal-submit-btn">
+                    <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code
+                </button>
+            </form>
+
+            <div class="portal-divider">
+                <span>OR INSTANT ONE-CLICK EVALUATION</span>
+            </div>
+
+            <button type="button" class="portal-demo-btn" onclick="handlePortalDemoLogin()">
+                <i class="fas fa-bolt" style="color: var(--amber);"></i> One-Click Demo Student Sign In (Minura Ashen • 210123A)
+            </button>
+
+            <div class="portal-guest-link-wrap">
+                <a href="javascript:void(0)" onclick="hideStudentLoginPage()" class="portal-guest-link">
+                    Continue to Dashboard as Guest <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        `;
+    } else {
+        // Step 2: OTP Verification
+        body.innerHTML = `
+            <div style="text-align: center; margin-bottom: 16px;">
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit OTP</h4>
+                <p style="font-size: 0.84rem; color: var(--text-secondary);">
+                    Verification code sent to <strong>${AppState.pendingOtpEmail}</strong>
+                </p>
+            </div>
+
+            <!-- Demo Mode Helper Code Pill -->
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 10px 14px; text-align: center; margin-bottom: 16px;">
+                <span style="font-size: 0.78rem; color: var(--pulse-green); font-weight: 700;">Demo Mode Helper:</span>
+                <button type="button" style="background: transparent; border: none; font-weight: 800; color: var(--pulse-green); cursor: pointer; text-decoration: underline; margin-left: 6px;" onclick="autofillPortalOtp()">
+                    Autofill Demo Code (${AppState.pendingOtpCode})
+                </button>
+            </div>
+
+            <form id="portal-otp-form" onsubmit="event.preventDefault(); handlePortalVerifyOtp();">
+                <div class="otp-box-container">
+                    <input type="text" id="portal-otp-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus>
+                </div>
+
+                <button type="submit" class="portal-submit-btn" style="margin-bottom: 10px;">
+                    <i class="fas fa-shield-check"></i> Verify & Enter Campus Dashboard
+                </button>
+
+                <button type="button" class="portal-signout-btn" style="color: var(--text-secondary); border-color: var(--border);" onclick="AppState.isEnteringOtp = false; renderPortalAuthBody();">
+                    <i class="fas fa-arrow-left"></i> Change Email
+                </button>
+            </form>
+        `;
+    }
+}
+
+function appendPortalDomain(domain) {
+    const input = document.getElementById('portal-email-input');
+    if (!input) return;
+    const current = input.value.trim();
+    if (current.includes('@')) {
+        const prefix = current.split('@')[0];
+        input.value = prefix + domain;
+    } else {
+        input.value = current + domain;
+    }
+    input.focus();
+}
+
+function handlePortalSendOtp() {
+    const emailInput = document.getElementById('portal-email-input');
+    const nameInput = document.getElementById('portal-name-input');
+    const email = emailInput ? emailInput.value.trim() : '';
+    const customName = nameInput ? nameInput.value.trim() : '';
+
+    if (!isValidUomEmail(email)) {
+        showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
+        return;
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    AppState.pendingOtpEmail = email;
+    AppState.pendingOtpCode = code;
+    AppState.pendingOtpCustomName = customName;
+    AppState.isEnteringOtp = true;
+
+    showToast(`Code sent to ${email} (Demo Code: ${code}) 📩`);
+    renderPortalAuthBody();
     renderStudentAuthModalBody();
-    modal.style.display = 'flex';
+}
+
+function autofillPortalOtp() {
+    const input = document.getElementById('portal-otp-input');
+    if (input && AppState.pendingOtpCode) {
+        input.value = AppState.pendingOtpCode;
+        handlePortalVerifyOtp();
+    }
+}
+
+function handlePortalVerifyOtp() {
+    const input = document.getElementById('portal-otp-input');
+    const entered = input ? input.value.trim() : '';
+
+    if (entered !== AppState.pendingOtpCode) {
+        showToast('Invalid verification code. Please check and re-enter.', true);
+        return;
+    }
+
+    const studentProfile = parseStudentProfileFromEmail(AppState.pendingOtpEmail, AppState.pendingOtpCustomName);
+    AppState.currentStudent = studentProfile;
+    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+
+    AppState.isEnteringOtp = false;
+    AppState.pendingOtpEmail = null;
+    AppState.pendingOtpCode = null;
+
+    showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
+    updateStudentHeaderElements();
+    renderPortalAuthBody();
+    renderStudentAuthModalBody();
+    hideStudentLoginPage();
+    if (AppState.currentTab === 'home') renderHome();
+}
+
+function handlePortalDemoLogin() {
+    const studentProfile = {
+        email: '210123a@uom.lk',
+        indexNumber: '210123A',
+        batch: 'Batch 21',
+        department: 'Computer Science & Engineering',
+        name: 'Minura Ashen',
+        isVerified: true,
+        verifiedAt: new Date().toISOString()
+    };
+    AppState.currentStudent = studentProfile;
+    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+    AppState.isEnteringOtp = false;
+    AppState.pendingOtpEmail = null;
+    AppState.pendingOtpCode = null;
+
+    showToast(`Welcome, Minura Ashen! Verified as CSE Undergraduate 🎓`);
+    updateStudentHeaderElements();
+    renderPortalAuthBody();
+    renderStudentAuthModalBody();
+    hideStudentLoginPage();
+    if (AppState.currentTab === 'home') renderHome();
 }
 
 function renderStudentAuthModalBody() {
     const body = document.getElementById('student-modal-body');
+    if (!body) return;
     const student = AppState.currentStudent;
 
     if (student) {
-        // Step 3: Verified Student Digital ID Card
         body.innerHTML = `
             <div class="digital-student-card">
                 <div class="student-card-top">
@@ -1504,7 +1780,6 @@ function renderStudentAuthModalBody() {
             </div>
         `;
     } else if (!AppState.isEnteringOtp) {
-        // Step 1: Email Input
         body.innerHTML = `
             <div style="margin-bottom: 16px;">
                 <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Email</h4>
@@ -1519,7 +1794,6 @@ function renderStudentAuthModalBody() {
                     <input type="email" id="uom-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
                 </div>
 
-                <!-- Domain Shortcut Chips -->
                 <div class="domain-chips-grid">
                     <button type="button" class="domain-chip" onclick="appendDomainToInput('@uom.lk')">@uom.lk</button>
                     <button type="button" class="domain-chip" onclick="appendDomainToInput('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
@@ -1540,7 +1814,6 @@ function renderStudentAuthModalBody() {
             </form>
         `;
     } else {
-        // Step 2: OTP Verification
         body.innerHTML = `
             <div style="text-align: center; margin-bottom: 16px;">
                 <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit OTP</h4>
@@ -1549,7 +1822,6 @@ function renderStudentAuthModalBody() {
                 </p>
             </div>
 
-            <!-- Demo Mode Helper Code Pill -->
             <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 10px 14px; text-align: center; margin-bottom: 16px;">
                 <span style="font-size: 0.78rem; color: var(--pulse-green); font-weight: 700;">Demo Mode Helper:</span>
                 <button type="button" style="background: transparent; border: none; font-weight: 800; color: var(--pulse-green); cursor: pointer; text-decoration: underline; margin-left: 6px;" onclick="autofillDemoOtp()">
@@ -1596,7 +1868,6 @@ function handleSendOtp() {
         return;
     }
 
-    // Generate secure 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     AppState.pendingOtpEmail = email;
     AppState.pendingOtpCode = code;
@@ -1605,6 +1876,7 @@ function handleSendOtp() {
 
     showToast(`Code sent to ${email} (Demo Code: ${code}) 📩`);
     renderStudentAuthModalBody();
+    renderPortalAuthBody();
 }
 
 function autofillDemoOtp() {
@@ -1635,15 +1907,24 @@ function handleVerifyOtp() {
     showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
     updateStudentHeaderElements();
     renderStudentAuthModalBody();
+    renderPortalAuthBody();
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) modal.style.display = 'none';
     if (AppState.currentTab === 'home') renderHome();
 }
 
 function signOutStudent() {
     AppState.currentStudent = null;
     localStorage.removeItem('spacepulse_student_profile');
+    AppState.isEnteringOtp = false;
+    AppState.pendingOtpEmail = null;
+    AppState.pendingOtpCode = null;
+
     showToast('Signed out of student account.');
     updateStudentHeaderElements();
     renderStudentAuthModalBody();
+    renderPortalAuthBody();
+    showStudentLoginPage();
     if (AppState.currentTab === 'home') renderHome();
 }
 
@@ -2250,7 +2531,9 @@ function initTheme() {
         document.documentElement.setAttribute('data-theme', theme);
         AppState.theme = theme;
         localStorage.setItem('spacepulse_theme', theme);
-        themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (themeIcon) themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        const portalThemeIcon = document.getElementById('portal-theme-icon');
+        if (portalThemeIcon) portalThemeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     }
 
     applyTheme(AppState.theme);
@@ -2329,4 +2612,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateReservationBanner();
     navigateTo('home');
     checkInitialDeepLink();
+
+    // Show student login page as first page in the web application
+    showStudentLoginPage();
 });
