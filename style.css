@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SpacePulse - University Vacancy Tracker & Live Campus Telemetry
+   SpacePulse - University Vacancy Tracker & Live University Telemetry
    Design System & Styling
    ========================================================================== */
 
@@ -1142,7 +1142,7 @@ body {
 .stat-metric-icon.purple { background-color: rgba(139, 92, 246, 0.12); color: var(--purple); }
 
 /* ==========================================================================
-   Campus Maps & 2D Floor Plans Hub
+   University Maps & 2D Floor Plans Hub
    ========================================================================== */
 .maps-hub-container {
     display: flex;
@@ -1301,6 +1301,330 @@ body {
     border: 1px solid var(--border);
     box-shadow: var(--shadow-md);
     z-index: 10;
+}
+
+/* Leaflet Custom Styling & Dark Theme Adaptations */
+.leaflet-container {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Dark Mode Map Tiles Filter (Clean dark theme for standard OSM without any API key) */
+.dark-mode-tiles {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.osm-map-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top: 16px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+#osm-map-container {
+    width: 100%;
+    height: 640px;
+    min-height: 560px;
+    background-color: #f1f5f9;
+    position: relative;
+    z-index: 1;
+}
+
+[data-theme="dark"] .osm-map-wrapper {
+    background: #0f172a;
+    border-color: var(--border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] #osm-map-container {
+    background-color: #121620;
+}
+
+/* Floating Toolbar on Right Side of Map */
+.map-floating-toolbar {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+    pointer-events: auto;
+}
+
+.map-tool-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    color: #1e3a8a;
+    font-size: 17px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.map-tool-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    background: #f8fafc;
+    color: #00008b;
+}
+
+.map-tool-btn:active {
+    transform: scale(0.96);
+}
+
+.map-tool-btn.active-branch {
+    background: #00008b;
+    color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 139, 0.4);
+}
+
+.map-tool-btn.active-branch:hover {
+    background: #1e3a8a;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .map-tool-btn {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #93c5fd;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .map-tool-btn:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .map-tool-btn.active-branch {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+/* Floating Action Button (FAB) Bottom-Right */
+.map-fab-btn {
+    position: absolute;
+    right: 18px;
+    bottom: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    pointer-events: auto;
+}
+
+.map-fab-btn:hover {
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 8px 26px rgba(16, 185, 129, 0.65);
+}
+
+.map-fab-btn:active {
+    transform: scale(0.95);
+}
+
+/* Custom Marker Pins from Screenshot */
+.custom-map-pin, .custom-origin-pin, .custom-halo-pin-wrap {
+    background: transparent !important;
+    border: none !important;
+}
+
+.map-halo-pin {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-halo-pin .pin-halo {
+    position: absolute;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    top: -9px;
+    left: -9px;
+    pointer-events: none;
+    animation: haloPulse 3s infinite ease-in-out;
+}
+
+@keyframes haloPulse {
+    0%, 100% { transform: scale(1); opacity: 0.35; }
+    50% { transform: scale(1.18); opacity: 0.15; }
+}
+
+.map-halo-pin.green .pin-halo { background: rgba(16, 185, 129, 0.45); }
+.map-halo-pin.orange .pin-halo { background: rgba(249, 115, 22, 0.45); }
+.map-halo-pin.red .pin-halo { background: rgba(239, 68, 68, 0.45); }
+.map-halo-pin.blue .pin-halo { background: rgba(30, 58, 138, 0.4); }
+
+.map-halo-pin .pin-core {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 14px;
+    border: 2.5px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.2s ease;
+}
+
+.map-halo-pin:hover .pin-core {
+    transform: scale(1.15);
+}
+
+.map-halo-pin.green .pin-core { background: linear-gradient(135deg, #10b981, #059669); }
+.map-halo-pin.orange .pin-core { background: linear-gradient(135deg, #f97316, #ea580c); }
+.map-halo-pin.red .pin-core { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.map-halo-pin.blue .pin-core { background: linear-gradient(135deg, #1e3a8a, #00008b); }
+.map-halo-pin.white-purple .pin-core {
+    background: #ffffff;
+    border: 2.5px solid #8b5cf6;
+    color: #8b5cf6;
+}
+
+/* User Location Pin at Architecture Building */
+.map-user-location-pin {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-user-location-pin .user-pulse-ring {
+    position: absolute;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.28);
+    top: -9px;
+    left: -9px;
+    animation: userGlow 2.5s infinite ease-out;
+}
+
+@keyframes userGlow {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.25); opacity: 0.15; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.map-user-location-pin .user-outer-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2563eb;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.map-user-location-pin .user-inner-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    border: 2px solid #3b82f6;
+}
+
+.map-user-location-pin .user-badge-pin {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    z-index: 3;
+}
+
+[data-theme="dark"] .leaflet-control-layers,
+[data-theme="dark"] .leaflet-bar a {
+    background-color: var(--surface) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .leaflet-bar a:hover {
+    background-color: var(--bg-alt) !important;
+}
+
+[data-theme="dark"] .leaflet-control-layers-expanded {
+    background-color: var(--surface) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+.leaflet-control-layers-expanded {
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-md) !important;
+    border: 1px solid var(--border) !important;
+    padding: 10px 14px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+}
+
+.leaflet-control-layers-base label {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-xl) !important;
+    padding: 4px !important;
+}
+
+[data-theme="dark"] .leaflet-popup-content-wrapper,
+[data-theme="dark"] .leaflet-popup-tip {
+    background-color: var(--surface) !important;
+    color: var(--text-primary) !important;
 }
 
 /* 2D Architectural Floor Plan */
@@ -3188,4 +3512,75 @@ body {
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+/* Live University Map Quick Banner Card on Home */
+.university-map-banner-card {
+    background: linear-gradient(135deg, rgba(0, 0, 139, 0.08), rgba(99, 102, 241, 0.12));
+    border: 1.5px solid rgba(99, 102, 241, 0.35);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.university-map-banner-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.18);
+    border-color: #4f46e5;
+}
+
+[data-theme="dark"] .university-map-banner-card {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.25), rgba(79, 70, 229, 0.2));
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.map-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.map-banner-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00008b, #4f46e5);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.map-banner-text h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.map-banner-text p {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.map-banner-cta {
+    flex-shrink: 0;
+    padding: 9px 18px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: var(--radius-md);
 }

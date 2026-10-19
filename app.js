@@ -1,5 +1,5 @@
 /**
- * SpacePulse - University Vacancy Tracker & Live Campus Telemetry
+ * SpacePulse - University Vacancy Tracker & Live University Telemetry
  * Complete Client-side Application Logic
  * Team NodeX - University of Moratuwa
  */
@@ -172,7 +172,7 @@ const spacePulseData = {
         }
     ],
 
-    // Campus GPS Nodes for OpenStreetMap (University of Moratuwa)
+    // University GPS Nodes for OpenStreetMap (University of Moratuwa)
     universityGpsNodes: [
         { id: 'floor_ground', name: 'Central Library', category: 'library', lat: 6.7953420, lng: 79.9010599, landmark: 'Central Academic Core' },
         { id: 'canteen_goda_uda', name: 'Goda Uda Canteen', category: 'canteen', lat: 6.7964500, lng: 79.9001536, landmark: 'Student Centre (Upper Level)' },
@@ -187,9 +187,10 @@ const spacePulseData = {
         { id: 'bookshop_engineering', name: 'Engineering Bookshop', category: 'bookshop', lat: 6.7971000, lng: 79.9004000, landmark: 'Engineering Complex Wing' }
     ],
 
-    // Campus Origin Landmarks for Travel Time HUD
+    // University Origin Landmarks for Travel Time HUD
     originPoints: [
-        { id: 'orig_gate', name: 'Main Campus Gate', lat: 6.798500, lng: 79.901800 },
+        { id: 'orig_arch', name: 'Architecture New Building (My Location)', lat: 6.795800, lng: 79.901800 },
+        { id: 'orig_gate', name: 'Main University Gate', lat: 6.798500, lng: 79.901800 },
         { id: 'orig_sentra', name: 'Sentra Court', lat: 6.796500, lng: 79.900800 },
         { id: 'orig_entc', name: 'ENTC Department', lat: 6.795800, lng: 79.902100 },
         { id: 'orig_civil', name: 'Civil Engineering Dept', lat: 6.796000, lng: 79.899100 },
@@ -291,8 +292,8 @@ const AppState = {
     alerts: JSON.parse(localStorage.getItem('spacepulse_alerts') || '[]'),
     activeReservation: JSON.parse(localStorage.getItem('spacepulse_reservation') || 'null'),
     reservationTimerInterval: null,
-    selectedOrigin: 'orig_sentra',
-    selectedDestination: 'floor_ground',
+    selectedOrigin: 'orig_arch',
+    selectedDestination: 'canteen_goda_uda',
     selectedSpeed: 4.5, // km/h
     searchQuery: '',
     selectedCategory: 'all',
@@ -308,6 +309,12 @@ const AppState = {
     pendingOtpCustomName: null,
     isEnteringOtp: false
 };
+
+// Auto-sanitize legacy cached demo profile in localStorage if needed
+if (AppState.currentStudent && AppState.currentStudent.email === '210123a@uom.lk') {
+    AppState.currentStudent.name = 'Minura Ashen';
+    localStorage.setItem('spacepulse_student_profile', JSON.stringify(AppState.currentStudent));
+}
 
 // ==========================================================================
 // 3. UoM Student Profile & Email Parser (Mirroring student_profile.dart)
@@ -346,7 +353,7 @@ function parseStudentProfileFromEmail(rawEmail, customName = '') {
         index = localPart.toUpperCase();
         if (!inferredName) inferredName = `Student ${index}`;
     } else {
-        // Name.batch format (e.g. perera.21 or minura.21)
+        // Name.batch format (e.g. perera.21 or silva.21)
         const dotBatchRegex = /^(.*)\.([0-9]{2})$/;
         const dotMatch = localPart.match(dotBatchRegex);
         if (dotMatch) {
@@ -441,38 +448,26 @@ const pageTitle = document.getElementById('page-title');
 const pageSubtitle = document.getElementById('page-subtitle');
 
 // --- 5.1 Home Dashboard ---
-function renderHome() {
-    const stats = getStats();
-    const isSearching = AppState.searchQuery.trim().length > 0 || AppState.selectedCategory !== 'all';
-    const student = AppState.currentStudent;
-
-    if (student) {
-        pageTitle.innerHTML = `Welcome back, ${student.name.split(' ')[0]}! 🎓 <span class="status-badge open" style="font-size: 0.72rem; vertical-align: middle; margin-left: 6px;">Verified UoM</span>`;
-        pageSubtitle.textContent = `${student.batch} • ${student.department} • University of Moratuwa`;
-    } else {
-        pageTitle.textContent = 'Welcome to SpacePulse 👋';
-        pageSubtitle.textContent = 'Live vacancy tracking and intelligent crowd monitoring at University of Moratuwa';
+function renderHomeBannersHTML(stats, student) {
+    let bannersHtml = '';
+    if (!student) {
+        bannersHtml += `
+            <div class="uom-student-banner">
+                <div class="uom-banner-left">
+                    <div class="uom-banner-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="uom-banner-text">
+                        <strong>Are you a University of Moratuwa student?</strong>
+                        <p>Connect your official @uom.lk student email to unlock 30-minute library seat holds and instant vacancy alerts.</p>
+                    </div>
+                </div>
+                <button class="uom-banner-btn" onclick="openStudentAuthModal()">
+                    <i class="fas fa-id-card"></i> Verify Student
+                </button>
+            </div>
+        `;
     }
 
-    let html = `
-        <!-- UoM Student Verification Banner (if not verified) -->
-        ${!student && !isSearching ? `
-        <div class="uom-student-banner">
-            <div class="uom-banner-left">
-                <div class="uom-banner-icon"><i class="fas fa-graduation-cap"></i></div>
-                <div class="uom-banner-text">
-                    <strong>Are you a University of Moratuwa student?</strong>
-                    <p>Connect your official @uom.lk student email to unlock 30-minute library seat holds and instant vacancy alerts.</p>
-                </div>
-            </div>
-            <button class="uom-banner-btn" onclick="openStudentAuthModal()">
-                <i class="fas fa-id-card"></i> Verify Student
-            </button>
-        </div>
-        ` : ''}
-
-        <!-- AI Recommendation Banner -->
-        ${!isSearching ? `
+    bannersHtml += `
         <div class="recommendation-banner">
             <div class="rec-content">
                 <span class="rec-tag"><i class="fas fa-sparkles"></i> AI Recommendation</span>
@@ -490,7 +485,148 @@ function renderHome() {
                 </div>
             </div>
         </div>
-        ` : ''}
+    `;
+
+    return bannersHtml;
+}
+
+function renderDefaultHomeSectionsHTML(stats) {
+    return `
+        <!-- Favorites Carousel Section -->
+        ${renderFavoritesSectionHTML()}
+
+        <!-- 4 Hero Facility Navigation Cards -->
+        <div class="section-title-wrap">
+            <h3><i class="fas fa-compass" style="color: var(--primary-blue);"></i> University Facilities</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-rotate"></i> Real-time synced</span>
+        </div>
+
+        <div class="hero-facility-grid">
+            <div class="hero-facility-card" onclick="navigateTo('library');">
+                <img src="assets/images/library.jpg" alt="Library" class="hero-facility-img" onerror="this.src='images.jpeg'">
+                <div class="hero-facility-overlay">
+                    <div class="hero-card-top">
+                        <div class="hero-icon-pill"><i class="fas fa-book-reader"></i></div>
+                        <span class="hero-badge green">${stats.availableLibrarySeats} Seats Free</span>
+                    </div>
+                    <div class="hero-card-bottom">
+                        <h3>University Library</h3>
+                        <p><i class="fas fa-location-dot"></i> 4 Study Floors • Quiet & Power Outlets</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-facility-card" onclick="navigateTo('canteen');">
+                <img src="assets/images/canteen.jpg" alt="Canteens" class="hero-facility-img" onerror="this.src='images.jpeg'">
+                <div class="hero-facility-overlay">
+                    <div class="hero-card-top">
+                        <div class="hero-icon-pill"><i class="fas fa-utensils"></i></div>
+                        <span class="hero-badge green">${stats.openCanteensCount} Open Now</span>
+                    </div>
+                    <div class="hero-card-bottom">
+                        <h3>University Canteens</h3>
+                        <p><i class="fas fa-location-dot"></i> Goda Uda, Goda Yata, L & Civil</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-facility-card" onclick="navigateTo('atm');">
+                <img src="assets/images/atm.jpg" alt="ATMs" class="hero-facility-img" onerror="this.src='images.jpeg'">
+                <div class="hero-facility-overlay">
+                    <div class="hero-card-top">
+                        <div class="hero-icon-pill"><i class="fas fa-money-check-dollar"></i></div>
+                        <span class="hero-badge amber">${stats.workingAtmsCount} Active ATMs</span>
+                    </div>
+                    <div class="hero-card-bottom">
+                        <h3>University ATMs</h3>
+                        <p><i class="fas fa-location-dot"></i> BOC, People's & Commercial Bank</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-facility-card" onclick="navigateTo('bookshop');">
+                <img src="assets/images/bookshop.jpg" alt="Book Shops" class="hero-facility-img" onerror="this.src='images.jpeg'">
+                <div class="hero-facility-overlay">
+                    <div class="hero-card-top">
+                        <div class="hero-icon-pill"><i class="fas fa-book-bookmark"></i></div>
+                        <span class="hero-badge purple">${stats.openBookshopsCount} Open</span>
+                    </div>
+                    <div class="hero-card-bottom">
+                        <h3>Book Shops</h3>
+                        <p><i class="fas fa-location-dot"></i> Printing, Photocopy, Textbooks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Telemetry Stats Cards -->
+        <div class="section-title-wrap">
+            <h3><i class="fas fa-wave-square" style="color: var(--pulse-green);"></i> Real-Time Pulse Overview</h3>
+        </div>
+
+        <div class="quick-stats-grid">
+            <div class="stat-metric-card" onclick="navigateTo('library');">
+                <div class="stat-metric-content">
+                    <h4>Total Free Seats</h4>
+                    <div class="stat-metric-value">${stats.availableLibrarySeats}</div>
+                    <div class="stat-metric-sub">of ${stats.totalLibrarySeats} seats library-wide</div>
+                </div>
+                <div class="stat-metric-icon green"><i class="fas fa-chair"></i></div>
+            </div>
+
+            <div class="stat-metric-card" onclick="navigateTo('atm');">
+                <div class="stat-metric-content">
+                    <h4>Shortest ATM Line</h4>
+                    <div class="stat-metric-value">${stats.shortestAtmQueue} <span style="font-size: 1rem; font-weight: 500;">in queue</span></div>
+                    <div class="stat-metric-sub">${stats.shortestAtmName}</div>
+                </div>
+                <div class="stat-metric-icon amber"><i class="fas fa-users-line"></i></div>
+            </div>
+
+            <div class="stat-metric-card" onclick="navigateTo('canteen');">
+                <div class="stat-metric-content">
+                    <h4>Canteens Serving</h4>
+                    <div class="stat-metric-value">${stats.openCanteensCount} / ${stats.totalCanteensCount}</div>
+                    <div class="stat-metric-sub">Open for meals & snacks</div>
+                </div>
+                <div class="stat-metric-icon blue"><i class="fas fa-bowl-rice"></i></div>
+            </div>
+
+            <div class="stat-metric-card" onclick="navigateTo('bookshop');">
+                <div class="stat-metric-content">
+                    <h4>Book Shops Active</h4>
+                    <div class="stat-metric-value">${stats.openBookshopsCount}</div>
+                    <div class="stat-metric-sub">Photocopying & Stationery</div>
+                </div>
+                <div class="stat-metric-icon purple"><i class="fas fa-print"></i></div>
+            </div>
+        </div>
+    `;
+}
+
+function renderHome() {
+    const stats = getStats();
+    const isSearching = AppState.searchQuery.trim().length > 0 || AppState.selectedCategory !== 'all';
+    const student = AppState.currentStudent;
+
+    if (student) {
+        pageTitle.innerHTML = `Welcome back, ${student.name.split(' ')[0]}! 🎓 <span class="status-badge open" style="font-size: 0.72rem; vertical-align: middle; margin-left: 6px;">Verified UoM</span>`;
+        pageSubtitle.textContent = `${student.batch} • ${student.department} • University of Moratuwa`;
+    } else {
+        pageTitle.textContent = 'Welcome to SpacePulse 👋';
+        pageSubtitle.textContent = 'Live vacancy tracking and intelligent crowd monitoring at University of Moratuwa';
+    }
+
+    const searchInput = document.getElementById('home-search-input');
+    const wasFocused = searchInput && (document.activeElement === searchInput);
+    const cursorStart = searchInput ? searchInput.selectionStart : 0;
+    const cursorEnd = searchInput ? searchInput.selectionEnd : 0;
+
+    let html = `
+        <!-- Home Banners Container -->
+        <div id="home-banners-container" style="display: ${isSearching ? 'none' : 'block'};">
+            ${renderHomeBannersHTML(stats, student)}
+        </div>
 
         <!-- Universal Search & Category Filter Section -->
         <div class="search-filter-section">
@@ -520,126 +656,23 @@ function renderHome() {
                 </button>
             </div>
         </div>
+
+        <!-- Dynamic Content Section -->
+        <div id="home-dynamic-content">
+            ${isSearching ? renderSearchResultsHTML() : renderDefaultHomeSectionsHTML(stats)}
+        </div>
     `;
-
-    if (isSearching) {
-        html += renderSearchResultsHTML();
-    } else {
-        html += `
-            <!-- Favorites Carousel Section -->
-            ${renderFavoritesSectionHTML()}
-
-            <!-- 4 Hero Facility Navigation Cards -->
-            <div class="section-title-wrap">
-                <h3><i class="fas fa-compass" style="color: var(--primary-blue);"></i> University Facilities</h3>
-                <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-rotate"></i> Real-time synced</span>
-            </div>
-
-            <div class="hero-facility-grid">
-                <div class="hero-facility-card" onclick="navigateTo('library');">
-                    <img src="assets/images/library.jpg" alt="Library" class="hero-facility-img" onerror="this.src='images.jpeg'">
-                    <div class="hero-facility-overlay">
-                        <div class="hero-card-top">
-                            <div class="hero-icon-pill"><i class="fas fa-book-reader"></i></div>
-                            <span class="hero-badge green">${stats.availableLibrarySeats} Seats Free</span>
-                        </div>
-                        <div class="hero-card-bottom">
-                            <h3>University Library</h3>
-                            <p><i class="fas fa-location-dot"></i> 4 Study Floors • Quiet & Power Outlets</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="hero-facility-card" onclick="navigateTo('canteen');">
-                    <img src="assets/images/canteen.jpg" alt="Canteens" class="hero-facility-img" onerror="this.src='images.jpeg'">
-                    <div class="hero-facility-overlay">
-                        <div class="hero-card-top">
-                            <div class="hero-icon-pill"><i class="fas fa-utensils"></i></div>
-                            <span class="hero-badge green">${stats.openCanteensCount} Open Now</span>
-                        </div>
-                        <div class="hero-card-bottom">
-                            <h3>Campus Canteens</h3>
-                            <p><i class="fas fa-location-dot"></i> Goda Uda, Goda Yata, L & Civil</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="hero-facility-card" onclick="navigateTo('atm');">
-                    <img src="assets/images/atm.jpg" alt="ATMs" class="hero-facility-img" onerror="this.src='images.jpeg'">
-                    <div class="hero-facility-overlay">
-                        <div class="hero-card-top">
-                            <div class="hero-icon-pill"><i class="fas fa-money-check-dollar"></i></div>
-                            <span class="hero-badge amber">${stats.workingAtmsCount} Active ATMs</span>
-                        </div>
-                        <div class="hero-card-bottom">
-                            <h3>Campus ATMs</h3>
-                            <p><i class="fas fa-location-dot"></i> BOC, People's & Commercial Bank</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="hero-facility-card" onclick="navigateTo('bookshop');">
-                    <img src="assets/images/bookshop.jpg" alt="Book Shops" class="hero-facility-img" onerror="this.src='images.jpeg'">
-                    <div class="hero-facility-overlay">
-                        <div class="hero-card-top">
-                            <div class="hero-icon-pill"><i class="fas fa-book-bookmark"></i></div>
-                            <span class="hero-badge purple">${stats.openBookshopsCount} Open</span>
-                        </div>
-                        <div class="hero-card-bottom">
-                            <h3>Book Shops</h3>
-                            <p><i class="fas fa-location-dot"></i> Printing, Photocopy, Textbooks</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Telemetry Stats Cards -->
-            <div class="section-title-wrap">
-                <h3><i class="fas fa-wave-square" style="color: var(--pulse-green);"></i> Real-Time Pulse Overview</h3>
-            </div>
-
-            <div class="quick-stats-grid">
-                <div class="stat-metric-card" onclick="navigateTo('library');">
-                    <div class="stat-metric-content">
-                        <h4>Total Free Seats</h4>
-                        <div class="stat-metric-value">${stats.availableLibrarySeats}</div>
-                        <div class="stat-metric-sub">of ${stats.totalLibrarySeats} seats library-wide</div>
-                    </div>
-                    <div class="stat-metric-icon green"><i class="fas fa-chair"></i></div>
-                </div>
-
-                <div class="stat-metric-card" onclick="navigateTo('atm');">
-                    <div class="stat-metric-content">
-                        <h4>Shortest ATM Line</h4>
-                        <div class="stat-metric-value">${stats.shortestAtmQueue} <span style="font-size: 1rem; font-weight: 500;">in queue</span></div>
-                        <div class="stat-metric-sub">${stats.shortestAtmName}</div>
-                    </div>
-                    <div class="stat-metric-icon amber"><i class="fas fa-users-line"></i></div>
-                </div>
-
-                <div class="stat-metric-card" onclick="navigateTo('canteen');">
-                    <div class="stat-metric-content">
-                        <h4>Canteens Serving</h4>
-                        <div class="stat-metric-value">${stats.openCanteensCount} / ${stats.totalCanteensCount}</div>
-                        <div class="stat-metric-sub">Open for meals & snacks</div>
-                    </div>
-                    <div class="stat-metric-icon blue"><i class="fas fa-bowl-rice"></i></div>
-                </div>
-
-                <div class="stat-metric-card" onclick="navigateTo('bookshop');">
-                    <div class="stat-metric-content">
-                        <h4>Book Shops Active</h4>
-                        <div class="stat-metric-value">${stats.openBookshopsCount}</div>
-                        <div class="stat-metric-sub">Photocopying & Stationery</div>
-                    </div>
-                    <div class="stat-metric-icon purple"><i class="fas fa-print"></i></div>
-                </div>
-            </div>
-        `;
-    }
 
     contentArea.innerHTML = html;
     attachHomeEventListeners();
+
+    if (wasFocused) {
+        const newSearchInput = document.getElementById('home-search-input');
+        if (newSearchInput) {
+            newSearchInput.focus();
+            newSearchInput.setSelectionRange(cursorStart, cursorEnd);
+        }
+    }
 }
 
 function renderFavoritesSectionHTML() {
@@ -764,6 +797,61 @@ function renderSearchResultsHTML() {
     return resHtml;
 }
 
+function updateHomeSearchResults() {
+    const isSearching = AppState.searchQuery.trim().length > 0 || AppState.selectedCategory !== 'all';
+    const stats = getStats();
+
+    // 1. Toggle Banners Visibility
+    const bannersContainer = document.getElementById('home-banners-container');
+    if (bannersContainer) {
+        bannersContainer.style.display = isSearching ? 'none' : 'block';
+    }
+
+    // 2. Toggle Clear Button Visibility
+    const searchClear = document.getElementById('home-search-clear');
+    if (searchClear) {
+        searchClear.style.display = AppState.searchQuery.length > 0 ? 'block' : 'none';
+    }
+
+    // 3. Update Category Chips Active State
+    document.querySelectorAll('.category-chip').forEach(btn => {
+        const cat = btn.getAttribute('data-cat');
+        btn.classList.toggle('active', cat === AppState.selectedCategory);
+    });
+
+    // 4. Update Dynamic Results Container without re-rendering search bar
+    const dynamicContainer = document.getElementById('home-dynamic-content');
+    if (dynamicContainer) {
+        dynamicContainer.innerHTML = isSearching ? renderSearchResultsHTML() : renderDefaultHomeSectionsHTML(stats);
+
+        // Re-attach clear filters button inside the results if present
+        const resetBtn = document.getElementById('reset-search-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', handleResetSearch);
+        }
+    }
+}
+
+function handleClearSearch() {
+    AppState.searchQuery = '';
+    const searchInput = document.getElementById('home-search-input');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+    }
+    updateHomeSearchResults();
+}
+
+function handleResetSearch() {
+    AppState.searchQuery = '';
+    AppState.selectedCategory = 'all';
+    const searchInput = document.getElementById('home-search-input');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    updateHomeSearchResults();
+}
+
 function attachHomeEventListeners() {
     const searchInput = document.getElementById('home-search-input');
     const searchClear = document.getElementById('home-search-clear');
@@ -772,38 +860,30 @@ function attachHomeEventListeners() {
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             AppState.searchQuery = e.target.value;
-            if (searchClear) searchClear.style.display = AppState.searchQuery ? 'block' : 'none';
-            renderHome();
+            updateHomeSearchResults();
         });
     }
 
     if (searchClear) {
-        searchClear.addEventListener('click', () => {
-            AppState.searchQuery = '';
-            renderHome();
-        });
+        searchClear.addEventListener('click', handleClearSearch);
     }
 
     if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            AppState.searchQuery = '';
-            AppState.selectedCategory = 'all';
-            renderHome();
-        });
+        resetBtn.addEventListener('click', handleResetSearch);
     }
 
     document.querySelectorAll('.category-chip').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const cat = e.currentTarget.getAttribute('data-cat');
             AppState.selectedCategory = cat;
-            renderHome();
+            updateHomeSearchResults();
         });
     });
 }
 
 // --- 5.2 Maps & 2D Floor Plans Hub ---
 function renderMaps() {
-    pageTitle.textContent = 'Campus & 2D Floor Maps 🗺️';
+    pageTitle.textContent = 'University & 2D Floor Maps 🗺️';
     pageSubtitle.textContent = 'Authentic OpenStreetMap GPS navigation & architectural 2D floor plans with seat reservation';
 
     const origin = spacePulseData.originPoints.find(o => o.id === AppState.selectedOrigin) || spacePulseData.originPoints[0];
@@ -882,7 +962,30 @@ function renderMaps() {
                     </div>
                 </div>
 
-                <div id="osm-map-container" style="margin-top: 16px;"></div>
+                <div class="osm-map-wrapper">
+                    <div id="osm-map-container"></div>
+
+                    <!-- Floating Navigation Controls Matching Screenshot -->
+                    <div class="map-floating-toolbar">
+                        <button class="map-tool-btn" id="map-locate-btn" title="Locate Me (Architecture)">
+                            <i class="fas fa-crosshairs"></i>
+                        </button>
+                        <button class="map-tool-btn" id="map-zoom-in-btn" title="Zoom In">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="map-tool-btn" id="map-zoom-out-btn" title="Zoom Out">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button class="map-tool-btn active-branch" id="map-network-toggle-btn" title="Toggle University Network Mesh & Zones">
+                            <i class="fas fa-code-branch"></i>
+                        </button>
+                    </div>
+
+                    <!-- Floating Action Button for University AI Matching Screenshot -->
+                    <button class="map-fab-btn" id="map-ai-fab-btn" onclick="toggleChatbot()" title="Ask SpacePulse University AI">
+                        <i class="fas fa-robot"></i>
+                    </button>
+                </div>
             </div>
 
             <div id="floorplans-subview" style="display: ${AppState.mapsSubTab === 'floorplans' ? 'block' : 'none'};">
@@ -966,59 +1069,521 @@ function initLeafletMap() {
         AppState.leafletMap = null;
     }
 
-    const moratuwaCenter = [6.7965, 79.9005];
+    // Precise university core coordinates matching the user screenshot
+    const moratuwaCenter = [6.79678, 79.90110];
     const map = L.map('osm-map-container', {
         center: moratuwaCenter,
         zoom: 17,
-        zoomControl: true
+        zoomControl: false, // Using the floating toolbar controls matching the screenshot
+        scrollWheelZoom: true
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors | SpacePulse Team NodeX',
-        maxZoom: 19
-    }).addTo(map);
+    const isDark = AppState.theme === 'dark';
 
-    spacePulseData.universityGpsNodes.forEach(node => {
-        let iconHtml = '<i class="fas fa-location-dot" style="font-size: 22px; color: #00008b;"></i>';
-        if (node.category === 'library') iconHtml = '<i class="fas fa-book-reader" style="font-size: 22px; color: #10b981;"></i>';
-        if (node.category === 'canteen') iconHtml = '<i class="fas fa-utensils" style="font-size: 22px; color: #f59e0b;"></i>';
-        if (node.category === 'atm') iconHtml = '<i class="fas fa-money-check-dollar" style="font-size: 22px; color: #3b82f6;"></i>';
-        if (node.category === 'bookshop') iconHtml = '<i class="fas fa-book" style="font-size: 22px; color: #8b5cf6;"></i>';
+    // 1. Google Maps University Street Layer (100% reliable, zero 403 access blocks, ultra-crisp university roads & landmarks)
+    const googleStreetLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps'
+    });
+
+    // 2. Google Maps Hybrid (High-resolution aerial satellite photo with building & street names)
+    const googleHybridLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps'
+    });
+
+    // 3. Cyber Dark University (Night Mode - Google Maps base with dark theme styling, zero blocks)
+    const darkLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        className: 'dark-mode-tiles',
+        attribution: '&copy; Google Maps'
+    });
+
+    // 4. Esri World Street Map (Official public GIS university street basemap with building footprints)
+    const esriStreetLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+    });
+
+    // 5. Esri World Imagery (Aerial satellite photo view)
+    const esriSatLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+    });
+
+    // 6. Humanitarian OpenStreetMap (HOT - Open humanitarian mirror without 403 restrictions)
+    const osmHotLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        subdomains: ['a', 'b', 'c'],
+        attribution: '&copy; OpenStreetMap contributors, Humanitarian OpenStreetMap Team'
+    });
+
+    // Set default basemap based on active theme
+    const activeTileLayer = isDark ? darkLayer : googleStreetLayer;
+    activeTileLayer.addTo(map);
+
+    AppState.activeMapTileLayer = activeTileLayer;
+    AppState.googleStreetLayer = googleStreetLayer;
+    AppState.darkLayer = darkLayer;
+
+    // Basemap Switcher Controller
+    const baseLayers = {
+        "📍 Google Maps (University Street)": googleStreetLayer,
+        "🌍 Google Maps Hybrid (Satellite)": googleHybridLayer,
+        "🏛️ Esri World Street Map": esriStreetLayer,
+        "🛰️ Esri Aerial Satellite": esriSatLayer,
+        "🌙 Cyber Dark (Night Mode)": darkLayer,
+        "🗺️ Humanitarian OpenStreetMap": osmHotLayer
+    };
+    L.control.layers(baseLayers, null, { position: 'topleft' }).addTo(map);
+
+    // --- Building Highlight Zones (Translucent Bounding Boxes from Picture) ---
+    const zonesLayer = L.layerGroup();
+
+    // Zone 1: Architecture New Building & Transport Complex (South - Indigo/Purple)
+    L.polygon([
+        [6.79525, 79.90110],
+        [6.79525, 79.90230],
+        [6.79630, 79.90230],
+        [6.79630, 79.90110]
+    ], {
+        color: '#6366f1',
+        weight: 1.8,
+        opacity: 0.85,
+        fillColor: '#6366f1',
+        fillOpacity: 0.12
+    }).bindTooltip("<strong>Architecture & Transport Complex</strong><br>Architecture New Building & Design Studios", { sticky: true }).addTo(zonesLayer);
+
+    // Zone 2: Earth Resources Engineering & Heavy Labs (West - Amber/Orange)
+    L.polygon([
+        [6.79615, 79.89925],
+        [6.79615, 79.90045],
+        [6.79690, 79.90045],
+        [6.79690, 79.89925]
+    ], {
+        color: '#f59e0b',
+        weight: 1.8,
+        opacity: 0.85,
+        fillColor: '#f59e0b',
+        fillOpacity: 0.12
+    }).bindTooltip("<strong>Earth Resources Engineering Complex</strong><br>Dept. of Earth Resources & Goda Uda Canteen", { sticky: true }).addTo(zonesLayer);
+
+    // Zone 3: Food Court and Study Area (Center - Emerald/Teal)
+    L.polygon([
+        [6.79635, 79.90075],
+        [6.79635, 79.90150],
+        [6.79690, 79.90150],
+        [6.79690, 79.90075]
+    ], {
+        color: '#10b981',
+        weight: 1.8,
+        opacity: 0.85,
+        fillColor: '#10b981',
+        fillOpacity: 0.12
+    }).bindTooltip("<strong>Food Court & Student Study Area</strong><br>Central Canteen, WUS Welfare & Study Garden", { sticky: true }).addTo(zonesLayer);
+
+    // Zone 4: New Classroom Block & Sentra Court (East - Violet/Purple)
+    L.polygon([
+        [6.79670, 79.90160],
+        [6.79670, 79.90235],
+        [6.79730, 79.90235],
+        [6.79730, 79.90160]
+    ], {
+        color: '#8b5cf6',
+        weight: 1.8,
+        opacity: 0.85,
+        fillColor: '#8b5cf6',
+        fillOpacity: 0.12
+    }).bindTooltip("<strong>New Classroom Block</strong><br>Lecture Theatres & L Canteen", { sticky: true }).addTo(zonesLayer);
+
+    zonesLayer.addTo(map);
+
+    // --- University Pedestrian Mesh Network Lines (Translucent Interconnecting Links from Picture) ---
+    const networkMeshLayer = L.layerGroup();
+    const universityMeshSegments = [
+        [[6.79580, 79.90180], [6.79720, 79.90120]], // Architecture to Sumanadasa
+        [[6.79580, 79.90180], [6.79655, 79.89995]], // Architecture to West Canteen
+        [[6.79580, 79.90180], [6.79658, 79.90105]], // Architecture to Food Court
+        [[6.79720, 79.90120], [6.79695, 79.90195]], // Sumanadasa to East Canteen
+        [[6.79720, 79.90120], [6.79710, 79.90060]], // Sumanadasa to NW Junction
+        [[6.79710, 79.90060], [6.79655, 79.89995]], // NW Junction to West Canteen
+        [[6.79720, 79.90120], [6.79658, 79.90105]], // Sumanadasa to Food Court
+        [[6.79655, 79.89995], [6.79658, 79.90105]], // West Canteen to Food Court
+        [[6.79695, 79.90195], [6.79658, 79.90105]]  // East Canteen to Food Court
+    ];
+
+    universityMeshSegments.forEach(coords => {
+        L.polyline(coords, {
+            color: '#4f46e5',
+            weight: 2.5,
+            opacity: 0.65,
+            lineCap: 'round',
+            lineJoin: 'round'
+        }).addTo(networkMeshLayer);
+    });
+
+    networkMeshLayer.addTo(map);
+
+    // --- Custom Markers Matching The User's Screenshot ---
+
+    // 1. South Node: User Location at Architecture New Building (Pulsing ring + blue circle + orange pin)
+    const userLocIcon = L.divIcon({
+        html: `
+            <div class="map-user-location-pin">
+                <div class="user-pulse-ring"></div>
+                <div class="user-outer-circle">
+                    <div class="user-inner-dot"></div>
+                </div>
+                <div class="user-badge-pin"><i class="fas fa-location-dot"></i></div>
+            </div>
+        `,
+        className: 'custom-halo-pin-wrap',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -20]
+    });
+    L.marker([6.79580, 79.90180], { icon: userLocIcon })
+        .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 175px;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #2563eb; text-transform: uppercase;">Your Current Location</span>
+                <strong style="font-size: 0.95rem; display: block; margin: 3px 0; color: #0f172a;">Architecture New Building</strong>
+                <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 8px;">Design Studios & Dept. of Transport Engineering</p>
+                <button onclick="updateTravelOrigin('orig_arch')" style="width: 100%; background: #2563eb; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">Set as My Start Point 🚶</button>
+            </div>
+        `)
+        .addTo(map);
+
+    // 2. North Node: Sumanadasa Building (Navy Circle + Halo)
+    const sumanadasaIcon = L.divIcon({
+        html: `
+            <div class="map-halo-pin blue">
+                <div class="pin-halo"></div>
+                <div class="pin-core"><i class="fas fa-graduation-cap"></i></div>
+            </div>
+        `,
+        className: 'custom-halo-pin-wrap',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -18]
+    });
+    L.marker([6.79720, 79.90120], { icon: sumanadasaIcon })
+        .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 175px;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #1e3a8a; text-transform: uppercase;">Engineering Faculty Core</span>
+                <strong style="font-size: 0.95rem; display: block; margin: 3px 0; color: #0f172a;">Sumanadasa Building</strong>
+                <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 8px;">Faculty Administration, Lecture Halls & Labs</p>
+                <button onclick="updateTravelDestination('floor_ground')" style="width: 100%; background: #00008b; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">Walk to Sumanadasa <i class="fas fa-location-arrow"></i></button>
+            </div>
+        `)
+        .addTo(map);
+
+    // 3. West Node: Goda Uda Canteen (Green Halo Pin)
+    const westCanteenIcon = L.divIcon({
+        html: `
+            <div class="map-halo-pin green">
+                <div class="pin-halo"></div>
+                <div class="pin-core"><i class="fas fa-utensils"></i></div>
+            </div>
+        `,
+        className: 'custom-halo-pin-wrap',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -18]
+    });
+    const godaUda = spacePulseData.canteens.find(c => c.id === 'canteen_goda_uda');
+    L.marker([6.79655, 79.89995], { icon: westCanteenIcon })
+        .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 180px;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Canteen (Upper Floor)</span>
+                <strong style="font-size: 0.95rem; display: block; margin: 3px 0; color: #0f172a;">Goda Uda Canteen</strong>
+                <div style="background: rgba(16, 185, 129, 0.12); padding: 5px 8px; border-radius: 6px; color: #10b981; font-weight: 700; font-size: 0.78rem; margin: 6px 0;">
+                    <i class="fas fa-users"></i> ${godaUda ? godaUda.personCount : 45} / 150 students • Short Queue
+                </div>
+                <button onclick="updateTravelDestination('canteen_goda_uda')" style="width: 100%; background: #10b981; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">Walk to Canteen <i class="fas fa-location-arrow"></i></button>
+            </div>
+        `)
+        .addTo(map);
+
+    // 4. East Node: L Canteen / Sentra Court (Orange Halo Pin)
+    const eastCanteenIcon = L.divIcon({
+        html: `
+            <div class="map-halo-pin orange">
+                <div class="pin-halo"></div>
+                <div class="pin-core"><i class="fas fa-utensils"></i></div>
+            </div>
+        `,
+        className: 'custom-halo-pin-wrap',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -18]
+    });
+    const canteenL = spacePulseData.canteens.find(c => c.id === 'canteen_l');
+    L.marker([6.79695, 79.90195], { icon: eastCanteenIcon })
+        .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 180px;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #f97316; text-transform: uppercase;">Canteen (Sentra Court)</span>
+                <strong style="font-size: 0.95rem; display: block; margin: 3px 0; color: #0f172a;">L Canteen (C3)</strong>
+                <div style="background: rgba(249, 115, 22, 0.12); padding: 5px 8px; border-radius: 6px; color: #f97316; font-weight: 700; font-size: 0.78rem; margin: 6px 0;">
+                    <i class="fas fa-users"></i> ${canteenL ? canteenL.personCount : 120} students • Bakery & Meals
+                </div>
+                <button onclick="updateTravelDestination('canteen_l')" style="width: 100%; background: #f97316; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">Walk to Canteen <i class="fas fa-location-arrow"></i></button>
+            </div>
+        `)
+        .addTo(map);
+
+    // 5. Center Node A: Goda Yata Canteen (Red Halo Pin)
+    const centerCanteenIcon = L.divIcon({
+        html: `
+            <div class="map-halo-pin red">
+                <div class="pin-halo"></div>
+                <div class="pin-core"><i class="fas fa-utensils"></i></div>
+            </div>
+        `,
+        className: 'custom-halo-pin-wrap',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -18]
+    });
+    const godaYata = spacePulseData.canteens.find(c => c.id === 'canteen_goda_yata');
+    L.marker([6.79658, 79.90105], { icon: centerCanteenIcon })
+        .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 180px;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #ef4444; text-transform: uppercase;">Central Food Court</span>
+                <strong style="font-size: 0.95rem; display: block; margin: 3px 0; color: #0f172a;">Goda Yata Canteen</strong>
+                <div style="background: rgba(239, 68, 68, 0.12); padding: 5px 8px; border-radius: 6px; color: #ef4444; font-weight: 700; font-size: 0.78rem; margin: 6px 0;">
+                    <i class="fas fa-users"></i> ${godaYata ? godaYata.personCount : 80} students • Rice & Juice
+                </div>
+                <button onclick="updateTravelDestination('canteen_goda_yata')" style="width: 100%; background: #ef4444; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">Walk to Food Court <i class="fas fa-location-arrow"></i></button>
+            </div>
+        `)
+        .addTo(map);
+
+    // 6. Center Node B: Student Center Welfare & Bookshop (Red Book Pin)
+    const bookshopPinIcon = L.divIcon({
+        html: `
+            <div class="map-halo-pin red">
+                <div class="pin-core" style="background: #b91c1c;"><i class="fas fa-book"></i></div>
+            </div>
+        `,
+        className: 'custom-halo-pin-wrap',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -16]
+    });
+    L.marker([6.79648, 79.90125], { icon: bookshopPinIcon })
+        .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 170px;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #b91c1c; text-transform: uppercase;">Bookshop & Welfare</span>
+                <strong style="font-size: 0.95rem; display: block; margin: 3px 0; color: #0f172a;">WUS Welfare Centre</strong>
+                <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 8px;">Textbooks, Photocopying, Printing</p>
+                <button onclick="updateTravelDestination('bookshop_main')" style="width: 100%; background: #b91c1c; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">Navigate Here <i class="fas fa-location-arrow"></i></button>
+            </div>
+        `)
+        .addTo(map);
+
+    // 7. NW Node: Wala Canteen Lane (White/Purple Pin)
+    const walaIcon = L.divIcon({
+        html: `
+            <div class="map-halo-pin white-purple">
+                <div class="pin-core"><i class="fas fa-utensils"></i></div>
+            </div>
+        `,
+        className: 'custom-halo-pin-wrap',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -16]
+    });
+    L.marker([6.79710, 79.90060], { icon: walaIcon })
+        .bindPopup(`
+            <div style="font-family: 'Inter', sans-serif; min-width: 170px;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: #8b5cf6; text-transform: uppercase;">Open-Air Canteen</span>
+                <strong style="font-size: 0.95rem; display: block; margin: 3px 0; color: #0f172a;">Wala Canteen Lane</strong>
+                <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 8px;">Amphitheatre & Quick Snacks</p>
+                <button onclick="updateTravelDestination('canteen_wala')" style="width: 100%; background: #8b5cf6; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">Walk to Wala Canteen <i class="fas fa-location-arrow"></i></button>
+            </div>
+        `)
+        .addTo(map);
+
+    // 8. Other Key University Landmarks (Central Library, ATMs)
+    const otherNodes = spacePulseData.universityGpsNodes.filter(n => 
+        !['canteen_goda_uda', 'canteen_goda_yata', 'canteen_l', 'canteen_wala', 'bookshop_main'].includes(n.id)
+    );
+
+    otherNodes.forEach(node => {
+        let pinColor = '#00008b';
+        let iconClass = 'fa-location-dot';
+        let bgGradient = 'linear-gradient(135deg, #00008b, #1e3a8a)';
+
+        if (node.category === 'library') {
+            pinColor = '#10b981';
+            iconClass = 'fa-book-reader';
+            bgGradient = 'linear-gradient(135deg, #059669, #10b981)';
+        } else if (node.category === 'atm') {
+            pinColor = '#3b82f6';
+            iconClass = 'fa-money-check-dollar';
+            bgGradient = 'linear-gradient(135deg, #2563eb, #3b82f6)';
+        } else if (node.category === 'bookshop') {
+            pinColor = '#8b5cf6';
+            iconClass = 'fa-book';
+            bgGradient = 'linear-gradient(135deg, #7c3aed, #8b5cf6)';
+        }
 
         const customIcon = L.divIcon({
-            html: `<div style="text-align: center; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">${iconHtml}</div>`,
+            html: `
+                <div style="
+                    background: ${bgGradient};
+                    color: #ffffff;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50% 50% 50% 0;
+                    transform: rotate(-45deg);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+                    border: 2px solid #ffffff;
+                ">
+                    <i class="fas ${iconClass}" style="transform: rotate(45deg); font-size: 13px;"></i>
+                </div>
+            `,
             className: 'custom-map-pin',
-            iconSize: [26, 26],
-            iconAnchor: [13, 26]
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
 
         const marker = L.marker([node.lat, node.lng], { icon: customIcon }).addTo(map);
 
-        let popupText = `<strong>${node.name}</strong><br><small>${node.landmark}</small>`;
+        let popupText = `
+            <div style="min-width: 175px; font-family: 'Inter', sans-serif;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                    <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: ${pinColor}; letter-spacing: 0.5px;">${node.category}</span>
+                </div>
+                <strong style="font-size: 0.95rem; display: block; margin-bottom: 2px; color: #0f172a;">${node.name}</strong>
+                <span style="font-size: 0.78rem; color: #64748b; display: block; margin-bottom: 8px;">${node.landmark}</span>
+        `;
+
         if (node.category === 'library') {
             const stats = getStats();
-            popupText += `<br><span style="color: #10b981; font-weight: bold;">${stats.availableLibrarySeats} Seats Free</span>`;
+            popupText += `<div style="background: rgba(16, 185, 129, 0.12); padding: 5px 8px; border-radius: 6px; color: #10b981; font-weight: 700; font-size: 0.8rem; margin-bottom: 8px;">
+                <i class="fas fa-chair"></i> ${stats.availableLibrarySeats} Seats Free Right Now
+            </div>`;
         }
+
+        popupText += `
+                <button onclick="updateTravelDestination('${node.id}')" style="
+                    width: 100%;
+                    background: #00008b;
+                    color: #ffffff;
+                    border: none;
+                    padding: 7px 10px;
+                    border-radius: 6px;
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px;
+                ">Navigate Here <i class="fas fa-location-arrow"></i></button>
+            </div>
+        `;
 
         marker.bindPopup(popupText);
     });
 
+    // Render Origin Point, Destination Node & Walking Path
     const origin = spacePulseData.originPoints.find(o => o.id === AppState.selectedOrigin);
     const destination = spacePulseData.universityGpsNodes.find(n => n.id === AppState.selectedDestination);
 
     if (origin && destination) {
+        // Custom Origin Pin (Red Pulsing Pin)
+        const originIcon = L.divIcon({
+            html: `
+                <div style="
+                    background: linear-gradient(135deg, #ef4444, #b91c1c);
+                    color: #ffffff;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50% 50% 50% 0;
+                    transform: rotate(-45deg);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+                    border: 2px solid #ffffff;
+                ">
+                    <i class="fas fa-person-walking" style="transform: rotate(45deg); font-size: 14px;"></i>
+                </div>
+            `,
+            className: 'custom-origin-pin',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+        L.marker([origin.lat, origin.lng], { icon: originIcon })
+            .bindPopup(`<strong>Your Origin:</strong><br>${origin.name}`)
+            .addTo(map);
+
         const polyline = L.polyline([
             [origin.lat, origin.lng],
             [destination.lat, destination.lng]
         ], {
             color: '#10b981',
-            weight: 4,
-            opacity: 0.85,
+            weight: 5,
+            opacity: 0.9,
             dashArray: '8, 8'
         }).addTo(map);
 
-        map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+        map.fitBounds(polyline.getBounds(), { padding: [55, 55] });
     }
+
+    // --- Floating Controls Click Handlers ---
+    const locateBtn = document.getElementById('map-locate-btn');
+    if (locateBtn) {
+        locateBtn.onclick = () => {
+            map.flyTo([6.79580, 79.90180], 17.5, { duration: 1.2 });
+            showToast('Centered on your university location: Architecture Building 📍');
+        };
+    }
+
+    const zoomInBtn = document.getElementById('map-zoom-in-btn');
+    if (zoomInBtn) {
+        zoomInBtn.onclick = () => map.zoomIn();
+    }
+
+    const zoomOutBtn = document.getElementById('map-zoom-out-btn');
+    if (zoomOutBtn) {
+        zoomOutBtn.onclick = () => map.zoomOut();
+    }
+
+    const networkBtn = document.getElementById('map-network-toggle-btn');
+    if (networkBtn) {
+        let meshVisible = true;
+        networkBtn.onclick = () => {
+            meshVisible = !meshVisible;
+            if (meshVisible) {
+                map.addLayer(networkMeshLayer);
+                map.addLayer(zonesLayer);
+                networkBtn.classList.add('active-branch');
+                showToast('University pedestrian network & zones enabled 🕸️');
+            } else {
+                map.removeLayer(networkMeshLayer);
+                map.removeLayer(zonesLayer);
+                networkBtn.classList.remove('active-branch');
+                showToast('University pedestrian network hidden');
+            }
+        };
+    }
+
+    // Multiple invalidateSize calls to ensure clean canvas without gray areas
+    setTimeout(() => map.invalidateSize(), 50);
+    setTimeout(() => map.invalidateSize(), 200);
+    setTimeout(() => map.invalidateSize(), 500);
 
     AppState.leafletMap = map;
 }
@@ -1149,7 +1714,7 @@ function createFloorCardHTML(f) {
 
 // --- 5.4 Canteens Screen ---
 function renderCanteen() {
-    pageTitle.textContent = 'Campus Canteens & Dining 🍽️';
+    pageTitle.textContent = 'University Canteens & Dining 🍽️';
     pageSubtitle.textContent = 'Live crowd count, open status and food availability across University of Moratuwa dining halls';
 
     let html = '<div class="dashboard-grid">';
@@ -1537,14 +2102,14 @@ function renderPortalAuthBody() {
                 </div>
 
                 <div class="student-privileges-box">
-                    <h5>Campus Telemetry Privileges Active:</h5>
+                    <h5>University Telemetry Privileges Active:</h5>
                     <div class="privilege-item"><i class="fas fa-check-circle" style="color: var(--pulse-green);"></i> 30-Minute Library Desk Holds & Reservations</div>
                     <div class="privilege-item"><i class="fas fa-check-circle" style="color: var(--pulse-green);"></i> Real-Time Threshold Push Notifications</div>
                     <div class="privilege-item"><i class="fas fa-check-circle" style="color: var(--pulse-green);"></i> Personalized Speed Mode & GPS Navigation</div>
                 </div>
 
                 <button class="portal-enter-btn" onclick="hideStudentLoginPage()">
-                    <i class="fas fa-compass"></i> Enter Campus Dashboard <i class="fas fa-arrow-right"></i>
+                    <i class="fas fa-compass"></i> Enter University Dashboard <i class="fas fa-arrow-right"></i>
                 </button>
 
                 <button class="portal-signout-btn" onclick="signOutStudent()">
@@ -1630,7 +2195,7 @@ function renderPortalAuthBody() {
                 </div>
 
                 <button type="submit" class="portal-submit-btn" style="margin-bottom: 10px;">
-                    <i class="fas fa-shield-check"></i> Verify & Enter Campus Dashboard
+                    <i class="fas fa-shield-check"></i> Verify & Enter University Dashboard
                 </button>
 
                 <button type="button" class="portal-signout-btn" style="color: var(--text-secondary); border-color: var(--border);" onclick="AppState.isEnteringOtp = false; renderPortalAuthBody();">
@@ -1768,7 +2333,7 @@ function renderStudentAuthModalBody() {
                 </div>
 
                 <div class="student-privileges-box">
-                    <h5>Campus Telemetry Privileges Unlocked:</h5>
+                    <h5>University Telemetry Privileges Unlocked:</h5>
                     <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> 30-Minute Library Desk Holds & Reservations</div>
                     <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Real-Time Threshold Push Notifications</div>
                     <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Personalized Speed Mode & Arrival Projections</div>
@@ -1784,7 +2349,7 @@ function renderStudentAuthModalBody() {
             <div style="margin-bottom: 16px;">
                 <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Email</h4>
                 <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Enter your official university email to unlock 30-minute desk reservations and personalized campus telemetry.
+                    Enter your official university email to unlock 30-minute desk reservations and personalized university telemetry.
                 </p>
             </div>
 
@@ -2131,7 +2696,7 @@ function openFacilityDetail(facilityId) {
             <div class="stat-row"><span>Specialty Foods:</span><strong>${canteen.specialties}</strong></div>
             <div class="stat-row"><span>Estimated Line Wait:</span><strong>~${Math.max(1, Math.round(canteen.personCount * 0.12))} mins</strong></div>
             <button class="primary-btn" style="margin-top: 18px;" onclick="document.getElementById('facility-detail-modal').style.display='none'; navigateTo('maps'); updateTravelDestination('${canteen.id}'); switchMapMode('osm');">
-                <i class="fas fa-location-arrow"></i> Navigate on Campus Ground Map
+                <i class="fas fa-location-arrow"></i> Navigate on University Ground Map
             </button>
         `;
         modal.style.display = 'flex';
@@ -2250,7 +2815,7 @@ function showToast(msg, isDanger = false) {
 }
 
 // ==========================================================================
-// 10. SpacePulse AI Campus Assistant (Chatbot)
+// 10. SpacePulse AI University Assistant (Chatbot)
 // ==========================================================================
 
 const chatbotDrawer = document.getElementById('chatbot-drawer');
@@ -2261,7 +2826,7 @@ const chatSendBtn = document.getElementById('chat-send-btn');
 
 function initChatbot() {
     if (chatMessages.children.length === 0) {
-        addChatMessage('bot', "Hello! I am **SpacePulse AI**, your live campus assistant for University of Moratuwa. I have real-time telemetry on library vacancies, canteen crowds, and ATM queues. What can I help you find right now?");
+        addChatMessage('bot', "Hello! I am **SpacePulse AI**, your live university assistant for University of Moratuwa. I have real-time telemetry on library vacancies, canteen crowds, and ATM queues. What can I help you find right now?");
     }
 
     document.getElementById('chatbot-fab').addEventListener('click', toggleChatbot);
@@ -2512,7 +3077,15 @@ function initSimulationEngine() {
 
         evaluateAlertThresholds();
 
-        if (AppState.currentTab === 'home') renderHome();
+        if (AppState.currentTab === 'home') {
+            const searchInput = document.getElementById('home-search-input');
+            const isFocused = searchInput && document.activeElement === searchInput;
+            if (isFocused) {
+                updateHomeSearchResults();
+            } else {
+                renderHome();
+            }
+        }
         else if (AppState.currentTab === 'library') renderLibrary();
         else if (AppState.currentTab === 'canteen') renderCanteen();
         else if (AppState.currentTab === 'atm') renderAtm();
@@ -2534,6 +3107,19 @@ function initTheme() {
         if (themeIcon) themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         const portalThemeIcon = document.getElementById('portal-theme-icon');
         if (portalThemeIcon) portalThemeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+        // Dynamically update Leaflet map tile layer to match theme
+        if (AppState.leafletMap && AppState.activeMapTileLayer) {
+            if (theme === 'dark' && AppState.darkLayer) {
+                AppState.leafletMap.removeLayer(AppState.activeMapTileLayer);
+                AppState.darkLayer.addTo(AppState.leafletMap);
+                AppState.activeMapTileLayer = AppState.darkLayer;
+            } else if (theme === 'light' && AppState.googleStreetLayer) {
+                AppState.leafletMap.removeLayer(AppState.activeMapTileLayer);
+                AppState.googleStreetLayer.addTo(AppState.leafletMap);
+                AppState.activeMapTileLayer = AppState.googleStreetLayer;
+            }
+        }
     }
 
     applyTheme(AppState.theme);
@@ -2585,6 +3171,12 @@ function initSidebar() {
     });
 
     document.getElementById('res-cancel-btn').addEventListener('click', cancelReservation);
+
+    window.addEventListener('resize', () => {
+        if (AppState.leafletMap) {
+            AppState.leafletMap.invalidateSize();
+        }
+    });
 }
 
 function checkInitialDeepLink() {
