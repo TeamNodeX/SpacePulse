@@ -312,7 +312,7 @@ const AppState = {
 
 // Auto-sanitize legacy cached demo profile in localStorage if needed
 if (AppState.currentStudent && AppState.currentStudent.email === '210123a@uom.lk') {
-    AppState.currentStudent.name = 'Minura Ashen';
+    AppState.currentStudent.name = 'Kavindu Dilupa';
     localStorage.setItem('spacepulse_student_profile', JSON.stringify(AppState.currentStudent));
 }
 
@@ -2148,7 +2148,7 @@ function renderPortalAuthBody() {
                     <label for="portal-name-input">Full Name (Optional)</label>
                     <div class="portal-input-wrap">
                         <i class="fas fa-user-graduate"></i>
-                        <input type="text" id="portal-name-input" placeholder="e.g. Minura Ashen" value="${AppState.pendingOtpCustomName || ''}">
+                        <input type="text" id="portal-name-input" placeholder="e.g. Kavindu Dilupa" value="${AppState.pendingOtpCustomName || ''}">
                     </div>
                 </div>
 
@@ -2162,7 +2162,7 @@ function renderPortalAuthBody() {
             </div>
 
             <button type="button" class="portal-demo-btn" onclick="handlePortalDemoLogin()">
-                <i class="fas fa-bolt" style="color: var(--amber);"></i> One-Click Demo Student Sign In (Minura Ashen • 210123A)
+                <i class="fas fa-bolt" style="color: var(--amber);"></i> One-Click Demo Student Sign In (Kavindu Dilupa • 210123A)
             </button>
 
             <div class="portal-guest-link-wrap">
@@ -2280,7 +2280,7 @@ function handlePortalDemoLogin() {
         indexNumber: '210123A',
         batch: 'Batch 21',
         department: 'Computer Science & Engineering',
-        name: 'Minura Ashen',
+        name: 'Kavindu Dilupa',
         isVerified: true,
         verifiedAt: new Date().toISOString()
     };
@@ -2290,7 +2290,7 @@ function handlePortalDemoLogin() {
     AppState.pendingOtpEmail = null;
     AppState.pendingOtpCode = null;
 
-    showToast(`Welcome, Minura Ashen! Verified as CSE Undergraduate 🎓`);
+    showToast(`Welcome, Kavindu Dilupa! Verified as CSE Undergraduate 🎓`);
     updateStudentHeaderElements();
     renderPortalAuthBody();
     renderStudentAuthModalBody();
@@ -2370,7 +2370,7 @@ function renderStudentAuthModalBody() {
 
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="uom-name-input">Full Name (Optional)</label>
-                    <input type="text" id="uom-name-input" placeholder="e.g. Minura Ashen">
+                    <input type="text" id="uom-name-input" placeholder="e.g. Kavindu Dilupa">
                 </div>
 
                 <button type="submit" class="primary-btn uom-btn">
