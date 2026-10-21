@@ -311,7 +311,7 @@ const AppState = {
 };
 
 // Auto-sanitize legacy cached demo profile in localStorage if needed
-if (AppState.currentStudent && AppState.currentStudent.email === '210123a@uom.lk') {
+if (AppState.currentStudent && AppState.currentStudent.email === '210123A@uom.lk') {
     AppState.currentStudent.name = 'Kavindu Dilupa';
     localStorage.setItem('spacepulse_student_profile', JSON.stringify(AppState.currentStudent));
 }
@@ -2276,7 +2276,7 @@ function handlePortalVerifyOtp() {
 
 function handlePortalDemoLogin() {
     const studentProfile = {
-        email: '210123a@uom.lk',
+        email: '210123A@uom.lk',
         indexNumber: '210123A',
         batch: 'Batch 21',
         department: 'Computer Science & Engineering',
@@ -2592,9 +2592,13 @@ function openSeatModal(seatId, floorId) {
     }
 
     document.getElementById('seat-share-btn').onclick = () => {
-        const text = `Let's study together at Seat ${seat.seatNumber} (${floor.floor})! SpacePulse shows free seats right now.`;
+        const text = `Let's study together at Seat ${seat.seatNumber} (${floor.floor})! SpacePulse shows free seats right now: ${SPACEPULSE_PRODUCTION_URL}`;
         navigator.clipboard.writeText(text);
-        showToast('Spot link and invitation copied to clipboard! 📋');
+        showToast('Spot link copied! Opening QR code for phone scanning... 📲');
+        setTimeout(() => {
+            document.getElementById('seat-modal').style.display = 'none';
+            openQrModal(SPACEPULSE_PRODUCTION_URL);
+        }, 400);
     };
 
     document.getElementById('seat-modal').style.display = 'flex';
@@ -3162,6 +3166,36 @@ function initSidebar() {
         document.getElementById('settings-modal').style.display = 'none';
     });
 
+    const qrModalCloseBtn = document.getElementById('qr-modal-close');
+    if (qrModalCloseBtn) {
+        qrModalCloseBtn.addEventListener('click', closeQrModal);
+    }
+
+    const qrModalBackdrop = document.getElementById('qr-modal');
+    if (qrModalBackdrop) {
+        qrModalBackdrop.addEventListener('click', (e) => {
+            if (e.target.id === 'qr-modal') closeQrModal();
+        });
+    }
+
+    const qrUrlInput = document.getElementById('qr-url-input');
+    if (qrUrlInput) {
+        qrUrlInput.addEventListener('input', (e) => {
+            clearTimeout(qrDebounceTimer);
+            qrDebounceTimer = setTimeout(() => {
+                const url = e.target.value.trim();
+                updateQrPresetChips(url);
+                renderQrCodeDisplay(url);
+            }, 180);
+        });
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeQrModal();
+        }
+    });
+
     document.getElementById('res-view-map-btn').addEventListener('click', () => {
         if (AppState.activeReservation) {
             navigateTo('maps');
@@ -3188,6 +3222,429 @@ function checkInitialDeepLink() {
             setTimeout(() => openFacilityDetail(fid), 400);
         }
     }
+}
+
+// ==========================================================================
+// SpacePulse Mobile QR & Sharing System
+// ==========================================================================
+
+let qrCodeGeneratorInstance = null;
+let qrDebounceTimer = null;
+const SPACEPULSE_PRODUCTION_URL = 'https://teamnodex.github.io/SpacePulse/';
+
+function getEffectiveCurrentUrl() {
+    try {
+        const href = window.location.href;
+        if (href && !href.startsWith('file:') && !href.startsWith('about:') && href !== 'blob:') {
+            return href;
+        }
+    } catch (e) {}
+    return SPACEPULSE_PRODUCTION_URL;
+}
+
+function openQrModal(targetUrl) {
+    const modal = document.getElementById('qr-modal');
+    if (!modal) return;
+
+    let initialUrl = targetUrl;
+    if (!initialUrl) {
+        const input = document.getElementById('qr-url-input');
+        initialUrl = (input && input.value.trim()) ? input.value.trim() : getEffectiveCurrentUrl();
+    }
+
+    // Check if running locally (file:// or localhost)
+    const isLocal = window.location.protocol === 'file:' || 
+                    window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1';
+    
+    const localNotice = document.getElementById('qr-local-notice');
+    if (localNotice) {
+        localNotice.style.display = (isLocal && initialUrl !== SPACEPULSE_PRODUCTION_URL) ? 'flex' : 'none';
+    }
+
+    // Update preset chips
+    updateQrPresetChips(initialUrl);
+
+    // Set input value
+    const urlInput = document.getElementById('qr-url-input');
+    if (urlInput) {
+        urlInput.value = initialUrl;
+    }
+
+    // Render the QR Code
+    renderQrCodeDisplay(initialUrl);
+
+    modal.style.display = 'flex';
+}
+
+function closeQrModal() {
+    const modal = document.getElementById('qr-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function updateQrPresetChips(currentUrl) {
+    const browserBtn = document.getElementById('qr-chip-browser');
+    const githubBtn = document.getElementById('qr-chip-github');
+    const customBtn = document.getElementById('qr-chip-custom');
+
+    [browserBtn, githubBtn, customBtn].forEach(b => b && b.classList.remove('active'));
+
+    const effectiveBrowserUrl = window.location.href;
+    if (currentUrl === effectiveBrowserUrl && window.location.protocol !== 'file:') {
+        if (browserBtn) browserBtn.classList.add('active');
+    } else if (currentUrl === SPACEPULSE_PRODUCTION_URL) {
+        if (githubBtn) githubBtn.classList.add('active');
+    } else {
+        if (customBtn) customBtn.classList.add('active');
+    }
+}
+
+function setQrUrlPreset(preset) {
+    let newUrl = SPACEPULSE_PRODUCTION_URL;
+    const urlInput = document.getElementById('qr-url-input');
+    const localNotice = document.getElementById('qr-local-notice');
+
+    if (preset === 'browser') {
+        newUrl = (window.location.protocol !== 'file:' && window.location.href) 
+            ? window.location.href 
+            : SPACEPULSE_PRODUCTION_URL;
+        if (localNotice) {
+            const isLocal = window.location.protocol === 'file:' || 
+                            window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1';
+            localNotice.style.display = isLocal ? 'flex' : 'none';
+        }
+    } else if (preset === 'github') {
+        newUrl = SPACEPULSE_PRODUCTION_URL;
+        if (localNotice) localNotice.style.display = 'none';
+    } else if (preset === 'custom') {
+        if (urlInput) {
+            urlInput.focus();
+            urlInput.select();
+        }
+        updateQrPresetChips('custom');
+        return;
+    }
+
+    if (urlInput) urlInput.value = newUrl;
+    updateQrPresetChips(newUrl);
+    renderQrCodeDisplay(newUrl);
+}
+
+function renderQrCodeDisplay(url) {
+    const container = document.getElementById('qr-code-target');
+    if (!container) return;
+
+    const sanitizedUrl = (url && url.trim()) ? url.trim() : SPACEPULSE_PRODUCTION_URL;
+
+    container.innerHTML = '';
+
+    if (typeof QRCode !== 'undefined') {
+        try {
+            qrCodeGeneratorInstance = new QRCode(container, {
+                text: sanitizedUrl,
+                width: 220,
+                height: 220,
+                colorDark: '#0b1528',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            return;
+        } catch (e) {
+            console.error('QRCode generation error:', e);
+        }
+    }
+
+    // Graceful fallback to static pre-rendered image if QRCode library not loaded
+    const fallbackImg = document.createElement('img');
+    fallbackImg.src = 'assets/images/spacepulse_qr.png';
+    fallbackImg.alt = 'SpacePulse QR Code';
+    fallbackImg.style.width = '220px';
+    fallbackImg.style.height = '220px';
+    fallbackImg.style.borderRadius = '8px';
+    container.appendChild(fallbackImg);
+}
+
+function copyQrUrl() {
+    const input = document.getElementById('qr-url-input');
+    const url = input ? input.value.trim() : SPACEPULSE_PRODUCTION_URL;
+
+    navigator.clipboard.writeText(url).then(() => {
+        const copyBtn = document.getElementById('qr-copy-btn');
+        const copyText = document.getElementById('qr-copy-text');
+        const copyIcon = document.getElementById('qr-copy-icon');
+
+        if (copyBtn) copyBtn.classList.add('copied');
+        if (copyText) copyText.textContent = 'Copied!';
+        if (copyIcon) copyIcon.className = 'fas fa-check';
+
+        showToast('Link copied to clipboard! 📋');
+
+        setTimeout(() => {
+            if (copyBtn) copyBtn.classList.remove('copied');
+            if (copyText) copyText.textContent = 'Copy';
+            if (copyIcon) copyIcon.className = 'fas fa-copy';
+        }, 2000);
+    }).catch(() => {
+        showToast('Could not copy link. Please copy manually.');
+    });
+}
+
+function downloadQrImage() {
+    const target = document.getElementById('qr-code-target');
+    const sourceCanvas = target ? target.querySelector('canvas') : null;
+    const sourceImg = target ? target.querySelector('img') : null;
+
+    // Build a high-res branded composite canvas (880x880)
+    const exportCanvas = document.createElement('canvas');
+    const exportSize = 880;
+    exportCanvas.width = exportSize;
+    exportCanvas.height = exportSize;
+    const ctx = exportCanvas.getContext('2d');
+
+    // Fill clean white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, exportSize, exportSize);
+
+    function triggerDownload(canvas) {
+        try {
+            const dataUrl = canvas.toDataURL('image/png');
+            const downloadLink = document.createElement('a');
+            downloadLink.href = dataUrl;
+            downloadLink.download = 'spacepulse_mobile_qr.png';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            showToast('SpacePulse QR code downloaded! 📲');
+        } catch (e) {
+            const a = document.createElement('a');
+            a.href = 'assets/images/spacepulse_qr.png';
+            a.download = 'spacepulse_qr.png';
+            a.click();
+            showToast('High-res SpacePulse QR code saved! 📲');
+        }
+    }
+
+    const drawCenterLogoAndFinish = () => {
+        const badgeSize = Math.floor(exportSize * 0.22);
+        const badgeX = (exportSize - badgeSize) / 2;
+        const badgeY = (exportSize - badgeSize) / 2;
+        const radius = Math.floor(badgeSize * 0.24);
+
+        // White badge backing with dark navy border
+        ctx.save();
+        ctx.beginPath();
+        if (ctx.roundRect) {
+            ctx.roundRect(badgeX, badgeY, badgeSize, badgeSize, radius);
+        } else {
+            ctx.rect(badgeX, badgeY, badgeSize, badgeSize);
+        }
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = '#0b1528';
+        ctx.stroke();
+        ctx.restore();
+
+        // Load SpacePulse logo
+        const logo = new Image();
+        logo.crossOrigin = 'anonymous';
+        logo.onload = () => {
+            const pad = Math.floor(badgeSize * 0.12);
+            const logoSize = badgeSize - pad * 2;
+            ctx.save();
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(badgeX + pad, badgeY + pad, logoSize, logoSize, Math.floor(radius * 0.8));
+            } else {
+                ctx.rect(badgeX + pad, badgeY + pad, logoSize, logoSize);
+            }
+            ctx.clip();
+            ctx.drawImage(logo, badgeX + pad, badgeY + pad, logoSize, logoSize);
+            ctx.restore();
+            triggerDownload(exportCanvas);
+        };
+        logo.onerror = () => {
+            ctx.fillStyle = '#881337';
+            ctx.font = 'bold 70px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('S', exportSize / 2, exportSize / 2);
+            triggerDownload(exportCanvas);
+        };
+        logo.src = 'assets/images/app_icon.png';
+    };
+
+    if (sourceCanvas) {
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(sourceCanvas, 40, 40, exportSize - 80, exportSize - 80);
+        drawCenterLogoAndFinish();
+    } else if (sourceImg && sourceImg.src) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            ctx.drawImage(img, 40, 40, exportSize - 80, exportSize - 80);
+            drawCenterLogoAndFinish();
+        };
+        img.onerror = () => {
+            window.open('assets/images/spacepulse_qr.png', '_blank');
+        };
+        img.src = sourceImg.src;
+    } else {
+        window.open('assets/images/spacepulse_qr.png', '_blank');
+    }
+}
+
+function printQrCard() {
+    const input = document.getElementById('qr-url-input');
+    const url = input ? input.value.trim() : SPACEPULSE_PRODUCTION_URL;
+    const target = document.getElementById('qr-code-target');
+    const canvas = target ? target.querySelector('canvas') : null;
+    const imgSrc = canvas ? canvas.toDataURL('image/png') : 'assets/images/spacepulse_qr.png';
+
+    const printWin = window.open('', '_blank', 'width=750,height=900');
+    if (!printWin) {
+        showToast('Please allow popups to print poster card.');
+        return;
+    }
+
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>SpacePulse Noticeboard Poster - University of Moratuwa</title>
+            <style>
+                @page { size: A4 portrait; margin: 20mm; }
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                    background: #f8fafc;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 100vh;
+                    margin: 0;
+                    color: #0f172a;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+                .poster-card {
+                    background: #ffffff;
+                    border: 3px solid #00008b;
+                    border-radius: 28px;
+                    padding: 44px 36px;
+                    max-width: 540px;
+                    width: 100%;
+                    box-sizing: border-box;
+                    text-align: center;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+                }
+                .uom-crest {
+                    font-size: 13px;
+                    font-weight: 800;
+                    letter-spacing: 2px;
+                    color: #881337;
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                }
+                h1 {
+                    margin: 0 0 6px 0;
+                    font-size: 34px;
+                    color: #00008b;
+                    font-weight: 800;
+                }
+                .tagline {
+                    font-size: 15px;
+                    color: #475569;
+                    margin: 0 0 26px 0;
+                }
+                .qr-frame {
+                    background: #ffffff;
+                    border: 2px dashed #00008b;
+                    border-radius: 20px;
+                    padding: 24px;
+                    display: inline-block;
+                    margin: 0 auto 24px auto;
+                }
+                .qr-frame img {
+                    width: 260px;
+                    height: 260px;
+                    display: block;
+                }
+                .scan-prompt {
+                    background: #f1f5f9;
+                    border-radius: 12px;
+                    padding: 14px 18px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: #0f172a;
+                    margin-bottom: 22px;
+                }
+                .feature-pills {
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    flex-wrap: wrap;
+                    margin-bottom: 26px;
+                }
+                .pill {
+                    background: #e0f2fe;
+                    color: #0369a1;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+                .dest-link {
+                    font-size: 12px;
+                    color: #64748b;
+                    word-break: break-all;
+                    font-family: monospace;
+                    margin-top: 10px;
+                }
+                .footer {
+                    border-top: 1px solid #e2e8f0;
+                    padding-top: 18px;
+                    font-size: 12px;
+                    color: #94a3b8;
+                    display: flex;
+                    justify-content: space-between;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="poster-card">
+                <div class="uom-crest">University of Moratuwa</div>
+                <h1>SpacePulse</h1>
+                <p class="tagline">Live Vacancy Tracking & University Navigation</p>
+                <div class="qr-frame">
+                    <img src="${imgSrc}" alt="SpacePulse QR">
+                </div>
+                <div class="scan-prompt">
+                    📱 Point your phone camera at this QR code to open SpacePulse instantly
+                </div>
+                <div class="feature-pills">
+                    <span class="pill">📚 Library Seats</span>
+                    <span class="pill">🍽️ Canteen Queues</span>
+                    <span class="pill">🏧 ATM Status</span>
+                    <span class="pill">🗺️ GPS Campus Map</span>
+                </div>
+                <div class="dest-link">${url}</div>
+                <div class="footer">
+                    <span>Designed for UoM Undergraduates</span>
+                    <span>Team NodeX Telemetry</span>
+                </div>
+            </div>
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                    }, 400);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
 }
 
 // ==========================================================================

@@ -50,6 +50,9 @@
                 </div>
 
                 <div class="portal-header-right">
+                    <button class="portal-icon-btn" id="portal-qr-btn" onclick="openQrModal()" title="Mobile Access QR">
+                        <i class="fas fa-qrcode"></i>
+                    </button>
                     <button class="portal-icon-btn" id="portal-theme-btn" onclick="togglePortalTheme()" title="Toggle Dark/Light Mode">
                         <i class="fas fa-moon" id="portal-theme-icon"></i>
                     </button>
@@ -176,6 +179,7 @@
                 <div class="nav-section-label" style="margin-top: 14px;">SYSTEM & TELEMETRY</div>
                 <ul class="nav-links">
                     <li><a href="javascript:void(0)" id="sidebar-student-auth-link" onclick="showStudentLoginPage()"><i class="fas fa-id-card"></i> <span>Student Login Portal</span> <span class="nav-badge hot">Auth</span></a></li>
+                    <li><a href="javascript:void(0)" id="sidebar-qr-link" onclick="openQrModal()"><i class="fas fa-qrcode"></i> <span>Mobile QR & Share</span> <span class="nav-badge live">QR</span></a></li>
                     <li><a href="javascript:void(0)" id="sidebar-stream-link" onclick="openSettingsModal()"><i class="fas fa-video"></i> <span>Camera Stream Ingestion</span></a></li>
                 </ul>
             </nav>
@@ -227,6 +231,11 @@
                     <!-- Settings & Stream Diagnostics -->
                     <button class="topbar-icon-btn" id="settings-modal-btn" onclick="openSettingsModal()" title="Settings & Stream Ingestion">
                         <i class="fas fa-gear"></i>
+                    </button>
+
+                    <!-- Mobile QR Code Modal Trigger -->
+                    <button class="topbar-icon-btn qr-topbar-btn" id="qr-modal-btn" onclick="openQrModal()" title="Mobile Access & QR Share">
+                        <i class="fas fa-qrcode"></i>
                     </button>
 
                     <!-- Theme Switcher -->
@@ -509,6 +518,93 @@
         </div>
     </div>
 
+    <!-- Mobile Access & Dynamic QR Code Modal -->
+    <div class="modal-backdrop" id="qr-modal" style="display: none;">
+        <div class="modal-box qr-modal-box">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon-circle qr-icon-glow"><i class="fas fa-qrcode"></i></div>
+                    <div>
+                        <h3>SpacePulse Mobile QR</h3>
+                        <p>Scan with any smartphone camera to launch live web app</p>
+                    </div>
+                </div>
+                <button class="modal-close-btn" id="qr-modal-close" onclick="closeQrModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body qr-modal-body">
+                <!-- QR Visual Display Card -->
+                <div class="qr-display-container">
+                    <div class="qr-card-glow">
+                        <div class="qr-canvas-wrapper" id="qr-canvas-wrapper">
+                            <div id="qr-code-target"></div>
+                            <div class="qr-center-logo-overlay">
+                                <img src="assets/images/app_icon.png" alt="SpacePulse" onerror="this.src='assets/images/logo.jpeg'">
+                            </div>
+                        </div>
+                        <div class="qr-card-meta">
+                            <div class="qr-app-badge">
+                                <span class="live-pulse-dot"></span>
+                                <span>SPACEPULSE • UNIV. OF MORATUWA</span>
+                            </div>
+                            <div class="qr-scan-hint">
+                                <i class="fas fa-camera"></i> Point phone camera to open instantly
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- URL Destination Controls -->
+                <div class="qr-controls-card">
+                    <div class="qr-controls-header">
+                        <label class="qr-controls-label"><i class="fas fa-sliders"></i> Target Destination Link</label>
+                    </div>
+
+                    <div class="qr-url-preset-chips">
+                        <button type="button" class="qr-chip active" id="qr-chip-browser" onclick="setQrUrlPreset('browser')">
+                            <i class="fas fa-laptop"></i> Current Browser URL
+                        </button>
+                        <button type="button" class="qr-chip" id="qr-chip-github" onclick="setQrUrlPreset('github')">
+                            <i class="fab fa-github"></i> GitHub Pages Link
+                        </button>
+                        <button type="button" class="qr-chip" id="qr-chip-custom" onclick="setQrUrlPreset('custom')">
+                            <i class="fas fa-pen"></i> Custom URL
+                        </button>
+                    </div>
+
+                    <div class="qr-input-group">
+                        <span class="qr-input-icon"><i class="fas fa-link"></i></span>
+                        <input type="text" id="qr-url-input" class="qr-url-input" placeholder="https://..." spellcheck="false" autocomplete="off">
+                        <button type="button" class="qr-copy-btn" id="qr-copy-btn" onclick="copyQrUrl()" title="Copy Link to Clipboard">
+                            <i class="fas fa-copy" id="qr-copy-icon"></i>
+                            <span id="qr-copy-text">Copy</span>
+                        </button>
+                    </div>
+
+                    <div class="qr-local-notice" id="qr-local-notice" style="display: none;">
+                        <i class="fas fa-circle-info"></i>
+                        <div>
+                            <strong>Local / Offline environment detected:</strong>
+                            <p>Mobile phones on the same Wi-Fi network cannot open <code>file://</code> URLs directly. Switch to the <strong>GitHub Pages Link</strong> preset or type your computer's local Wi-Fi IP (e.g. <code>http://192.168.1.x:5500</code>).</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="qr-action-row">
+                        <button type="button" class="qr-action-btn primary" id="qr-download-btn" onclick="downloadQrImage()">
+                            <i class="fas fa-download"></i> Download QR (PNG)
+                        </button>
+                        <button type="button" class="qr-action-btn secondary" id="qr-print-btn" onclick="printQrCard()">
+                            <i class="fas fa-print"></i> Print Poster
+                        </button>
+                        <a href="assets/images/spacepulse_qr.png" download="spacepulse_qr.png" target="_blank" class="qr-action-btn tertiary" title="Download High-Res 860px PNG Asset">
+                            <i class="fas fa-file-arrow-down"></i> High-Res Asset
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toast-container"></div>
 
@@ -516,7 +612,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- QR Code Generator (Local offline bundle with CDN fallback) -->
+    <script src="assets/qrcode.min.js"></script>
+    
     <!-- Application Logic -->
-    <script src="app.js?v=3.1"></script>
+    <script src="app.js?v=3.2"></script>
 </body>
 </html>
