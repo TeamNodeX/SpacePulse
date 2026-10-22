@@ -198,6 +198,349 @@ const spacePulseData = {
         { id: 'orig_lib', name: 'Central Library Plaza', lat: 6.795340, lng: 79.901050 }
     ],
 
+    // Official University of Moratuwa CAD Infrastructure Map Data (Scale 1:1000, 7021 x 4967)
+    infrastructureMap: {
+        width: 7021,
+        height: 4967,
+        scaleRatio: 5.8, // ~5.8 px = 1 meter on CAD 1:1000 scale
+        imageSrc: 'assets/images/uom_infrastructure_map.webp',
+        imageFallback: 'assets/images/uom_infrastructure_map.png',
+        title: 'University of Moratuwa Map of Infrastructure'
+    },
+
+    blueprintNodes: [
+        {
+            id: 'floor_ground',
+            name: 'Central Library',
+            category: 'library',
+            subtext: '4 Reading Floors • Air-conditioned Stacks & Commons',
+            px: 3680, py: 3300, y: 1667, x: 3680,
+            zone: 'zone_01', icon: 'fa-book-reader', color: '#10b981',
+            badge: '175 Free Seats', isPrimary: true
+        },
+        {
+            id: 'canteen_goda_uda',
+            name: 'Goda Uda Canteen',
+            category: 'canteen',
+            subtext: 'Student Centre Upper Level • Buffet, Juices & Shorties',
+            px: 2950, py: 3450, y: 1517, x: 2950,
+            zone: 'zone_01', icon: 'fa-utensils', color: '#f59e0b',
+            badge: '45 Students', isPrimary: true
+        },
+        {
+            id: 'canteen_goda_yata',
+            name: 'Goda Yata Canteen',
+            category: 'canteen',
+            subtext: 'Student Centre Ground Level • Shorties, Tea & Lunch',
+            px: 2920, py: 3500, y: 1467, x: 2920,
+            zone: 'zone_01', icon: 'fa-utensils', color: '#ef4444',
+            badge: '85 Students', isPrimary: true
+        },
+        {
+            id: 'canteen_l',
+            name: 'L Canteen (Sentra Court)',
+            category: 'canteen',
+            subtext: 'L-Block Dining • Bakery, Coffee & Set Meals',
+            px: 2650, py: 2150, y: 2817, x: 2650,
+            zone: 'zone_02', icon: 'fa-utensils', color: '#f97316',
+            badge: '120 Students', isPrimary: true
+        },
+        {
+            id: 'canteen_wala',
+            name: 'Wala Canteen (Amphitheater)',
+            category: 'canteen',
+            subtext: 'Canteen No 02 • Open Air Amphitheatre',
+            px: 1750, py: 3550, y: 1417, x: 1750,
+            zone: 'zone_01', icon: 'fa-utensils', color: '#8b5cf6',
+            badge: 'Snack Bar', isPrimary: true
+        },
+        {
+            id: 'canteen_civil',
+            name: 'Civil Canteen',
+            category: 'canteen',
+            subtext: 'Civil Engineering Complex Canteen & Snacks',
+            px: 2100, py: 3700, y: 1267, x: 2100,
+            zone: 'zone_01', icon: 'fa-utensils', color: '#06b6d4',
+            badge: '30 Students', isPrimary: true
+        },
+        {
+            id: 'atm_boc',
+            name: 'Bank of Ceylon ATM',
+            category: 'atm',
+            subtext: 'Administration Building Plaza • Fast Cash & CDM',
+            px: 3350, py: 3700, y: 1267, x: 3350,
+            zone: 'zone_01', icon: 'fa-money-check-dollar', color: '#3b82f6',
+            badge: 'Cash OK (5 line)', isPrimary: true
+        },
+        {
+            id: 'atm_peoples',
+            name: "People's Bank ATM",
+            category: 'atm',
+            subtext: 'New Administration Building Entrance',
+            px: 3450, py: 3750, y: 1217, x: 3450,
+            zone: 'zone_01', icon: 'fa-money-check-dollar', color: '#2563eb',
+            badge: 'Cash OK (2 line)', isPrimary: true
+        },
+        {
+            id: 'atm_commercial',
+            name: 'Commercial Bank ATM',
+            category: 'atm',
+            subtext: 'Engineering Faculty Access Road',
+            px: 3550, py: 3800, y: 1167, x: 3550,
+            zone: 'zone_01', icon: 'fa-money-check-dollar', color: '#64748b',
+            badge: 'Out of Order', isPrimary: true
+        },
+        {
+            id: 'bookshop_main',
+            name: 'Student Center Bookshop & WUS Welfare',
+            category: 'bookshop',
+            subtext: 'Textbooks, Stationery, Binding & Xerox',
+            px: 2950, py: 3350, y: 1617, x: 2950,
+            zone: 'zone_01', icon: 'fa-book-bookmark', color: '#ec4899',
+            badge: 'Open Now', isPrimary: true
+        },
+        {
+            id: 'bookshop_engineering',
+            name: 'Engineering Bookshop',
+            category: 'bookshop',
+            subtext: 'Sumanadasa Wing • Technical Drawing Tools',
+            px: 2050, py: 3300, y: 1667, x: 2050,
+            zone: 'zone_01', icon: 'fa-book-bookmark', color: '#a855f7',
+            badge: 'Open Now', isPrimary: true
+        },
+        {
+            id: 'dept_it',
+            name: 'Faculty of Information Technology',
+            category: 'academic',
+            subtext: 'IT Phase I & Phase II Complex • Old IT Building',
+            px: 3300, py: 1950, y: 3017, x: 3300,
+            zone: 'zone_02', icon: 'fa-laptop-code', color: '#0284c7',
+            badge: 'IT Labs', isPrimary: true
+        },
+        {
+            id: 'dept_entc',
+            name: 'Dept. of Electronic & Telecommunication (ENTC)',
+            category: 'academic',
+            subtext: 'ENTC Building • Microelectronics & Robotics Labs',
+            px: 3350, py: 2750, y: 2217, x: 3350,
+            zone: 'zone_02', icon: 'fa-microchip', color: '#4f46e5',
+            badge: 'IoT & Telemetry', isPrimary: true
+        },
+        {
+            id: 'dept_arch',
+            name: 'Faculty of Architecture',
+            category: 'academic',
+            subtext: 'Architecture Extension, Integrated Design & Black Box',
+            px: 3500, py: 3000, y: 1967, x: 3500,
+            zone: 'zone_02', icon: 'fa-drafting-compass', color: '#7c3aed',
+            badge: 'Design Studios', isPrimary: true
+        },
+        {
+            id: 'bldg_sumanadasa',
+            name: 'Sumanadasa Building (Engineering Core)',
+            category: 'academic',
+            subtext: 'Central Engineering Theatres, Dean Office & Depts',
+            px: 2050, py: 3250, y: 1717, x: 2050,
+            zone: 'zone_01', icon: 'fa-building-columns', color: '#1e3a8a',
+            badge: 'Academic Hub', isPrimary: true
+        },
+        {
+            id: 'dept_mech',
+            name: 'Dept. of Mechanical Engineering',
+            category: 'academic',
+            subtext: 'Mechanical Workshops & Drafting Laboratories',
+            px: 2100, py: 4100, y: 867, x: 2100,
+            zone: 'zone_01', icon: 'fa-gears', color: '#ea580c',
+            badge: 'Heavy Labs', isPrimary: true
+        },
+        {
+            id: 'dept_chem',
+            name: 'Dept. of Chemical & Process Engineering',
+            category: 'academic',
+            subtext: 'Process Eng Laboratories & Research Facilities',
+            px: 2750, py: 3900, y: 1067, x: 2750,
+            zone: 'zone_01', icon: 'fa-flask-vial', color: '#059669',
+            badge: 'Process Labs', isPrimary: true
+        },
+        {
+            id: 'dept_textile',
+            name: 'Dept. of Textile & Clothing Technology',
+            category: 'academic',
+            subtext: 'Textile Engineering & Fashion Design Building',
+            px: 2300, py: 1900, y: 3067, x: 2300,
+            zone: 'zone_03', icon: 'fa-shirt', color: '#db2777',
+            badge: 'Fashion Wing', isPrimary: true
+        },
+        {
+            id: 'dept_earth',
+            name: 'Dept. of Earth Resources & Material Science',
+            category: 'academic',
+            subtext: 'Earth Resources, Metallurgy & Rock Mechanics',
+            px: 2500, py: 3650, y: 1317, x: 2500,
+            zone: 'zone_01', icon: 'fa-mountain', color: '#d97706',
+            badge: 'Mining Labs', isPrimary: true
+        },
+        {
+            id: 'dept_civil',
+            name: 'Civil Engineering Research Center',
+            category: 'academic',
+            subtext: 'Civil Labs, Structures & Hydraulic Institute',
+            px: 3100, py: 1100, y: 3867, x: 3100,
+            zone: 'zone_03', icon: 'fa-trowel-bricks', color: '#0891b2',
+            badge: 'Research Labs', isPrimary: true
+        },
+        {
+            id: 'bldg_auditorium',
+            name: 'The New Auditorium & Examination Hall',
+            category: 'facility',
+            subtext: 'Main University Convocation & Exam Complex',
+            px: 3750, py: 2300, y: 2667, x: 3750,
+            zone: 'zone_02', icon: 'fa-masks-theater', color: '#9333ea',
+            badge: 'Convocation Hall', isPrimary: true
+        },
+        {
+            id: 'facility_health',
+            name: 'University Health Center & Medical Center',
+            category: 'facility',
+            subtext: 'Sick Room, Doctor Consultation & First Aid',
+            px: 3250, py: 2350, y: 2617, x: 3250,
+            zone: 'zone_02', icon: 'fa-house-medical', color: '#dc2626',
+            badge: 'Doctor on Duty', isPrimary: true
+        },
+        {
+            id: 'facility_gym',
+            name: 'Gymnasium & Indoor Sports Complex',
+            category: 'sports',
+            subtext: 'Badminton, Table Tennis & Fitness Center',
+            px: 1850, py: 2650, y: 2317, x: 1850,
+            zone: 'zone_03', icon: 'fa-dumbbell', color: '#16a34a',
+            badge: 'Gym Open', isPrimary: true
+        },
+        {
+            id: 'facility_ground',
+            name: 'University Play Ground & Sports Pavilion',
+            category: 'sports',
+            subtext: 'Cricket Ground, Athletics Track, Tennis & Basketball',
+            px: 1300, py: 3100, y: 1867, x: 1300,
+            zone: 'zone_03', icon: 'fa-baseball-bat-ball', color: '#22c55e',
+            badge: 'Outdoor Courts', isPrimary: true
+        },
+        {
+            id: 'gate_katubedda',
+            name: 'Katubedda Main Entrance Gate',
+            category: 'gate',
+            subtext: 'Main Highway Gateway from Katubedda Junction',
+            px: 2200, py: 4650, y: 317, x: 2200,
+            zone: 'zone_01', icon: 'fa-archway', color: '#2563eb',
+            badge: 'Security Post', isPrimary: true
+        },
+        {
+            id: 'gate_bandaranayake',
+            name: 'Srimat Bandaranayake Mawatha Gate',
+            category: 'gate',
+            subtext: 'Administration & Library Direct Road Gateway',
+            px: 3600, py: 3850, y: 1117, x: 3600,
+            zone: 'zone_01', icon: 'fa-door-open', color: '#3b82f6',
+            badge: 'Gate S18', isPrimary: true
+        },
+        {
+            id: 'gate_willorawatta',
+            name: 'Willorawatta Road Exit Gateway',
+            category: 'gate',
+            subtext: 'Access toward Willorawatta',
+            px: 4200, py: 4100, y: 867, x: 4200,
+            zone: 'zone_02', icon: 'fa-road', color: '#6366f1',
+            badge: 'East Gate', isPrimary: false
+        },
+        {
+            id: 'gate_piliyandala',
+            name: 'Piliyandala Road Exit Gateway',
+            category: 'gate',
+            subtext: 'Direct route towards Piliyandala',
+            px: 4600, py: 3400, y: 1567, x: 4600,
+            zone: 'zone_02', icon: 'fa-road', color: '#8b5cf6',
+            badge: 'NE Gate', isPrimary: false
+        },
+        {
+            id: 'landmark_bolgoda',
+            name: 'The Bolgoda Lake Waterfront',
+            category: 'landmark',
+            subtext: 'Scenic Lake Promenade & Marine Boat Yard',
+            px: 4400, py: 800, y: 4167, x: 4400,
+            zone: 'zone_03', icon: 'fa-water', color: '#0284c7',
+            badge: 'Scenic Area', isPrimary: false
+        }
+    ],
+
+    blueprintZones: [
+        {
+            id: 'zone_01',
+            name: 'ZONE - 01',
+            label: 'Academic Core & Administration (Green)',
+            color: '#16a34a',
+            strokeColor: '#22c55e',
+            description: 'Sumanadasa, Mech/Civil/Earth Engineering, Admin & Central Canteen',
+            polygon: [
+                [267, 2150],
+                [1267, 1600],
+                [1717, 1950],
+                [1767, 2400],
+                [1867, 2900],
+                [1717, 3600],
+                [1267, 3900],
+                [867, 3600],
+                [317, 2600]
+            ]
+        },
+        {
+            id: 'zone_02',
+            name: 'ZONE - 02',
+            label: 'IT, ENTC & Architecture Complex (Magenta)',
+            color: '#c026d3',
+            strokeColor: '#e879f9',
+            description: 'Faculty of IT, ENTC, Architecture, New Auditorium & Exam Halls',
+            polygon: [
+                [1967, 3300],
+                [2217, 3200],
+                [3017, 3100],
+                [3117, 3650],
+                [2667, 4100],
+                [1567, 4500],
+                [1117, 4000],
+                [1567, 3600]
+            ]
+        },
+        {
+            id: 'zone_03',
+            name: 'ZONE - 03',
+            label: 'Sports, Hostels & Lake Boundary (Blue)',
+            color: '#2563eb',
+            strokeColor: '#60a5fa',
+            description: 'Play Ground, Gymnasium, Textile Dept, Student Hostels & Bolgoda Lake',
+            polygon: [
+                [1867, 800],
+                [2400, 1600],
+                [3100, 2200],
+                [4167, 4200],
+                [4300, 3600],
+                [3300, 2700],
+                [2317, 1700],
+                [1500, 1100]
+            ]
+        }
+    ],
+
+    blueprintOrigins: [
+        { id: 'gate_katubedda', name: 'Katubedda Main Entrance Gate', y: 317, x: 2200 },
+        { id: 'dept_arch', name: 'Architecture Building (My Location)', y: 1967, x: 3500 },
+        { id: 'bldg_sumanadasa', name: 'Sumanadasa Building', y: 1717, x: 2050 },
+        { id: 'floor_ground', name: 'Central Library Plaza', y: 1667, x: 3680 },
+        { id: 'dept_it', name: 'Faculty of IT (Phase I & II)', y: 3017, x: 3300 },
+        { id: 'canteen_l', name: 'L-Block & Sentra Court', y: 2817, x: 2650 },
+        { id: 'facility_gym', name: 'Gymnasium & Sports Ground', y: 2317, x: 1850 },
+        { id: 'atm_boc', name: 'Main Administration Building', y: 1267, x: 3350 }
+    ],
+
     // 2D Floor Plan Seats Layout Coordinates (per floor)
     seatsByFloor: {
         floor_2_down: [
@@ -285,7 +628,7 @@ const AppState = {
     currentTab: 'home',
     theme: localStorage.getItem('spacepulse_theme') || 'light',
     simulationActive: true,
-    mapsSubTab: 'osm', // 'osm' or 'floorplans'
+    mapsSubTab: 'infrastructure', // 'infrastructure', 'osm', or 'floorplans'
     selectedFloorId: 'floor_ground',
     seatFilter: 'all', // 'all', 'free', 'occupied', 'power'
     favorites: JSON.parse(localStorage.getItem('spacepulse_favs') || '["floor_ground", "canteen_goda_uda"]'),
@@ -301,6 +644,19 @@ const AppState = {
     activeChart: null,
     leafletMap: null,
     currentTrendsProfile: 'weekday',
+
+    // Official CAD Infrastructure Map State
+    blueprintCategory: 'all',
+    blueprintSearchQuery: '',
+    blueprintShowZones: true,
+    blueprintContrastMode: 'auto',
+    selectedBlueprintOrigin: 'gate_katubedda',
+    selectedBlueprintDestination: 'floor_ground',
+    blueprintMap: null,
+    blueprintMarkers: [],
+    blueprintRouteLayer: null,
+    blueprintZonesLayer: null,
+    blueprintImageLayer: null,
 
     // UoM Student Profile & Authentication
     currentStudent: JSON.parse(localStorage.getItem('spacepulse_student_profile') || 'null'),
@@ -883,30 +1239,204 @@ function attachHomeEventListeners() {
 
 // --- 5.2 Maps & 2D Floor Plans Hub ---
 function renderMaps() {
-    pageTitle.textContent = 'University & 2D Floor Maps 🗺️';
-    pageSubtitle.textContent = 'Authentic OpenStreetMap GPS navigation & architectural 2D floor plans with seat reservation';
+    pageTitle.textContent = 'University & Floor Maps 🗺️';
+    pageSubtitle.textContent = 'Official CAD Infrastructure Blueprint & real-time telemetry navigation for University of Moratuwa';
 
-    const origin = spacePulseData.originPoints.find(o => o.id === AppState.selectedOrigin) || spacePulseData.originPoints[0];
-    const destinationNode = spacePulseData.universityGpsNodes.find(n => n.id === AppState.selectedDestination) || spacePulseData.universityGpsNodes[0];
+    // Blueprint HUD Travel Calculations
+    const bpOrigin = spacePulseData.blueprintOrigins.find(o => o.id === AppState.selectedBlueprintOrigin) || 
+                     spacePulseData.blueprintNodes.find(n => n.id === AppState.selectedBlueprintOrigin) || 
+                     spacePulseData.blueprintOrigins[0];
+    const bpDest = spacePulseData.blueprintNodes.find(n => n.id === AppState.selectedBlueprintDestination) || 
+                   spacePulseData.blueprintNodes[0];
 
-    const distanceMeters = calculateDistanceMeters(origin.lat, origin.lng, destinationNode.lat, destinationNode.lng);
-    const metersPerMin = (AppState.selectedSpeed * 1000) / 60;
-    const walkMins = Math.max(1, Math.round(distanceMeters / metersPerMin));
+    const bpDistPx = Math.hypot(bpDest.x - bpOrigin.x, bpDest.y - bpOrigin.y);
+    const bpDistMeters = Math.max(15, Math.round(bpDistPx / spacePulseData.infrastructureMap.scaleRatio));
+    const bpMetersPerMin = (AppState.selectedSpeed * 1000) / 60;
+    const bpWalkMins = Math.max(1, Math.round(bpDistMeters / bpMetersPerMin));
 
-    const matchingFloor = spacePulseData.libraryFloors.find(f => f.id === destinationNode.id);
-    const projectedFree = matchingFloor ? Math.max(0, matchingFloor.availableSeats - Math.floor(walkMins * 1.5)) : 'N/A';
+    const matchingFloor = spacePulseData.libraryFloors.find(f => f.id === bpDest.id);
+    const projectedFree = matchingFloor ? Math.max(0, matchingFloor.availableSeats - Math.floor(bpWalkMins * 1.5)) : null;
+
+    // OSM Travel Calculations (Fallback GIS view)
+    const osmOrigin = spacePulseData.originPoints.find(o => o.id === AppState.selectedOrigin) || spacePulseData.originPoints[0];
+    const osmDest = spacePulseData.universityGpsNodes.find(n => n.id === AppState.selectedDestination) || spacePulseData.universityGpsNodes[0];
+    const osmDistMeters = calculateDistanceMeters(osmOrigin.lat, osmOrigin.lng, osmDest.lat, osmDest.lng);
+    const osmWalkMins = Math.max(1, Math.round(osmDistMeters / bpMetersPerMin));
 
     let html = `
         <div class="maps-hub-container">
-            <div class="map-segmented-bar">
+            <!-- Map Mode Segmented Bar -->
+            <div class="map-segmented-bar" style="max-width: 720px;">
+                <button class="map-segment-btn ${AppState.mapsSubTab === 'infrastructure' ? 'active' : ''}" onclick="switchMapMode('infrastructure')">
+                    <i class="fas fa-compass-drafting"></i> <span>University Infrastructure Map (CAD)</span> <span class="nav-badge hot">OFFICIAL</span>
+                </button>
                 <button class="map-segment-btn ${AppState.mapsSubTab === 'osm' ? 'active' : ''}" onclick="switchMapMode('osm')">
-                    <i class="fas fa-map-location-dot"></i> University Ground (OSM)
+                    <i class="fas fa-satellite"></i> <span>Satellite & GIS Basemap</span>
                 </button>
                 <button class="map-segment-btn ${AppState.mapsSubTab === 'floorplans' ? 'active' : ''}" onclick="switchMapMode('floorplans')">
-                    <i class="fas fa-layer-group"></i> Library 2D Floor Plans
+                    <i class="fas fa-layer-group"></i> <span>Library 2D Floor Plans</span>
                 </button>
             </div>
 
+            <!-- 1. Official Infrastructure Blueprint CAD Map Subview (Primary) -->
+            <div id="infrastructure-subview" style="display: ${AppState.mapsSubTab === 'infrastructure' ? 'block' : 'none'};">
+                <!-- Navigation HUD Bar -->
+                <div class="travel-hud-bar">
+                    <div class="hud-location-selector">
+                        <div class="hud-select-group">
+                            <label for="bp-hud-origin"><i class="fas fa-street-view"></i> Your Start Point</label>
+                            <select id="bp-hud-origin" onchange="updateBlueprintOrigin(this.value)">
+                                ${spacePulseData.blueprintOrigins.map(p => `
+                                    <option value="${p.id}" ${p.id === AppState.selectedBlueprintOrigin ? 'selected' : ''}>${p.name}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+
+                        <div class="hud-select-group">
+                            <label for="bp-hud-dest"><i class="fas fa-location-dot"></i> Destination Building / Facility</label>
+                            <select id="bp-hud-dest" onchange="updateBlueprintDestination(this.value)">
+                                ${spacePulseData.blueprintNodes.map(n => `
+                                    <option value="${n.id}" ${n.id === AppState.selectedBlueprintDestination ? 'selected' : ''}>${n.name} (${n.category.toUpperCase()})</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="hud-speed-modes">
+                        <button class="speed-mode-btn ${AppState.selectedSpeed === 4.5 ? 'active' : ''}" onclick="updateBlueprintSpeed(4.5)">
+                            <i class="fas fa-person-walking"></i> Walk (4.5)
+                        </button>
+                        <button class="speed-mode-btn ${AppState.selectedSpeed === 5.8 ? 'active' : ''}" onclick="updateBlueprintSpeed(5.8)">
+                            <i class="fas fa-person-walking-dashed-line-arrow-right"></i> Fast (5.8)
+                        </button>
+                        <button class="speed-mode-btn ${AppState.selectedSpeed === 9.0 ? 'active' : ''}" onclick="updateBlueprintSpeed(9.0)">
+                            <i class="fas fa-person-running"></i> Run (9.0)
+                        </button>
+                        <button class="speed-mode-btn ${AppState.selectedSpeed === 15.0 ? 'active' : ''}" onclick="updateBlueprintSpeed(15.0)">
+                            <i class="fas fa-bicycle"></i> Cycle (15)
+                        </button>
+                    </div>
+
+                    <div class="hud-metrics-pill">
+                        <div class="hud-metric-item">
+                            <span>Ground Distance</span>
+                            <strong>${bpDistMeters} m</strong>
+                        </div>
+                        <div class="hud-metric-item">
+                            <span>Estimated Walk</span>
+                            <strong>${bpWalkMins} min</strong>
+                        </div>
+                        ${projectedFree !== null ? `
+                        <div class="hud-metric-item">
+                            <span>Free Seats on Arrival</span>
+                            <strong style="color: var(--pulse-green);">~${projectedFree} seats</strong>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Blueprint Meta Information & Search Bar Strip -->
+                <div class="blueprint-meta-strip">
+                    <div class="blueprint-meta-badge">
+                        <i class="fas fa-building-columns"></i>
+                        <span>University of Moratuwa • Map of Infrastructure</span>
+                    </div>
+
+                    <div class="blueprint-scale-tag">
+                        <span><i class="fas fa-ruler-combined"></i> Scale 1 : 1000</span>
+                        <span><i class="fas fa-layer-group"></i> 28 Telemetry Nodes Active</span>
+                    </div>
+
+                    <div class="map-search-group">
+                        <i class="fas fa-magnifying-glass map-search-icon"></i>
+                        <input type="text" id="blueprint-search-input" class="map-search-input" 
+                               placeholder="Search department, canteen, ATM, gym..." 
+                               value="${AppState.blueprintSearchQuery}"
+                               oninput="handleBlueprintSearch(this.value)">
+                    </div>
+                </div>
+
+                <!-- Category Filter Chips Bar -->
+                <div class="map-category-filter-bar">
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'all' ? 'active' : ''}" onclick="filterBlueprintCategory('all')">
+                        <i class="fas fa-border-all"></i> All Landmarks (28)
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'library' ? 'active' : ''}" onclick="filterBlueprintCategory('library')">
+                        <i class="fas fa-book-reader"></i> Library
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'canteen' ? 'active' : ''}" onclick="filterBlueprintCategory('canteen')">
+                        <i class="fas fa-utensils"></i> Canteens (5)
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'atm' ? 'active' : ''}" onclick="filterBlueprintCategory('atm')">
+                        <i class="fas fa-money-check-dollar"></i> ATMs (3)
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'bookshop' ? 'active' : ''}" onclick="filterBlueprintCategory('bookshop')">
+                        <i class="fas fa-book-bookmark"></i> Bookshops (2)
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'academic' ? 'active' : ''}" onclick="filterBlueprintCategory('academic')">
+                        <i class="fas fa-graduation-cap"></i> Academic Depts (8)
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'facility' ? 'active' : ''}" onclick="filterBlueprintCategory('facility')">
+                        <i class="fas fa-hospital"></i> Health & Auditoriums
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'sports' ? 'active' : ''}" onclick="filterBlueprintCategory('sports')">
+                        <i class="fas fa-dumbbell"></i> Sports & Ground
+                    </button>
+                    <button class="map-cat-chip ${AppState.blueprintCategory === 'gate' ? 'active' : ''}" onclick="filterBlueprintCategory('gate')">
+                        <i class="fas fa-archway"></i> Gates & Exits (4)
+                    </button>
+                </div>
+
+                <!-- Blueprint Map Wrapper with Leaflet Container -->
+                <div class="osm-map-wrapper blueprint-map-wrapper">
+                    <div id="blueprint-map-container"></div>
+
+                    <!-- Floating Navigation Toolbar -->
+                    <div class="map-floating-toolbar">
+                        <button class="map-tool-btn" id="bp-locate-btn" title="Center Core (Library & Sumanadasa)">
+                            <i class="fas fa-crosshairs"></i>
+                        </button>
+                        <button class="map-tool-btn" id="bp-zoom-in-btn" title="Zoom In">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="map-tool-btn" id="bp-zoom-out-btn" title="Zoom Out">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button class="map-tool-btn ${AppState.blueprintContrastMode === 'dark' || (AppState.blueprintContrastMode === 'auto' && AppState.theme === 'dark') ? 'active-branch' : ''}" id="bp-contrast-btn" title="Toggle Cyber Dark Hologram / Light CAD Blueprint">
+                            <i class="fas fa-circle-half-stroke"></i>
+                        </button>
+                        <button class="map-tool-btn ${AppState.blueprintShowZones ? 'active-branch' : ''}" id="bp-zones-btn" title="Toggle CAD Cleaning Boundaries & Zones">
+                            <i class="fas fa-shield-halved"></i>
+                        </button>
+                        <button class="map-tool-btn" id="bp-fullscreen-btn" title="Toggle Fullscreen Map">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+
+                    <!-- Floating Action Button for University AI -->
+                    <button class="map-fab-btn" onclick="toggleChatbot()" title="Ask SpacePulse University AI">
+                        <i class="fas fa-robot"></i>
+                    </button>
+                </div>
+
+                <!-- CAD Service Boundaries Legend Strip -->
+                <div class="zone-legend-strip">
+                    <span style="font-size: 0.76rem; font-weight: 800; color: var(--text-primary); margin-right: 6px;">
+                        <i class="fas fa-vector-square"></i> CAD Boundaries:
+                    </span>
+                    <button class="zone-pill-btn zone-01" onclick="focusBlueprintZone('zone_01')">
+                        <i class="fas fa-square" style="color: #16a34a;"></i> <strong>ZONE - 01</strong> (Academic Core, Admin & Central Canteen)
+                    </button>
+                    <button class="zone-pill-btn zone-02" onclick="focusBlueprintZone('zone_02')">
+                        <i class="fas fa-square" style="color: #c026d3;"></i> <strong>ZONE - 02</strong> (IT Faculty, Architecture, ENTC & Auditorium)
+                    </button>
+                    <button class="zone-pill-btn zone-03" onclick="focusBlueprintZone('zone_03')">
+                        <i class="fas fa-square" style="color: #2563eb;"></i> <strong>ZONE - 03</strong> (Sports Ground, Gym, Textile & Bolgoda Lake)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Satellite & GIS Street Map Subview -->
             <div id="osm-subview" style="display: ${AppState.mapsSubTab === 'osm' ? 'block' : 'none'};">
                 <div class="travel-hud-bar">
                     <div class="hud-location-selector">
@@ -947,18 +1477,12 @@ function renderMaps() {
                     <div class="hud-metrics-pill">
                         <div class="hud-metric-item">
                             <span>Distance</span>
-                            <strong>${distanceMeters} m</strong>
+                            <strong>${osmDistMeters} m</strong>
                         </div>
                         <div class="hud-metric-item">
                             <span>Est. Travel</span>
-                            <strong>${walkMins} min</strong>
+                            <strong>${osmWalkMins} min</strong>
                         </div>
-                        ${matchingFloor ? `
-                        <div class="hud-metric-item">
-                            <span>Expected Free</span>
-                            <strong>~${projectedFree} seats</strong>
-                        </div>
-                        ` : ''}
                     </div>
                 </div>
 
@@ -981,13 +1505,13 @@ function renderMaps() {
                         </button>
                     </div>
 
-                    <!-- Floating Action Button for University AI Matching Screenshot -->
                     <button class="map-fab-btn" id="map-ai-fab-btn" onclick="toggleChatbot()" title="Ask SpacePulse University AI">
                         <i class="fas fa-robot"></i>
                     </button>
                 </div>
             </div>
 
+            <!-- 3. 2D Architectural Floor Plans Subview -->
             <div id="floorplans-subview" style="display: ${AppState.mapsSubTab === 'floorplans' ? 'block' : 'none'};">
                 <div class="floor-plan-card">
                     <div class="floor-plan-header">
@@ -1025,7 +1549,9 @@ function renderMaps() {
 
     contentArea.innerHTML = html;
 
-    if (AppState.mapsSubTab === 'osm') {
+    if (AppState.mapsSubTab === 'infrastructure') {
+        setTimeout(initBlueprintMap, 100);
+    } else if (AppState.mapsSubTab === 'osm') {
         setTimeout(initLeafletMap, 100);
     }
 }
@@ -1058,6 +1584,374 @@ function updateTravelDestination(destId) {
 function updateTravelSpeed(speed) {
     AppState.selectedSpeed = speed;
     renderMaps();
+}
+
+// --- Blueprint Infrastructure Map Handlers ---
+function filterBlueprintCategory(category) {
+    AppState.blueprintCategory = category;
+    renderMaps();
+}
+
+function handleBlueprintSearch(query) {
+    AppState.blueprintSearchQuery = query;
+    if (AppState.blueprintMap) {
+        initBlueprintMap();
+    }
+}
+
+function updateBlueprintOrigin(originId) {
+    AppState.selectedBlueprintOrigin = originId;
+    renderMaps();
+}
+
+function updateBlueprintDestination(destId) {
+    AppState.selectedBlueprintDestination = destId;
+    renderMaps();
+}
+
+function updateBlueprintSpeed(speed) {
+    AppState.selectedSpeed = speed;
+    renderMaps();
+}
+
+function focusBlueprintZone(zoneId) {
+    const zone = spacePulseData.blueprintZones.find(z => z.id === zoneId);
+    if (!zone || !AppState.blueprintMap) return;
+    const poly = L.polygon(zone.polygon);
+    AppState.blueprintMap.flyToBounds(poly.getBounds(), { padding: [40, 40], duration: 1.0 });
+    showToast(`Focused on ${zone.name}: ${zone.label}`);
+}
+
+function jumpToBlueprintNode(nodeId) {
+    const node = spacePulseData.blueprintNodes.find(n => n.id === nodeId);
+    if (!node || !AppState.blueprintMap) return;
+    AppState.blueprintMap.flyTo([node.y, node.x], 0.6, { duration: 1.0 });
+    const targetMarker = AppState.blueprintMarkers.find(m => m.id === nodeId);
+    if (targetMarker && targetMarker.marker) {
+        setTimeout(() => targetMarker.marker.openPopup(), 1100);
+    }
+}
+
+function calculateBlueprintWaypoints(orig, dest) {
+    // Generate authentic road path along UoM campus internal road network
+    const waypoints = [[orig.y, orig.x]];
+
+    // Sumanadasa - Canteen central crossroads
+    const sumJunction = [1717, 2400];
+    // Main Admin road junction
+    const adminJunction = [1267, 3350];
+    // Architecture junction
+    const archJunction = [1967, 3350];
+    // Katubedda entrance feeder road
+    const gateFeeder = [517, 2300];
+    // IT Faculty road
+    const itJunction = [2817, 3100];
+
+    // If starting from Katubedda Gate
+    if (orig.id === 'gate_katubedda') {
+        waypoints.push(gateFeeder);
+        if (dest.y > 2000) {
+            waypoints.push(sumJunction);
+            if (dest.x > 3000) waypoints.push(archJunction);
+        } else {
+            waypoints.push(adminJunction);
+        }
+    } else if (dest.id === 'gate_katubedda') {
+        if (orig.y > 2000) {
+            if (orig.x > 3000) waypoints.push(archJunction);
+            waypoints.push(sumJunction);
+        } else {
+            waypoints.push(adminJunction);
+        }
+        waypoints.push(gateFeeder);
+    } else if (Math.abs(orig.x - dest.x) > 1200 && Math.abs(orig.y - dest.y) > 800) {
+        // Intermediate campus road connector
+        waypoints.push([Math.round((orig.y + dest.y) / 2), Math.round((orig.x + dest.x) / 2)]);
+    }
+
+    waypoints.push([dest.y, dest.x]);
+    return waypoints;
+}
+
+// --- Blueprint CAD Infrastructure Map Initializer (Leaflet CRS.Simple) ---
+function initBlueprintMap() {
+    const mapElement = document.getElementById('blueprint-map-container');
+    if (!mapElement) return;
+
+    if (AppState.blueprintMap) {
+        AppState.blueprintMap.remove();
+        AppState.blueprintMap = null;
+    }
+
+    const h = spacePulseData.infrastructureMap.height; // 4967
+    const w = spacePulseData.infrastructureMap.width;  // 7021
+    const bounds = [[0, 0], [h, w]];
+
+    const map = L.map('blueprint-map-container', {
+        crs: L.CRS.Simple,
+        minZoom: -2.8,
+        maxZoom: 2.2,
+        zoomSnap: 0.2,
+        zoomDelta: 0.4,
+        zoomControl: false,
+        attributionControl: false,
+        maxBounds: [[-600, -800], [h + 600, w + 800]],
+        maxBoundsViscosity: 0.8
+    });
+
+    const isDark = AppState.blueprintContrastMode === 'dark' || (AppState.blueprintContrastMode === 'auto' && AppState.theme === 'dark');
+    const imageLayer = L.imageOverlay(spacePulseData.infrastructureMap.imageSrc, bounds, {
+        className: 'blueprint-map-layer' + (isDark ? ' dark-blueprint' : '')
+    }).addTo(map);
+
+    AppState.blueprintImageLayer = imageLayer;
+
+    // Layer groups for zones, routes, and markers
+    const zonesLayer = L.layerGroup();
+    const routeLayer = L.layerGroup();
+    const markersLayer = L.layerGroup();
+
+    // 1. Add CAD Service Boundary Zones
+    spacePulseData.blueprintZones.forEach(zone => {
+        const poly = L.polygon(zone.polygon, {
+            color: zone.strokeColor,
+            weight: 2.5,
+            opacity: 0.85,
+            fillColor: zone.color,
+            fillOpacity: 0.12,
+            dashArray: '6, 6'
+        }).bindTooltip(`<strong>${zone.name}</strong><br>${zone.label}<br><span style="font-size:0.75rem; color:#64748b;">${zone.description}</span>`, { sticky: true });
+        poly.addTo(zonesLayer);
+    });
+
+    if (AppState.blueprintShowZones) {
+        zonesLayer.addTo(map);
+    }
+    AppState.blueprintZonesLayer = zonesLayer;
+
+    // 2. Add Markers for Filtered Category & Search Query
+    AppState.blueprintMarkers = [];
+    const query = (AppState.blueprintSearchQuery || '').toLowerCase().trim();
+    const activeCat = AppState.blueprintCategory;
+
+    const filteredNodes = spacePulseData.blueprintNodes.filter(node => {
+        const matchesCat = activeCat === 'all' || node.category === activeCat;
+        const matchesQuery = !query || 
+            node.name.toLowerCase().includes(query) || 
+            node.subtext.toLowerCase().includes(query) || 
+            node.category.toLowerCase().includes(query);
+        return matchesCat && matchesQuery;
+    });
+
+    filteredNodes.forEach(node => {
+        let badgeContent = node.badge;
+        // Live dynamic sync with core data if available
+        if (node.id === 'floor_ground') {
+            const stats = getStats();
+            badgeContent = `${stats.availableLibrarySeats} Free Seats`;
+        } else if (node.id.startsWith('canteen_')) {
+            const c = spacePulseData.canteens.find(x => x.id === node.id);
+            if (c) badgeContent = `${c.personCount} / ${c.maxCapacity} Seats`;
+        } else if (node.id.startsWith('atm_')) {
+            const a = spacePulseData.atms.find(x => x.id === node.id);
+            if (a) badgeContent = a.hasCash ? `Cash OK (${a.queueLength} in line)` : 'Out of Order';
+        }
+
+        const iconHtml = `
+            <div class="bp-marker-wrapper" id="bp-marker-${node.id}">
+                <div class="bp-pulse-beacon" style="background: ${node.color}; opacity: 0.25;"></div>
+                <div class="bp-marker-pin" style="background: linear-gradient(135deg, ${node.color}, #0f172a); border-color: #ffffff;">
+                    <i class="fas ${node.icon}"></i>
+                </div>
+                <div class="bp-marker-badge" style="border-left: 3px solid ${node.color};">
+                    ${badgeContent}
+                </div>
+            </div>
+        `;
+
+        const customIcon = L.divIcon({
+            html: iconHtml,
+            className: 'custom-blueprint-pin',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -18]
+        });
+
+        const marker = L.marker([node.y, node.x], { icon: customIcon });
+
+        const popupHtml = `
+            <div style="font-family: 'Inter', sans-serif; min-width: 220px; padding: 4px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+                    <span style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: ${node.color}; letter-spacing: 0.5px;">
+                        <i class="fas ${node.icon}"></i> ${node.category.toUpperCase()}
+                    </span>
+                    <span style="font-size: 0.68rem; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #475569;">
+                        ${node.zone.toUpperCase().replace('_', ' ')}
+                    </span>
+                </div>
+                <strong style="font-size: 0.98rem; display: block; margin-bottom: 3px; color: var(--text-primary, #0f172a); line-height: 1.25;">
+                    ${node.name}
+                </strong>
+                <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 8px; line-height: 1.3;">
+                    ${node.subtext}
+                </p>
+                <div style="background: rgba(16, 185, 129, 0.1); border-left: 3px solid ${node.color}; padding: 6px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; color: #047857; margin-bottom: 10px;">
+                    <i class="fas fa-circle-check"></i> ${badgeContent}
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    ${node.category === 'library' ? `
+                        <button onclick="switchMapMode('floorplans')" style="width: 100%; background: #10b981; color: #fff; border: none; padding: 7px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">
+                            <i class="fas fa-chair"></i> View 2D Floor Plan & Hold Seat
+                        </button>
+                    ` : ''}
+                    <button onclick="updateBlueprintOrigin('${node.id}')" style="width: 100%; background: var(--bg-alt, #f1f5f9); color: var(--text-primary, #1e293b); border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">
+                        <i class="fas fa-street-view"></i> Set as My Starting Location
+                    </button>
+                    <button onclick="updateBlueprintDestination('${node.id}')" style="width: 100%; background: var(--primary-blue, #00008b); color: #fff; border: none; padding: 7px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.78rem;">
+                        <i class="fas fa-location-arrow"></i> Navigate Here on CAD Map
+                    </button>
+                </div>
+            </div>
+        `;
+
+        marker.bindPopup(popupHtml);
+        marker.addTo(markersLayer);
+        AppState.blueprintMarkers.push({ id: node.id, marker: marker, node: node });
+    });
+
+    markersLayer.addTo(map);
+
+    // 3. Render Route between Selected Origin and Destination
+    const origNode = spacePulseData.blueprintOrigins.find(o => o.id === AppState.selectedBlueprintOrigin) || 
+                     spacePulseData.blueprintNodes.find(n => n.id === AppState.selectedBlueprintOrigin) || 
+                     spacePulseData.blueprintOrigins[0];
+    const destNode = spacePulseData.blueprintNodes.find(n => n.id === AppState.selectedBlueprintDestination) || 
+                     spacePulseData.blueprintNodes[0];
+
+    if (origNode && destNode) {
+        // Origin Pin
+        const origIcon = L.divIcon({
+            html: `
+                <div style="
+                    background: linear-gradient(135deg, #ef4444, #b91c1c);
+                    color: #ffffff;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50% 50% 50% 0;
+                    transform: rotate(-45deg);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.55);
+                    border: 2px solid #ffffff;
+                ">
+                    <i class="fas fa-person-walking" style="transform: rotate(45deg); font-size: 14px;"></i>
+                </div>
+            `,
+            className: 'custom-blueprint-origin-pin',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+        L.marker([origNode.y, origNode.x], { icon: origIcon })
+            .bindPopup(`<strong>Your Origin:</strong><br>${origNode.name}`)
+            .addTo(routeLayer);
+
+        // Path line with intermediate road junction waypoints
+        const waypoints = calculateBlueprintWaypoints(origNode, destNode);
+        const polyline = L.polyline(waypoints, {
+            color: '#10b981',
+            weight: 5,
+            opacity: 0.95,
+            dashArray: '8, 8',
+            lineCap: 'round',
+            lineJoin: 'round'
+        }).addTo(routeLayer);
+
+        routeLayer.addTo(map);
+        AppState.blueprintRouteLayer = routeLayer;
+
+        // Fit bounds to route
+        map.fitBounds(polyline.getBounds(), { padding: [80, 80], maxZoom: 0.2 });
+    } else {
+        // Default initial view: Central Academic Core
+        map.fitBounds([[1000, 1800], [3200, 4200]]);
+    }
+
+    // 4. Attach Floating Toolbar Click Handlers
+    const locateBtn = document.getElementById('bp-locate-btn');
+    if (locateBtn) {
+        locateBtn.onclick = () => {
+            map.flyToBounds([[1000, 1800], [3200, 4200]], { duration: 1.2 });
+            showToast('Centered on Central University Core (Library & Sumanadasa) 🏛️');
+        };
+    }
+
+    const zoomInBtn = document.getElementById('bp-zoom-in-btn');
+    if (zoomInBtn) {
+        zoomInBtn.onclick = () => map.zoomIn();
+    }
+
+    const zoomOutBtn = document.getElementById('bp-zoom-out-btn');
+    if (zoomOutBtn) {
+        zoomOutBtn.onclick = () => map.zoomOut();
+    }
+
+    const contrastBtn = document.getElementById('bp-contrast-btn');
+    if (contrastBtn) {
+        contrastBtn.onclick = () => {
+            const imgEl = imageLayer.getElement ? imageLayer.getElement() : (imageLayer._image || document.querySelector('.blueprint-map-layer'));
+            if (!imgEl) return;
+            const isCurrentlyDark = imgEl.classList.contains('dark-blueprint');
+            if (isCurrentlyDark) {
+                imgEl.classList.remove('dark-blueprint');
+                contrastBtn.classList.remove('active-branch');
+                AppState.blueprintContrastMode = 'light';
+                showToast('Switched to CAD Architectural Light Mode 📐');
+            } else {
+                imgEl.classList.add('dark-blueprint');
+                contrastBtn.classList.add('active-branch');
+                AppState.blueprintContrastMode = 'dark';
+                showToast('Switched to Cyber-Dark Holographic Mode 🌙');
+            }
+        };
+    }
+
+    const zonesBtn = document.getElementById('bp-zones-btn');
+    if (zonesBtn) {
+        zonesBtn.onclick = () => {
+            AppState.blueprintShowZones = !AppState.blueprintShowZones;
+            if (AppState.blueprintShowZones) {
+                map.addLayer(zonesLayer);
+                zonesBtn.classList.add('active-branch');
+                showToast('CAD Cleaning & Infrastructure Boundaries enabled 🛡️');
+            } else {
+                map.removeLayer(zonesLayer);
+                zonesBtn.classList.remove('active-branch');
+                showToast('CAD Boundaries hidden');
+            }
+        };
+    }
+
+    const fsBtn = document.getElementById('bp-fullscreen-btn');
+    if (fsBtn) {
+        fsBtn.onclick = () => {
+            const wrapper = document.querySelector('.blueprint-map-wrapper');
+            if (!wrapper) return;
+            if (!document.fullscreenElement) {
+                wrapper.requestFullscreen().catch(err => console.log(err));
+            } else {
+                document.exitFullscreen().catch(err => console.log(err));
+            }
+        };
+    }
+
+    setTimeout(() => map.invalidateSize(), 50);
+    setTimeout(() => map.invalidateSize(), 200);
+    setTimeout(() => map.invalidateSize(), 500);
+
+    AppState.blueprintMap = map;
 }
 
 function initLeafletMap() {
@@ -2699,8 +3593,8 @@ function openFacilityDetail(facilityId) {
             <div class="stat-row"><span>Occupancy Count:</span><strong>${canteen.personCount} / ${canteen.maxCapacity} persons</strong></div>
             <div class="stat-row"><span>Specialty Foods:</span><strong>${canteen.specialties}</strong></div>
             <div class="stat-row"><span>Estimated Line Wait:</span><strong>~${Math.max(1, Math.round(canteen.personCount * 0.12))} mins</strong></div>
-            <button class="primary-btn" style="margin-top: 18px;" onclick="document.getElementById('facility-detail-modal').style.display='none'; navigateTo('maps'); updateTravelDestination('${canteen.id}'); switchMapMode('osm');">
-                <i class="fas fa-location-arrow"></i> Navigate on University Ground Map
+            <button class="primary-btn" style="margin-top: 18px;" onclick="document.getElementById('facility-detail-modal').style.display='none'; navigateTo('maps'); updateBlueprintDestination('${canteen.id}'); switchMapMode('infrastructure'); jumpToBlueprintNode('${canteen.id}');">
+                <i class="fas fa-location-arrow"></i> Navigate on CAD Infrastructure Map
             </button>
         `;
         modal.style.display = 'flex';
@@ -2716,8 +3610,8 @@ function openFacilityDetail(facilityId) {
             <div class="stat-row"><span>Cash Available:</span><strong>${atm.hasCash ? 'Yes' : 'Out of Order / No Cash'}</strong></div>
             <div class="stat-row"><span>Queue Count:</span><strong>${atm.queueLength} persons</strong></div>
             <div class="stat-row"><span>Location:</span><strong>${atm.location}</strong></div>
-            <button class="primary-btn" style="margin-top: 18px;" onclick="document.getElementById('facility-detail-modal').style.display='none'; navigateTo('maps'); updateTravelDestination('${atm.id}'); switchMapMode('osm');">
-                <i class="fas fa-location-arrow"></i> Walking Directions
+            <button class="primary-btn" style="margin-top: 18px;" onclick="document.getElementById('facility-detail-modal').style.display='none'; navigateTo('maps'); updateBlueprintDestination('${atm.id}'); switchMapMode('infrastructure'); jumpToBlueprintNode('${atm.id}');">
+                <i class="fas fa-location-arrow"></i> Walking Directions on CAD Map
             </button>
         `;
         modal.style.display = 'flex';
@@ -2732,8 +3626,8 @@ function openFacilityDetail(facilityId) {
             <div class="stat-row"><span>Status:</span><strong>${shop.status}</strong></div>
             <div class="stat-row"><span>Crowdedness:</span><strong>${shop.crowdedness}</strong></div>
             <div class="stat-row"><span>Services Offered:</span><strong>${shop.services.join(', ')}</strong></div>
-            <button class="primary-btn" style="margin-top: 18px;" onclick="document.getElementById('facility-detail-modal').style.display='none'; navigateTo('maps'); updateTravelDestination('${shop.id}'); switchMapMode('osm');">
-                <i class="fas fa-location-arrow"></i> Walking Directions
+            <button class="primary-btn" style="margin-top: 18px;" onclick="document.getElementById('facility-detail-modal').style.display='none'; navigateTo('maps'); updateBlueprintDestination('${shop.id}'); switchMapMode('infrastructure'); jumpToBlueprintNode('${shop.id}');">
+                <i class="fas fa-location-arrow"></i> Walking Directions on CAD Map
             </button>
         `;
         modal.style.display = 'flex';
@@ -3122,6 +4016,18 @@ function initTheme() {
                 AppState.leafletMap.removeLayer(AppState.activeMapTileLayer);
                 AppState.googleStreetLayer.addTo(AppState.leafletMap);
                 AppState.activeMapTileLayer = AppState.googleStreetLayer;
+            }
+        }
+
+        // Dynamically update CAD Infrastructure Blueprint layer to match theme
+        if (AppState.blueprintImageLayer) {
+            const imgEl = AppState.blueprintImageLayer.getElement ? AppState.blueprintImageLayer.getElement() : (AppState.blueprintImageLayer._image || document.querySelector('.blueprint-map-layer'));
+            if (imgEl && AppState.blueprintContrastMode === 'auto') {
+                if (theme === 'dark') {
+                    imgEl.classList.add('dark-blueprint');
+                } else {
+                    imgEl.classList.remove('dark-blueprint');
+                }
             }
         }
     }
