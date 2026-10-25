@@ -4,10 +4,12 @@ Team NodeX - Sub-Team 2: Backend & Architecture (Sandaru & Mihin)
 """
 import asyncio
 import logging
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from .core.config import settings
 from .core.state_manager import state_manager
@@ -120,8 +122,38 @@ async def websocket_occupancy_endpoint(websocket: WebSocket):
     except Exception:
         ws_manager.disconnect(websocket)
 
-@app.get("/", tags=["Root"])
+# Resolve workspace root directory for frontend static assets
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Mount static assets directory
+assets_dir = os.path.join(BASE_DIR, "assets")
+if os.path.exists(assets_dir):
+    app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+@app.get("/style.css", include_in_schema=False)
+async def serve_style():
+    return FileResponse(os.path.join(BASE_DIR, "style.css"), media_type="text/css")
+
+@app.get("/app.js", include_in_schema=False)
+async def serve_app_js():
+    return FileResponse(os.path.join(BASE_DIR, "app.js"), media_type="application/javascript")
+
+@app.get("/images.jpeg", include_in_schema=False)
+async def serve_fallback_image():
+    img_path = os.path.join(BASE_DIR, "images.jpeg")
+    if os.path.exists(img_path):
+        return FileResponse(img_path, media_type="image/jpeg")
+    return JSONResponse(status_code=404, content={"detail": "Not found"})
+
+@app.get("/", include_in_schema=False)
 async def root():
+    index_path = os.path.join(BASE_DIR, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path, media_type="text/html")
+    return {"message": "SpacePulse Web App Ready"}
+
+@app.get("/api", tags=["Root"])
+async def api_info():
     return {
         "message": "SpacePulse REST API is online",
         "team": "NodeX (University of Moratuwa)",
