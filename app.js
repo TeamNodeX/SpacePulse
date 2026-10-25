@@ -922,7 +922,32 @@ const pageSubtitle = document.getElementById('page-subtitle');
 
 // --- 5.1 Home Dashboard ---
 function renderHomeBannersHTML(stats, student) {
-    return `
+    let loginPromptHTML = '';
+    if (!student || !student.isVerified) {
+        loginPromptHTML = `
+            <div class="webmail-login-banner" onclick="openStudentAuthModal()" style="cursor: pointer; background: linear-gradient(135deg, rgba(136, 19, 55, 0.95) 0%, rgba(76, 5, 25, 0.98) 100%); color: #ffffff; border-radius: var(--radius-lg); padding: 18px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 10px 25px rgba(136, 19, 55, 0.25); border: 1.5px solid rgba(253, 224, 71, 0.4);">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 255, 255, 0.15); border: 1.5px solid #fde047; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fde047; flex-shrink: 0;">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: #fde047; margin-bottom: 2px;">UNIVERSITY OF MORATUWA SSO</div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #ffffff;">Log in with University Webmail (<span style="color: #fde047;">webmail.uom.lk</span>)</h3>
+                        <p style="margin: 0; font-size: 0.82rem; opacity: 0.9; color: #f1f5f9;">Connect your official student email to unlock 30-minute library seat holds, real-time alerts & CAD navigation.</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap;">
+                    <button type="button" class="btn-primary" style="background: #fde047; color: #4c0519; font-weight: 800; border: none; padding: 10px 18px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onclick="event.stopPropagation(); openStudentAuthModal();">
+                        <i class="fas fa-right-to-bracket"></i> Student Login
+                    </button>
+                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff; text-decoration: none; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.3); padding: 10px 16px; border-radius: 8px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;" onclick="event.stopPropagation();">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Open webmail.uom.lk
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+    return loginPromptHTML + `
         <div class="recommendation-banner">
             <div class="rec-content">
                 <span class="rec-tag"><i class="fas fa-sparkles"></i> AI RECOMMENDATION</span>
@@ -3350,10 +3375,6 @@ function showStudentLoginPage() {
 }
 
 function hideStudentLoginPage() {
-    if (!AppState.currentStudent || !AppState.currentStudent.isVerified) {
-        showToast('University Webmail verification is required to access SpacePulse.', true);
-        return;
-    }
     const page = document.getElementById('student-login-page');
     if (page) {
         page.style.display = 'none';
@@ -3377,14 +3398,10 @@ function togglePortalTheme() {
 }
 
 function openStudentAuthModal() {
-    if (!AppState.currentStudent || !AppState.currentStudent.isVerified) {
-        showStudentLoginPage();
-    } else {
-        const modal = document.getElementById('student-auth-modal');
-        if (modal) {
-            renderStudentAuthModalBody();
-            modal.style.display = 'flex';
-        }
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) {
+        renderStudentAuthModalBody();
+        modal.style.display = 'flex';
     }
 }
 
@@ -3490,9 +3507,14 @@ function renderPortalAuthBody() {
                 <span>OFFICIAL UNIVERSITY WEBMAIL SERVICE</span>
             </div>
 
-            <button type="button" class="portal-webmail-btn" style="width: 100%; justify-content: center; padding: 12px;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
-                <i class="fas fa-envelope-open-text" style="color: var(--uom-crimson);"></i> Open University Webmail (mail.uom.lk)
-            </button>
+            <div style="display: flex; gap: 8px;">
+                <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; text-decoration: none;">
+                    <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> webmail.uom.lk ↗
+                </a>
+                <button type="button" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
+                    <i class="fas fa-inbox" style="color: var(--primary-blue);"></i> Webmail Inbox
+                </button>
+            </div>
         `;
     } else {
         // Step 2: OTP Verification
@@ -3511,9 +3533,14 @@ function renderPortalAuthBody() {
                     <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
                     <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is only viewable in your university webmail inbox.</div>
                 </div>
-                <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
-                    <i class="fas fa-inbox"></i> Open Webmail
-                </button>
+                <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="webmail-open-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> webmail.uom.lk
+                    </a>
+                    <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-inbox"></i> Inbox
+                    </button>
+                </div>
             </div>
 
             <form id="portal-otp-form" onsubmit="event.preventDefault(); handlePortalVerifyOtp();">
@@ -3584,7 +3611,7 @@ async function handlePortalSendOtp(isResend = false) {
         AppState.pendingOtpCustomName = customName;
         AppState.isEnteringOtp = true;
 
-        showToast('Verification code dispatched to your University Webmail. Check your inbox at mail.uom.lk 📩');
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at webmail.uom.lk 📩');
         renderPortalAuthBody();
         renderStudentAuthModalBody();
     } catch (err) {
@@ -3658,7 +3685,7 @@ async function handlePortalVerifyOtp() {
 }
 
 // ==========================================================================
-// University of Moratuwa Webmail Service (mail.uom.lk) Interface
+// University of Moratuwa Webmail Service (webmail.uom.lk) Interface
 // ==========================================================================
 
 let activeWebmailMessages = [];
@@ -3691,7 +3718,7 @@ async function refreshWebmailInbox(filterEmail) {
     if (listEl) {
         listEl.innerHTML = `
             <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
-                <i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Checking mail.uom.lk...
+                <i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Checking webmail.uom.lk...
             </div>
         `;
     }
@@ -3896,7 +3923,7 @@ function renderStudentAuthModalBody() {
             <div style="margin-bottom: 16px;">
                 <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Webmail</h4>
                 <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Enter your official university email to unlock 30-minute desk reservations and personalized university telemetry.
+                    Enter your official university email (<a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700;">webmail.uom.lk</a>) to unlock 30-minute desk reservations and personalized university telemetry.
                 </p>
             </div>
 
@@ -3924,6 +3951,10 @@ function renderStudentAuthModalBody() {
                     <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code
                 </button>
             </form>
+
+            <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; color: var(--uom-crimson); font-weight: 700; border-color: rgba(136, 19, 55, 0.3);">
+                <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (https://webmail.uom.lk/)
+            </a>
         `;
     } else {
         body.innerHTML = `
@@ -3938,11 +3969,16 @@ function renderStudentAuthModalBody() {
                 <i class="fas fa-envelope-open-text" style="font-size: 1.5rem; color: #0284c7;"></i>
                 <div style="flex: 1;">
                     <div style="font-weight: 700; font-size: 0.82rem;">Delivered to Webmail</div>
-                    <div style="font-size: 0.72rem; color: var(--text-secondary);">Open your University Webmail to retrieve your code.</div>
+                    <div style="font-size: 0.72rem; color: var(--text-secondary);">Your verification code is only viewable in your university webmail inbox.</div>
                 </div>
-                <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
-                    <i class="fas fa-inbox"></i> Webmail
-                </button>
+                <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="webmail-open-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> webmail.uom.lk
+                    </a>
+                    <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-inbox"></i> Inbox
+                    </button>
+                </div>
             </div>
 
             <form id="student-otp-form" onsubmit="event.preventDefault(); handleVerifyOtp();">
@@ -3954,9 +3990,14 @@ function renderStudentAuthModalBody() {
                     <i class="fas fa-shield-check"></i> Verify & Unlock Student Features
                 </button>
 
-                <button type="button" class="secondary-btn" onclick="AppState.isEnteringOtp = false; renderStudentAuthModalBody();">
-                    <i class="fas fa-arrow-left"></i> Change Email
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="secondary-btn" style="flex: 1;" onclick="AppState.isEnteringOtp = false; renderStudentAuthModalBody();">
+                        <i class="fas fa-arrow-left"></i> Change Email
+                    </button>
+                    <button type="button" class="secondary-btn" style="flex: 1; color: #0284c7; border-color: rgba(2, 132, 199, 0.3);" onclick="handleSendOtp()">
+                        <i class="fas fa-rotate"></i> Resend
+                    </button>
+                </div>
             </form>
         `;
     }
@@ -4000,7 +4041,7 @@ async function handleSendOtp() {
         AppState.pendingOtpCustomName = customName;
         AppState.isEnteringOtp = true;
 
-        showToast('Verification code dispatched to your University Webmail. Check your inbox at mail.uom.lk 📩');
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at webmail.uom.lk 📩');
         renderStudentAuthModalBody();
         renderPortalAuthBody();
     } catch (err) {
@@ -4065,11 +4106,11 @@ function signOutStudent() {
     AppState.pendingOtpEmail = null;
     AppState.pendingOtpCustomName = null;
 
-    showToast('Signed out of student account. Login required.');
+    showToast('Signed out of student account. Login with University Webmail anytime.');
     updateStudentHeaderElements();
     renderStudentAuthModalBody();
     renderPortalAuthBody();
-    showStudentLoginPage();
+    hideStudentLoginPage();
     if (AppState.currentTab === 'home') renderHome();
 }
 
@@ -5257,11 +5298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     navigateTo('home');
     checkInitialDeepLink();
     initBackendSync();
-
-    // Mandatory University Webmail Login Gate
-    if (!AppState.currentStudent || !AppState.currentStudent.isVerified) {
-        showStudentLoginPage();
-    }
 });
 
 // ==========================================================================
