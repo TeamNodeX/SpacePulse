@@ -113,7 +113,7 @@ class EmailService:
         smtp_dispatched = False
         smtp_error = None
 
-        # 2. Outbound SMTP Delivery if credentials provided
+        # 2. Outbound SMTP Delivery if credentials provided, or direct UoM MX exchange
         if self.is_smtp_configured():
             try:
                 msg = MIMEMultipart("alternative")
@@ -137,6 +137,34 @@ class EmailService:
             except Exception as e:
                 smtp_error = str(e)
                 logger.warning(f"SMTP relay failed (message stored in webmail mailbox): {e}")
+        elif to_email.lower().strip().endswith("@uom.lk"):
+            # Direct MX delivery to University of Moratuwa inbound mail exchange (inrelay-a.uom.lk:25)
+            # This directly delivers to official UoM Webmail inboxes (https://web.mail.uom.lk/#/mailbox/INBOX)
+            try:
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = subject
+                msg["From"] = "SpacePulse Verification <spacepulse-verify@spacepulse.org>"
+                msg["To"] = to_email
+
+                part1 = MIMEText(text_content, "plain")
+                part2 = MIMEText(html_content, "html")
+                msg.attach(part1)
+                msg.attach(part2)
+
+                server = smtplib.SMTP("inrelay-a.uom.lk", 25, timeout=10)
+                server.ehlo()
+                try:
+                    server.starttls()
+                    server.ehlo()
+                except Exception:
+                    pass
+                server.sendmail("spacepulse-verify@spacepulse.org", [to_email], msg.as_string())
+                server.quit()
+                smtp_dispatched = True
+                logger.info(f"Successfully delivered verification email directly to UoM Webmail MX for {to_email}")
+            except Exception as e:
+                smtp_error = str(e)
+                logger.warning(f"Direct UoM MX delivery failed: {e}")
 
         return {
             "status": "ok",

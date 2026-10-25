@@ -22,166 +22,60 @@
     <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
 </head>
 <body>
-    <!-- Dedicated First-Page Student Login Portal Screen (Hidden by default; access via Dashboard) -->
-    <div class="student-login-portal-screen" id="student-login-page" style="display: none;">
-        <div class="portal-ambient-mesh">
-            <div class="portal-glow-orb orb-1"></div>
-            <div class="portal-glow-orb orb-2"></div>
-            <div class="portal-glow-orb orb-3"></div>
-            <div class="portal-grid-overlay"></div>
-        </div>
-
-        <div class="portal-container">
-            <!-- Portal Navigation Bar -->
-            <header class="portal-header">
-                <div class="portal-brand-left">
-                    <div class="portal-logo-group">
-                        <img src="assets/images/logo.jpeg" alt="SpacePulse Logo" class="portal-logo" onerror="this.src='images.jpeg'">
-                        <span class="portal-live-dot" title="Sensors Online"></span>
-                        <div class="portal-brand-text">
-                            <h2>SpacePulse</h2>
-                            <span class="portal-sub">Univ. of Moratuwa</span>
-                        </div>
-                    </div>
-                    <div class="portal-telemetry-badge">
-                        <span class="pulse-beacon"></span>
-                        <span>UNIVERSITY TELEMETRY LIVE</span>
-                    </div>
-                </div>
-
-                <div class="portal-header-right">
-                    <button class="portal-guest-btn" onclick="hideStudentLoginPage()" title="Return to Dashboard">
-                        <i class="fas fa-house"></i>
-                        <span>Dashboard</span>
-                    </button>
-                    <button class="portal-icon-btn" id="portal-qr-btn" onclick="openQrModal()" title="Mobile Access QR">
-                        <i class="fas fa-qrcode"></i>
-                    </button>
-                    <button class="portal-icon-btn" id="portal-theme-btn" onclick="togglePortalTheme()" title="Toggle Dark/Light Mode">
-                        <i class="fas fa-moon" id="portal-theme-icon"></i>
-                    </button>
-                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" title="Open official University Webmail">
-                        <i class="fas fa-envelope-open-text"></i>
-                        <span>webmail.uom.lk ↗</span>
-                    </a>
-                </div>
-            </header>
-
-            <!-- Portal Center Auth Card -->
-            <div class="portal-main-wrapper">
-                <div class="portal-card">
-                    <!-- Crimson & Gold University Crest Top Strip -->
-                    <div class="portal-card-crest-strip">
-                        <div class="portal-crest-icon-box">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="portal-strip-info">
-                            <span class="portal-crest-kicker">University of Moratuwa</span>
-                            <h3 class="portal-card-heading">Student Access Portal</h3>
-                        </div>
-                        <div class="portal-secure-badge">
-                            <i class="fas fa-shield-halved"></i>
-                            <span>Official UoM SSO</span>
-                        </div>
-                    </div>
-
-                    <!-- University Privileges Value Bar -->
-                    <div class="portal-privileges-bar">
-                        <div class="portal-priv-pill">
-                            <i class="fas fa-chair text-success"></i>
-                            <span>30-Min Seat Holds</span>
-                        </div>
-                        <div class="portal-priv-pill">
-                            <i class="fas fa-bell text-warning"></i>
-                            <span>Real-Time Alerts</span>
-                        </div>
-                        <div class="portal-priv-pill">
-                            <i class="fas fa-map-location-dot text-primary"></i>
-                            <span>2D & GPS Navigation</span>
-                        </div>
-                        <div class="portal-priv-pill">
-                            <i class="fas fa-utensils text-purple"></i>
-                            <span>Canteen Queues</span>
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Auth Body -->
-                    <div class="portal-auth-body" id="portal-auth-body">
-                        <div class="portal-section-intro">
-                            <h4>Sign in with University Webmail</h4>
-                            <p>Connect your official <strong>@uom.lk</strong> student webmail. A single-use 6-digit verification code will be dispatched to your webmail inbox (<a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700;">https://webmail.uom.lk/</a>).</p>
-                        </div>
-
-                        <form id="portal-email-form" onsubmit="event.preventDefault(); handlePortalSendOtp();">
-                            <div class="portal-form-group">
-                                <label for="portal-email-input">Official Student Email Address</label>
-                                <div class="portal-input-wrap">
-                                    <i class="fas fa-envelope"></i>
-                                    <input type="email" id="portal-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required>
-                                </div>
-                            </div>
-
-                            <div class="domain-chips-grid" style="margin-top: 4px; margin-bottom: 14px;">
-                                <button type="button" class="domain-chip" onclick="appendPortalDomain('@uom.lk')">@uom.lk</button>
-                                <button type="button" class="domain-chip" onclick="appendPortalDomain('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
-                                <button type="button" class="domain-chip" onclick="appendPortalDomain('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
-                                <button type="button" class="domain-chip" onclick="appendPortalDomain('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
-                                <button type="button" class="domain-chip" onclick="appendPortalDomain('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
-                                <button type="button" class="domain-chip" onclick="appendPortalDomain('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
-                            </div>
-
-                            <div class="portal-form-group">
-                                <label for="portal-name-input">Full Name (Optional)</label>
-                                <div class="portal-input-wrap">
-                                    <i class="fas fa-user-graduate"></i>
-                                    <input type="text" id="portal-name-input" placeholder="e.g. Kavindu Dilupa">
-                                </div>
-                            </div>
-
-                            <button type="submit" class="portal-submit-btn" id="portal-send-btn">
-                                <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code to Webmail
-                            </button>
-                        </form>
-
-                        <div class="portal-divider">
-                            <span>OFFICIAL UNIVERSITY WEBMAIL SERVICE</span>
-                        </div>
-
-                        <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="width: 100%; justify-content: center; padding: 12px; text-decoration: none;">
-                            <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> Open University Webmail (https://webmail.uom.lk/)
-                        </a>
+    <!-- Dedicated Front Page Student Identity & Verification Screen (Strict Web App Gateway) -->
+    <div class="front-page-gate-screen" id="front-page-auth">
+        <div class="modal-box student-auth-box">
+            <div class="modal-header uom-crimson-header">
+                <div class="modal-title-group">
+                    <div class="modal-crest-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div>
+                        <h3>University of Moratuwa</h3>
+                        <p id="front-page-header-sub">Official Student Identity & Privileges Verification</p>
                     </div>
                 </div>
             </div>
+            <div class="modal-body" id="front-page-body">
+                <div style="margin-bottom: 18px;">
+                    <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">Connect Your UoM Student Webmail</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">
+                        Enter your official university email (<a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700; text-decoration: underline;">web.mail.uom.lk</a>) to unlock 30-minute desk reservations and live university telemetry.
+                    </p>
+                </div>
 
-            <!-- Portal Live University Telemetry Ticker -->
-            <footer class="portal-footer">
-                <div class="portal-ticker-track">
-                    <div class="portal-ticker-pill">
-                        <span class="ticker-dot live"></span>
-                        <span>Telemetry Sensors: <strong>14 Nodes Active</strong></span>
+                <form id="front-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label for="uom-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
+                        <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required>
                     </div>
-                    <div class="portal-ticker-pill">
-                        <i class="fas fa-book-reader" style="color: var(--primary-blue);"></i>
-                        <span>Library Vacancy: <strong id="portal-lib-stat">175 Free Seats</strong></span>
+
+                    <div class="domain-chips-grid">
+                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@uom.lk')">@uom.lk</button>
+                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
+                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
+                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
+                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
+                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
                     </div>
-                    <div class="portal-ticker-pill">
-                        <i class="fas fa-utensils" style="color: var(--amber);"></i>
-                        <span>Dining: <strong id="portal-canteen-stat">4 Canteens Open</strong></span>
+
+                    <div class="form-group" style="margin-bottom: 22px;">
+                        <label for="uom-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
+                        <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Kavindu Dilupa">
                     </div>
-                    <div class="portal-ticker-pill">
-                        <i class="fas fa-money-check-dollar" style="color: var(--pulse-green);"></i>
-                        <span>ATMs: <strong id="portal-atm-stat">BOC & Peoples Cash OK</strong></span>
-                    </div>
-                </div>
-                <div class="portal-copyright">
-                    <span>Designed for UoM Undergraduates by <strong>Team NodeX</strong></span>
-                </div>
-            </footer>
+
+                    <button type="submit" class="primary-btn uom-btn">
+                        <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code
+                    </button>
+                </form>
+
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn">
+                    <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail Inbox (https://web.mail.uom.lk/#/mailbox/INBOX)
+                </a>
+            </div>
         </div>
     </div>
 
-    <div class="app-container">
+    <!-- Main SpacePulse Application Container (Protected: Revealed only after verification) -->
+    <div class="app-container" id="main-app-container" style="display: none;">
         <!-- Sidebar Navigation -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -308,14 +202,14 @@
         </div>
     </div>
 
-    <!-- Floating AI Chatbot Action Button -->
-    <button class="chatbot-fab" id="chatbot-fab" onclick="openChatbot()" title="Chat with SpacePulse AI Assistant">
+    <!-- Floating AI Chatbot Action Button (Hidden until verified) -->
+    <button class="chatbot-fab" id="chatbot-fab" onclick="openChatbot()" title="Chat with SpacePulse AI Assistant" style="display: none;">
         <i class="fas fa-robot"></i>
         <span class="fab-pulse-ping"></span>
     </button>
 
-    <!-- Floating Live Telemetry / Kiosk Showcase Action Button -->
-    <button class="kiosk-fab-btn" id="kiosk-fab-btn" onclick="toggleKioskMode()" title="Toggle SpacePulse Live Telemetry & Kiosk Showcase">
+    <!-- Floating Live Telemetry / Kiosk Showcase Action Button (Hidden until verified) -->
+    <button class="kiosk-fab-btn" id="kiosk-fab-btn" onclick="toggleKioskMode()" title="Toggle SpacePulse Live Telemetry & Kiosk Showcase" style="display: none;">
         <i class="fas fa-desktop"></i>
     </button>
 
@@ -331,7 +225,7 @@
             </div>
             <div class="ai-header-actions">
                 <button id="chatbot-key-btn" class="chat-tool-btn" title="Configure Google Gemini API Key"><i class="fas fa-key"></i></button>
-                <button id="chatbot-close-btn" class="chat-tool-btn" onclick="toggleChatbot()" title="Close Assistant"><i class="fas fa-times"></i></button>
+                <button id="chatbot-close-btn" class="chat-tool-btn" onclick="closeChatbot()" title="Close Assistant"><i class="fas fa-times"></i></button>
             </div>
         </div>
 
@@ -351,7 +245,7 @@
             <button id="chat-send-btn" aria-label="Send Message"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
-    <div class="chatbot-overlay" id="chatbot-overlay"></div>
+    <div class="chatbot-overlay" id="chatbot-overlay" onclick="closeChatbot()"></div>
 
     <!-- UoM Student Verification & Profile Modal -->
     <div class="modal-backdrop" id="student-auth-modal" style="display: none;">
@@ -367,17 +261,17 @@
                 <button class="modal-close-btn" id="student-modal-close" onclick="closeStudentAuthModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body" id="student-modal-body">
-                <div style="margin-bottom: 16px;">
-                    <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Webmail</h4>
-                    <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                        Enter your official university email (<a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700;">webmail.uom.lk</a>) to unlock 30-minute desk reservations and personalized university telemetry.
+                <div style="margin-bottom: 18px;">
+                    <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">Connect Your UoM Student Webmail</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">
+                        Enter your official university email (<a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700; text-decoration: underline;">web.mail.uom.lk</a>) to unlock 30-minute desk reservations and personalized university telemetry.
                     </p>
                 </div>
 
                 <form id="student-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label for="uom-email-input">Student Email Address</label>
-                        <input type="email" id="uom-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required>
+                        <label for="uom-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
+                        <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required>
                     </div>
 
                     <div class="domain-chips-grid">
@@ -389,9 +283,9 @@
                         <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label for="uom-name-input">Full Name (Optional)</label>
-                        <input type="text" id="uom-name-input" placeholder="e.g. Kavindu Dilupa">
+                    <div class="form-group" style="margin-bottom: 22px;">
+                        <label for="uom-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
+                        <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Kavindu Dilupa">
                     </div>
 
                     <button type="submit" class="primary-btn uom-btn">
@@ -399,8 +293,8 @@
                     </button>
                 </form>
 
-                <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; color: var(--uom-crimson); font-weight: 700; border-color: rgba(136, 19, 55, 0.3);">
-                    <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (https://webmail.uom.lk/)
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn">
+                    <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail Inbox (https://web.mail.uom.lk/#/mailbox/INBOX)
                 </a>
             </div>
         </div>
@@ -679,7 +573,7 @@
         </div>
     </div>
 
-    <!-- University of Moratuwa Webmail Reader Modal (https://webmail.uom.lk/) -->
+    <!-- University of Moratuwa Webmail Reader Modal (https://web.mail.uom.lk/#/mailbox/INBOX) -->
     <div class="webmail-modal-overlay" id="webmail-modal" style="display: none;">
         <div class="webmail-modal-window">
             <!-- Webmail App Bar -->
@@ -690,7 +584,7 @@
                     </div>
                     <div class="webmail-brand-text">
                         <div class="webmail-service-title">University of Moratuwa Webmail</div>
-                        <div class="webmail-service-subtitle">webmail.uom.lk • Official University Webmail Portal</div>
+                        <div class="webmail-service-subtitle">web.mail.uom.lk/#/mailbox/INBOX • Official University Webmail Inbox</div>
                     </div>
                 </div>
                 <div class="webmail-header-actions">
@@ -698,9 +592,9 @@
                         <i class="fas fa-rotate" id="webmail-refresh-icon"></i>
                         <span>Refresh Inbox</span>
                     </button>
-                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="webmail-action-btn external" title="Open webmail.uom.lk in browser tab">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-action-btn external" title="Open web.mail.uom.lk inbox in new tab">
                         <i class="fas fa-arrow-up-right-from-square"></i>
-                        <span>webmail.uom.lk ↗</span>
+                        <span>web.mail.uom.lk ↗</span>
                     </a>
                     <button type="button" class="webmail-close-btn" onclick="closeUniversityWebmailModal()" title="Close Webmail Viewer">
                         <i class="fas fa-times"></i>

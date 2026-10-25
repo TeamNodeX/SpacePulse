@@ -932,7 +932,7 @@ function renderHomeBannersHTML(stats, student) {
                     </div>
                     <div>
                         <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: #fde047; margin-bottom: 2px;">UNIVERSITY OF MORATUWA SSO</div>
-                        <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #ffffff;">Log in with University Webmail (<span style="color: #fde047;">webmail.uom.lk</span>)</h3>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #ffffff;">Log in with University Webmail (<span style="color: #fde047;">web.mail.uom.lk</span>)</h3>
                         <p style="margin: 0; font-size: 0.82rem; opacity: 0.9; color: #f1f5f9;">Connect your official student email to unlock 30-minute library seat holds, real-time alerts & CAD navigation.</p>
                     </div>
                 </div>
@@ -940,8 +940,8 @@ function renderHomeBannersHTML(stats, student) {
                     <button type="button" class="btn-primary" style="background: #fde047; color: #4c0519; font-weight: 800; border: none; padding: 10px 18px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onclick="event.stopPropagation(); openStudentAuthModal();">
                         <i class="fas fa-right-to-bracket"></i> Student Login
                     </button>
-                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff; text-decoration: none; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.3); padding: 10px 16px; border-radius: 8px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;" onclick="event.stopPropagation();">
-                        <i class="fas fa-arrow-up-right-from-square"></i> Open webmail.uom.lk
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff; text-decoration: none; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.3); padding: 10px 16px; border-radius: 8px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;" onclick="event.stopPropagation();">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Open web.mail.uom.lk
                     </a>
                 </div>
             </div>
@@ -3348,36 +3348,49 @@ function initTrendsCharts() {
 }
 
 // ==========================================================================
-// 6. UoM Student Verification & Portal Login System
+// 6. UoM Student Verification & Front Page Gateway
 // ==========================================================================
 
+function lockAppToFrontPage() {
+    const frontGate = document.getElementById('front-page-auth');
+    const appContainer = document.getElementById('main-app-container') || document.querySelector('.app-container');
+    const chatbotFab = document.getElementById('chatbot-fab');
+    const kioskFab = document.getElementById('kiosk-fab-btn');
+
+    if (frontGate) frontGate.style.display = 'flex';
+    if (appContainer) appContainer.style.display = 'none';
+    if (chatbotFab) chatbotFab.style.display = 'none';
+    if (kioskFab) kioskFab.style.display = 'none';
+
+    AppState.isEnteringOtp = false;
+    renderFrontPageBody();
+}
+
+function unlockAppWithVerifiedStudent(studentProfile) {
+    const frontGate = document.getElementById('front-page-auth');
+    const appContainer = document.getElementById('main-app-container') || document.querySelector('.app-container');
+    const chatbotFab = document.getElementById('chatbot-fab');
+    const kioskFab = document.getElementById('kiosk-fab-btn');
+
+    if (frontGate) frontGate.style.display = 'none';
+    if (appContainer) appContainer.style.display = 'flex';
+    if (chatbotFab) chatbotFab.style.display = 'flex';
+    if (kioskFab) kioskFab.style.display = 'flex';
+
+    updateStudentHeaderElements();
+    updateReservationBanner();
+    if (AppState.currentTab === 'home') renderHome();
+}
+
 function showStudentLoginPage() {
-    const page = document.getElementById('student-login-page');
-    if (!page) return;
-
-    // Update live telemetry ticker on portal
-    const stats = getStats();
-    const libStat = document.getElementById('portal-lib-stat');
-    const canteenStat = document.getElementById('portal-canteen-stat');
-    const atmStat = document.getElementById('portal-atm-stat');
-
-    if (libStat) libStat.textContent = `${stats.availableLibrarySeats} Free Seats`;
-    if (canteenStat) canteenStat.textContent = `${stats.openCanteensCount} Canteens Open`;
-    if (atmStat) atmStat.textContent = `${stats.shortestAtmName} (${stats.shortestAtmQueue} in line)`;
-
-    const portalThemeIcon = document.getElementById('portal-theme-icon');
-    if (portalThemeIcon) {
-        portalThemeIcon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
-
-    renderPortalAuthBody();
-    page.style.display = 'flex';
+    lockAppToFrontPage();
 }
 
 function hideStudentLoginPage() {
-    const page = document.getElementById('student-login-page');
-    if (page) {
-        page.style.display = 'none';
+    if (AppState.currentStudent && AppState.currentStudent.isVerified) {
+        unlockAppWithVerifiedStudent(AppState.currentStudent);
+    } else {
+        lockAppToFrontPage();
     }
 }
 
@@ -3508,8 +3521,8 @@ function renderPortalAuthBody() {
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; text-decoration: none;">
-                    <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> webmail.uom.lk ↗
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; text-decoration: none;">
+                    <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> web.mail.uom.lk ↗
                 </a>
                 <button type="button" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
                     <i class="fas fa-inbox" style="color: var(--primary-blue);"></i> Webmail Inbox
@@ -3534,8 +3547,8 @@ function renderPortalAuthBody() {
                     <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is only viewable in your university webmail inbox.</div>
                 </div>
                 <div style="display: flex; gap: 6px; flex-shrink: 0;">
-                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="webmail-open-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-arrow-up-right-from-square"></i> webmail.uom.lk
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-open-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
                     </a>
                     <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
                         <i class="fas fa-inbox"></i> Inbox
@@ -3611,7 +3624,7 @@ async function handlePortalSendOtp(isResend = false) {
         AppState.pendingOtpCustomName = customName;
         AppState.isEnteringOtp = true;
 
-        showToast('Verification code dispatched to your University Webmail. Check your inbox at webmail.uom.lk 📩');
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at web.mail.uom.lk/#/mailbox/INBOX 📩');
         renderPortalAuthBody();
         renderStudentAuthModalBody();
     } catch (err) {
@@ -3835,9 +3848,6 @@ function renderWebmailMessageDetail(msg) {
                         <button type="button" class="webmail-copy-code-btn" onclick="copyWebmailCode('${code}')">
                             <i class="fas fa-copy"></i> Copy Code
                         </button>
-                        <button type="button" class="webmail-insert-code-btn" onclick="insertWebmailCodeAndVerify('${code}')">
-                            <i class="fas fa-arrow-right-to-bracket"></i> Insert Code & Log In
-                        </button>
                     </div>
                 </div>
             ` : ''}
@@ -3851,86 +3861,66 @@ function renderWebmailMessageDetail(msg) {
 
 function copyWebmailCode(code) {
     navigator.clipboard.writeText(code).then(() => {
-        showToast(`Verification code ${code} copied to clipboard! 📋`);
+        showToast(`Verification code ${code} copied to clipboard! 📋 Enter it in SpacePulse to unlock.`);
     }).catch(() => {
-        showToast(`Code: ${code}`);
+        showToast(`Your Code: ${code}`);
     });
 }
 
-function insertWebmailCodeAndVerify(code) {
-    const input = document.getElementById('portal-otp-input');
-    if (input) {
-        input.value = code;
-    }
-    const modalInput = document.getElementById('otp-code-input');
-    if (modalInput) {
-        modalInput.value = code;
-    }
-    closeUniversityWebmailModal();
-    showToast('Code inserted from Webmail! Verifying student identity... 🚀');
-    handlePortalVerifyOtp();
-}
-
-// Student Auth Modal (Header Modal) Handlers
-function renderStudentAuthModalBody() {
-    const body = document.getElementById('student-modal-body');
-    if (!body) return;
+// Student Auth & Front Page Handlers
+function renderFrontPageBody() {
+    const frontBody = document.getElementById('front-page-body');
+    const modalBody = document.getElementById('student-modal-body');
     const student = AppState.currentStudent;
 
-    if (student) {
-        body.innerHTML = `
-            <div class="digital-student-card">
-                <div class="student-card-top">
-                    <div>
-                        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 2px;">${student.name}</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary);">${student.email}</p>
-                    </div>
-                    <div class="student-badge-verified">
-                        <i class="fas fa-circle-check"></i> Verified UoM
-                    </div>
+    let html = '';
+    if (student && student.isVerified) {
+        html = `
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--pulse-green); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 12px auto;">
+                    <i class="fas fa-user-check"></i>
                 </div>
+                <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 4px;">Verified Student Profile</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">Connected via official University Webmail SSO</p>
+            </div>
 
-                <div class="seat-properties-grid" style="margin-bottom: 12px;">
-                    <div class="prop-card">
-                        <span class="prop-label">Student Index</span>
-                        <strong class="prop-val">${student.indexNumber}</strong>
-                    </div>
-                    <div class="prop-card">
-                        <span class="prop-label">Academic Batch</span>
-                        <strong class="prop-val">${student.batch}</strong>
-                    </div>
+            <div class="student-id-badge" style="margin-bottom: 20px;">
+                <div class="badge-row">
+                    <span class="badge-label">Student Name:</span>
+                    <span class="badge-value" style="font-weight: 700;">${student.name}</span>
                 </div>
-
-                <div class="prop-card" style="margin-bottom: 12px;">
-                    <span class="prop-label">Faculty / Department</span>
-                    <strong class="prop-val" style="font-size: 0.9rem;">${student.department}</strong>
+                <div class="badge-row">
+                    <span class="badge-label">Webmail Address:</span>
+                    <span class="badge-value" style="color: #0284c7;">${student.email}</span>
                 </div>
-
-                <div class="student-privileges-box">
-                    <h5>University Telemetry Privileges Unlocked:</h5>
-                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> 30-Minute Library Desk Holds & Reservations</div>
-                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Real-Time Threshold Push Notifications</div>
-                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Personalized Speed Mode & Arrival Projections</div>
+                <div class="badge-row">
+                    <span class="badge-label">Faculty / Dept:</span>
+                    <span class="badge-value">${student.department} (${student.batch || 'Undergraduate'})</span>
                 </div>
+            </div>
 
-                <button class="secondary-btn" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);" onclick="signOutStudent()">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out / Switch Student Account
+            <div style="display: flex; gap: 10px; margin-top: 14px;">
+                <button class="primary-btn uom-btn" style="flex: 1;" onclick="unlockAppWithVerifiedStudent(AppState.currentStudent)">
+                    <i class="fas fa-arrow-right"></i> Enter Web App
+                </button>
+                <button class="secondary-btn" style="flex: 1; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);" onclick="signOutStudent()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
                 </button>
             </div>
         `;
     } else if (!AppState.isEnteringOtp) {
-        body.innerHTML = `
-            <div style="margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Webmail</h4>
-                <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Enter your official university email (<a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700;">webmail.uom.lk</a>) to unlock 30-minute desk reservations and personalized university telemetry.
+        html = `
+            <div style="margin-bottom: 18px;">
+                <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">Connect Your UoM Student Webmail</h4>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">
+                    Enter your official university email (<a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700; text-decoration: underline;">web.mail.uom.lk</a>) to unlock 30-minute desk reservations and personalized university telemetry.
                 </p>
             </div>
 
-            <form id="student-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
+            <form id="front-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <label for="uom-email-input">Student Email Address</label>
-                    <input type="email" id="uom-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
+                    <label for="uom-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
+                    <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
                 </div>
 
                 <div class="domain-chips-grid">
@@ -3942,9 +3932,9 @@ function renderStudentAuthModalBody() {
                     <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="uom-name-input">Full Name (Optional)</label>
-                    <input type="text" id="uom-name-input" placeholder="e.g. Kavindu Dilupa">
+                <div class="form-group" style="margin-bottom: 22px;">
+                    <label for="uom-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
+                    <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Kavindu Dilupa" value="${AppState.pendingOtpCustomName || ''}">
                 </div>
 
                 <button type="submit" class="primary-btn uom-btn">
@@ -3952,55 +3942,65 @@ function renderStudentAuthModalBody() {
                 </button>
             </form>
 
-            <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; color: var(--uom-crimson); font-weight: 700; border-color: rgba(136, 19, 55, 0.3);">
-                <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (https://webmail.uom.lk/)
+            <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn">
+                <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail Inbox (https://web.mail.uom.lk/#/mailbox/INBOX)
             </a>
         `;
     } else {
-        body.innerHTML = `
+        html = `
             <div style="text-align: center; margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit Verification Code</h4>
-                <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Verification code dispatched to <strong>${AppState.pendingOtpEmail}</strong>
+                <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px;">Enter 6-Digit Verification Code</h4>
+                <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.4;">
+                    Verification code dispatched to: <br><strong style="color: var(--primary-blue); font-size: 0.95rem;">${AppState.pendingOtpEmail}</strong>
                 </p>
             </div>
 
-            <div class="webmail-helper-card" style="margin-bottom: 14px;">
-                <i class="fas fa-envelope-open-text" style="font-size: 1.5rem; color: #0284c7;"></i>
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.82rem;">Delivered to Webmail</div>
-                    <div style="font-size: 0.72rem; color: var(--text-secondary);">Your verification code is only viewable in your university webmail inbox.</div>
+            <div class="webmail-helper-card" style="margin-bottom: 16px; background: rgba(2, 132, 199, 0.08); border: 1.5px solid rgba(2, 132, 199, 0.35); border-radius: 12px; padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <i class="fas fa-envelope-open-text" style="font-size: 1.6rem; color: #0284c7;"></i>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Delivered to University Webmail Inbox</div>
+                        <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is in your webmail inbox. Check the email and manually enter your 6-digit code below:</div>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 6px; flex-shrink: 0;">
-                    <a href="https://webmail.uom.lk/" target="_blank" rel="noopener noreferrer" class="webmail-open-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-arrow-up-right-from-square"></i> webmail.uom.lk
+
+                <div style="display: flex; gap: 8px; flex-direction: column;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="primary-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; font-size: 0.84rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+                        <i class="fas fa-inbox"></i> Open University Webmail Inbox (web.mail.uom.lk/#/mailbox/INBOX) ↗
                     </a>
-                    <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
-                        <i class="fas fa-inbox"></i> Inbox
+                    <button type="button" class="secondary-btn" style="padding: 8px 12px; font-size: 0.80rem; color: #0284c7; border-color: rgba(2, 132, 199, 0.4); background: #ffffff;" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-envelope-open"></i> Open In-App Webmail Reader
                     </button>
                 </div>
             </div>
 
             <form id="student-otp-form" onsubmit="event.preventDefault(); handleVerifyOtp();">
                 <div class="otp-box-container">
-                    <input type="text" id="otp-code-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus>
+                    <input type="text" id="otp-code-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus value="">
                 </div>
 
-                <button type="submit" class="primary-btn" style="margin-bottom: 10px;">
-                    <i class="fas fa-shield-check"></i> Verify & Unlock Student Features
+                <button type="submit" class="primary-btn uom-btn" style="margin-bottom: 12px;">
+                    <i class="fas fa-shield-check"></i> Verify & Unlock SpacePulse Web App
                 </button>
 
                 <div style="display: flex; gap: 8px;">
-                    <button type="button" class="secondary-btn" style="flex: 1;" onclick="AppState.isEnteringOtp = false; renderStudentAuthModalBody();">
+                    <button type="button" class="secondary-btn" style="flex: 1;" onclick="AppState.isEnteringOtp = false; renderFrontPageBody();">
                         <i class="fas fa-arrow-left"></i> Change Email
                     </button>
                     <button type="button" class="secondary-btn" style="flex: 1; color: #0284c7; border-color: rgba(2, 132, 199, 0.3);" onclick="handleSendOtp()">
-                        <i class="fas fa-rotate"></i> Resend
+                        <i class="fas fa-rotate"></i> Resend Code
                     </button>
                 </div>
             </form>
         `;
     }
+
+    if (frontBody) frontBody.innerHTML = html;
+    if (modalBody) modalBody.innerHTML = html;
+}
+
+function renderStudentAuthModalBody() {
+    renderFrontPageBody();
 }
 
 function appendDomainToInput(domain) {
@@ -4017,8 +4017,10 @@ function appendDomainToInput(domain) {
 }
 
 async function handleSendOtp() {
-    const email = document.getElementById('uom-email-input').value.trim();
-    const customName = document.getElementById('uom-name-input').value.trim();
+    const input = document.getElementById('uom-email-input');
+    const nameInput = document.getElementById('uom-name-input');
+    const email = input ? input.value.trim() : '';
+    const customName = nameInput ? nameInput.value.trim() : '';
 
     if (!isValidUomEmail(email)) {
         showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
@@ -4041,16 +4043,15 @@ async function handleSendOtp() {
         AppState.pendingOtpCustomName = customName;
         AppState.isEnteringOtp = true;
 
-        showToast('Verification code dispatched to your University Webmail. Check your inbox at webmail.uom.lk 📩');
-        renderStudentAuthModalBody();
-        renderPortalAuthBody();
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at web.mail.uom.lk/#/mailbox/INBOX 📩');
+        renderFrontPageBody();
     } catch (err) {
         showToast(err.message || 'Failed to connect to backend auth service.', true);
     }
 }
 
 async function handleVerifyOtp() {
-    const input = document.getElementById('otp-code-input');
+    const input = document.getElementById('otp-code-input') || document.getElementById('portal-otp-input');
     const code = input ? input.value.trim() : '';
 
     if (!code || code.length !== 6) {
@@ -4075,6 +4076,7 @@ async function handleVerifyOtp() {
         }
 
         const studentProfile = data.student;
+        studentProfile.isVerified = true;
         AppState.currentStudent = studentProfile;
         localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
         if (data.token) {
@@ -4086,13 +4088,7 @@ async function handleVerifyOtp() {
         AppState.pendingOtpCustomName = null;
 
         showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
-        updateStudentHeaderElements();
-        renderStudentAuthModalBody();
-        renderPortalAuthBody();
-        const modal = document.getElementById('student-auth-modal');
-        if (modal) modal.style.display = 'none';
-        hideStudentLoginPage();
-        if (AppState.currentTab === 'home') renderHome();
+        unlockAppWithVerifiedStudent(studentProfile);
     } catch (err) {
         showToast(err.message || 'Invalid verification code. Please check your webmail.', true);
     }
@@ -4106,12 +4102,8 @@ function signOutStudent() {
     AppState.pendingOtpEmail = null;
     AppState.pendingOtpCustomName = null;
 
-    showToast('Signed out of student account. Login with University Webmail anytime.');
-    updateStudentHeaderElements();
-    renderStudentAuthModalBody();
-    renderPortalAuthBody();
-    hideStudentLoginPage();
-    if (AppState.currentTab === 'home') renderHome();
+    showToast('Signed out of student account. Verification required to view web app.');
+    lockAppToFrontPage();
 }
 
 function updateStudentHeaderElements() {
@@ -4473,44 +4465,85 @@ function updateChatbotKeyStatus() {
 }
 
 function initChatbot() {
-    if (!chatMessages || !chatbotDrawer) return;
+    const drawer = document.getElementById('chatbot-drawer');
+    const overlay = document.getElementById('chatbot-overlay');
+    const messages = document.getElementById('chat-messages');
+    const sendBtn = document.getElementById('chat-send-btn');
+    const input = document.getElementById('chat-input');
+    const chatbotFab = document.getElementById('chatbot-fab');
+    const openChatbotBtn = document.getElementById('open-chatbot-btn');
+    const closeChatbotBtn = document.getElementById('chatbot-close-btn');
 
-    if (chatMessages.children.length === 0) {
+    if (!messages || !drawer) return;
+
+    if (messages.children.length === 0) {
         addChatMessage('bot', "Hello! I am **SpacePulse AI**, your live university assistant for University of Moratuwa. I have real-time telemetry on library vacancies, canteen crowds, and ATM queues. What can I help you find right now?");
     }
 
-    const chatbotFab = document.getElementById('chatbot-fab');
-    if (chatbotFab) chatbotFab.addEventListener('click', toggleChatbot);
+    if (chatbotFab) {
+        chatbotFab.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleChatbot();
+        };
+    }
 
-    const openChatbotBtn = document.getElementById('open-chatbot-btn');
-    if (openChatbotBtn) openChatbotBtn.addEventListener('click', toggleChatbot);
+    if (openChatbotBtn) {
+        openChatbotBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openChatbot();
+        };
+    }
 
-    const closeChatbotBtn = document.getElementById('chatbot-close-btn');
-    if (closeChatbotBtn) closeChatbotBtn.addEventListener('click', toggleChatbot);
+    if (closeChatbotBtn) {
+        closeChatbotBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeChatbot();
+        };
+    }
 
-    if (chatbotOverlay) chatbotOverlay.addEventListener('click', toggleChatbot);
+    if (overlay) {
+        overlay.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeChatbot();
+        };
+    }
 
-    if (chatSendBtn) chatSendBtn.addEventListener('click', handleChatSend);
-    if (chatInput) {
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleChatSend();
-        });
+    if (sendBtn) {
+        sendBtn.onclick = (e) => {
+            e.preventDefault();
+            handleChatSend();
+        };
+    }
+
+    if (input) {
+        input.onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleChatSend();
+            }
+        };
     }
 
     document.querySelectorAll('#chat-quick-chips .chip').forEach(chip => {
-        chip.addEventListener('click', () => {
+        chip.onclick = (e) => {
+            e.preventDefault();
             const prompt = chip.getAttribute('data-prompt');
-            if (chatInput) {
-                chatInput.value = prompt;
+            if (input) {
+                input.value = prompt;
                 handleChatSend();
             }
-        });
+        };
     });
 
     const keyBtn = document.getElementById('chatbot-key-btn');
     if (keyBtn) {
-        keyBtn.addEventListener('click', () => {
-            const current = AppState.geminiApiKey || '';
+        keyBtn.onclick = (e) => {
+            e.preventDefault();
+            const current = (AppState.geminiApiKey || '').trim();
             const key = prompt(
                 'Enter your Google Gemini API Key:\n(Get a free API key at https://aistudio.google.com)\n\nLeave empty to remove stored key:',
                 current
@@ -4527,51 +4560,70 @@ function initChatbot() {
                 }
                 updateChatbotKeyStatus();
             }
-        });
+        };
     }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeChatbot();
+    });
 
     updateChatbotKeyStatus();
 }
 
-function toggleChatbot() {
-    if (!chatbotDrawer) return;
-    chatbotDrawer.classList.toggle('open');
-    if (chatbotOverlay) chatbotOverlay.classList.toggle('open');
-    if (chatbotDrawer.classList.contains('open') && chatInput) {
-        chatInput.focus();
+function openChatbot() {
+    const drawer = document.getElementById('chatbot-drawer');
+    const overlay = document.getElementById('chatbot-overlay');
+    const input = document.getElementById('chat-input');
+    if (drawer) drawer.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    if (input) {
+        setTimeout(() => input.focus(), 250);
     }
 }
 
-function openChatbot() {
-    if (!chatbotDrawer) return;
-    if (!chatbotDrawer.classList.contains('open')) {
-        toggleChatbot();
+function closeChatbot() {
+    const drawer = document.getElementById('chatbot-drawer');
+    const overlay = document.getElementById('chatbot-overlay');
+    if (drawer) drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+}
+
+function toggleChatbot() {
+    const drawer = document.getElementById('chatbot-drawer');
+    if (!drawer) return;
+    if (drawer.classList.contains('open')) {
+        closeChatbot();
+    } else {
+        openChatbot();
     }
 }
 
 function addChatMessage(role, text) {
-    if (!chatMessages) return;
+    const messages = document.getElementById('chat-messages');
+    if (!messages) return;
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${role}`;
     bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    chatMessages.appendChild(bubble);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
 }
 
 async function handleChatSend() {
-    if (!chatInput) return;
-    const text = chatInput.value.trim();
+    const input = document.getElementById('chat-input');
+    const messages = document.getElementById('chat-messages');
+    if (!input || !messages) return;
+    const text = input.value.trim();
     if (!text) return;
 
     addChatMessage('user', text);
-    chatInput.value = '';
+    input.value = '';
 
     // Add typing indicator bubble
     const typingBubble = document.createElement('div');
     typingBubble.className = 'chat-bubble bot';
     typingBubble.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Thinking...';
-    chatMessages.appendChild(typingBubble);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    messages.appendChild(typingBubble);
+    messages.scrollTop = messages.scrollHeight;
 
     try {
         const reply = await generateAiResponse(text);
@@ -4584,7 +4636,10 @@ async function handleChatSend() {
 }
 
 async function callGeminiApi(modelName, systemPrompt, query) {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(AppState.geminiApiKey)}`, {
+    const key = (AppState.geminiApiKey || '').trim();
+    if (!key) throw new Error('No Gemini API key configured.');
+
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(key)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -4603,7 +4658,7 @@ async function callGeminiApi(modelName, systemPrompt, query) {
         throw new Error(errMsg);
     }
 
-    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
         return data.candidates[0].content.parts[0].text;
     }
     throw new Error('No candidate content in Gemini response.');
@@ -4628,13 +4683,18 @@ Current Real-Time University Snapshot:
 - Bank of Ceylon & Peoples Bank ATMs: Working (Shortest line: ${stats.shortestAtmName} with ${stats.shortestAtmQueue} students)
 Answer the student's question concisely, warmly, and helpfully using markdown bolding and emojis.`;
 
-            // Try gemini-1.5-flash (primary standard model), fallback to gemini-2.0-flash
-            try {
-                return await callGeminiApi('gemini-1.5-flash', systemPrompt, query);
-            } catch (err1) {
-                console.warn('gemini-1.5-flash failed, trying gemini-2.0-flash:', err1.message);
-                return await callGeminiApi('gemini-2.0-flash', systemPrompt, query);
+            // Try fallback chain of Gemini models
+            const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+            let lastErr = null;
+            for (const model of modelsToTry) {
+                try {
+                    return await callGeminiApi(model, systemPrompt, query);
+                } catch (e1) {
+                    lastErr = e1;
+                    console.warn(`Gemini model ${model} failed:`, e1.message);
+                }
             }
+            if (lastErr) throw lastErr;
         } catch (e) {
             console.warn('Gemini API call failed, falling back to local reasoning engine:', e);
             showToast('Gemini API notice: ' + (e.message || 'Falling back to local reasoning'), true);
@@ -5402,6 +5462,14 @@ document.addEventListener('DOMContentLoaded', () => {
     navigateTo('home');
     checkInitialDeepLink();
     initBackendSync();
+
+    // Enforce Front Page Verification Gate:
+    // Only if student enters verification code will features and details be visible
+    if (AppState.currentStudent && AppState.currentStudent.isVerified) {
+        unlockAppWithVerifiedStudent(AppState.currentStudent);
+    } else {
+        lockAppToFrontPage();
+    }
 });
 
 // ==========================================================================

@@ -2208,8 +2208,8 @@ body {
     height: 100vh;
     background-color: var(--surface);
     border-left: 1px solid var(--border);
-    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.25);
-    z-index: 110;
+    box-shadow: -8px 0 35px rgba(0, 0, 0, 0.4);
+    z-index: 10000005;
     display: flex;
     flex-direction: column;
     transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2222,9 +2222,9 @@ body {
 .chatbot-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
-    z-index: 105;
+    z-index: 10000004;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -2414,47 +2414,205 @@ body {
    UoM Student Verification Modal & ID Card
    ========================================================================== */
 .uom-crimson-header {
-    background: var(--uom-gradient) !important;
+    background: linear-gradient(135deg, #700b2b 0%, #4c0519 45%, #1e1b4b 100%) !important;
     color: #ffffff;
+    padding: 22px 26px;
 }
 
-.modal-crest-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-md);
-    background: #ffffff;
-    color: var(--uom-crimson);
+.front-page-gate-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.35rem;
-    border: 2px solid var(--uom-gold);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    box-sizing: border-box;
+    background: radial-gradient(circle at 50% 25%, #2a0845 0%, #15002b 30%, #090014 70%, #030008 100%);
+    overflow-y: auto;
+    animation: fadeInGate 0.3s ease;
 }
 
-.domain-chips-grid {
+@keyframes fadeInGate {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+#student-auth-modal.modal-backdrop {
+    background: rgba(10, 15, 30, 0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 999;
+}
+
+.student-auth-box {
+    max-width: 530px;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    border: none;
+    overflow: hidden;
+}
+
+.student-auth-box .modal-header {
+    border-bottom: none;
+}
+
+.student-auth-box .modal-crest-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #881337;
     display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 8px 0 14px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.domain-chip {
+.student-auth-box .modal-title-group h3 {
+    margin: 0 0 2px 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.student-auth-box .modal-title-group p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.student-auth-box .modal-close-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    opacity: 0.85;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.student-auth-box .modal-close-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.student-auth-box .modal-body {
+    padding: 26px 28px;
+    background-color: var(--surface);
+}
+
+.student-auth-box .auth-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+    display: block;
+}
+
+.student-auth-box .auth-input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background-color: var(--bg-alt);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.student-auth-box .auth-input:focus {
+    border-color: #881337;
+    box-shadow: 0 0 0 3px rgba(136, 19, 55, 0.12);
+    outline: none;
+    background-color: var(--surface);
+}
+
+.student-auth-box .domain-chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 18px;
+}
+
+.student-auth-box .domain-chip {
     background-color: var(--bg-alt);
     border: 1px solid var(--border);
     color: var(--text-secondary);
-    padding: 5px 11px;
+    padding: 6px 14px;
     border-radius: var(--radius-full);
-    font-size: 0.74rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.15s ease;
 }
 
-.domain-chip:hover {
-    background-color: var(--uom-crimson);
+.student-auth-box .domain-chip:hover {
+    background-color: #881337;
     color: #ffffff;
-    border-color: var(--uom-crimson);
+    border-color: #881337;
+    transform: translateY(-1px);
+}
+
+.student-auth-box .primary-btn.uom-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: #881337;
+    color: #ffffff;
+    font-size: 0.98rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(136, 19, 55, 0.35);
+    transition: all 0.2s ease;
+    margin-top: 4px;
+}
+
+.student-auth-box .primary-btn.uom-btn:hover {
+    background: #6b0c2a;
+    box-shadow: 0 6px 18px rgba(136, 19, 55, 0.45);
+    transform: translateY(-1px);
+}
+
+.student-auth-box .webmail-link-btn {
+    width: 100%;
+    padding: 13px 20px;
+    border-radius: 12px;
+    background: rgba(136, 19, 55, 0.04);
+    color: #881337;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border: 1.5px solid rgba(136, 19, 55, 0.25);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.student-auth-box .webmail-link-btn:hover {
+    background: rgba(136, 19, 55, 0.08);
+    border-color: #881337;
 }
 
 .otp-box-container {
@@ -2833,7 +2991,7 @@ body {
     position: fixed;
     top: 24px;
     right: 24px;
-    z-index: 150;
+    z-index: 10000001;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -3590,7 +3748,7 @@ body {
 .webmail-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 10000;
+    z-index: 10000000;
     background: rgba(15, 23, 42, 0.75);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
