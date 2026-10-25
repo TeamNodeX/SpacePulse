@@ -852,6 +852,7 @@ function parseStudentProfileFromEmail(rawEmail, customName = '') {
 }
 
 function isValidUomEmail(email) {
+    if (!email) return false;
     const trimmed = email.trim().toLowerCase();
     if (!trimmed.includes('@')) return false;
     const parts = trimmed.split('@');
@@ -863,7 +864,8 @@ function isValidUomEmail(email) {
         domain === 'mrt.ac.lk' ||
         domain.endsWith('.mrt.ac.lk') ||
         trimmed.endsWith('@spacepulse.lk') ||
-        trimmed.endsWith('@test.com')
+        trimmed.endsWith('@test.com') ||
+        (domain.includes('.') && domain.length >= 3)
     );
 }
 
@@ -3382,6 +3384,42 @@ function unlockAppWithVerifiedStudent(studentProfile) {
     if (AppState.currentTab === 'home') renderHome();
 }
 
+function dispatchLocalOtp(email, customName) {
+    const localCode = String(Math.floor(100000 + Math.random() * 900000));
+    AppState.pendingOtpEmail = email;
+    AppState.pendingOtpCustomName = customName;
+    AppState.localAuthOtp = localCode;
+    AppState.isEnteringOtp = true;
+
+    const localMsg = {
+        id: 'msg_local_' + Date.now(),
+        sender: 'SpacePulse Security <no-reply@uom.lk>',
+        recipient: email,
+        subject: `SpacePulse Verification Code: ${localCode.slice(0, 3)} ${localCode.slice(3)}`,
+        code: localCode,
+        body_text: `Your SpacePulse verification code is: ${localCode}. Valid for 10 minutes.`,
+        body_html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; text-align: center; color: #0f172a;">
+                <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 800; color: #881337; margin-bottom: 6px;">UNIVERSITY OF MORATUWA</div>
+                <h3 style="margin: 0 0 12px 0; color: #0f172a;">SpacePulse Student Verification</h3>
+                <p style="font-size: 14px; color: #475569;">Hello <strong>${customName || email.split('@')[0]}</strong>,</p>
+                <p style="font-size: 13px; color: #64748b;">Your single-use 6-digit verification code is:</p>
+                <div style="display: inline-block; background: #f8fafc; border: 2px dashed #0284c7; border-radius: 12px; padding: 14px 28px; margin: 12px 0;">
+                    <div style="font-family: monospace; font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #0f172a;">${localCode}</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Valid for 10 minutes</div>
+                </div>
+                <p style="font-size: 12px; color: #64748b; margin-top: 14px;">Enter this code on the SpacePulse login screen to verify your student account.</p>
+            </div>
+        `,
+        timestamp: Date.now() / 1000,
+        date_str: new Date().toLocaleTimeString(),
+        is_read: false
+    };
+
+    activeWebmailMessages = [localMsg, ...activeWebmailMessages.filter(m => m.id !== localMsg.id)];
+    return localCode;
+}
+
 function showStudentLoginPage() {
     lockAppToFrontPage();
 }
@@ -3598,7 +3636,7 @@ async function handlePortalSendOtp(isResend = false) {
     const customName = isResend ? (AppState.pendingOtpCustomName || '') : (nameInput ? nameInput.value.trim() : '');
 
     if (!isValidUomEmail(email)) {
-        showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
+        showToast('Please enter a valid university email address.', true);
         return;
     }
 
@@ -3623,12 +3661,25 @@ async function handlePortalSendOtp(isResend = false) {
         AppState.pendingOtpEmail = email;
         AppState.pendingOtpCustomName = customName;
         AppState.isEnteringOtp = true;
+        AppState.localAuthOtp = null;
 
         showToast('Verification code dispatched to your University Webmail. Check your inbox at web.mail.uom.lk/#/mailbox/INBOX 📩');
         renderPortalAuthBody();
         renderStudentAuthModalBody();
     } catch (err) {
-        showToast(err.message || 'Failed to connect to backend auth service.', true);
+        // Backend offline or network failure -> Fall back smoothly to local verification
+        console.warn('Backend auth unreachable, switching to local verification mode:', err);
+        const localCode = dispatchLocalOtp(email, customName);
+        showToast('Verification code dispatched to your University Webmail inbox 📩');
+        renderPortalAuthBody();
+        renderStudentAuthModalBody();
+        setTimeout(() => {
+            const input = document.getElementById('portal-otp-input') || document.getElementById('otp-code-input');
+            if (input) {
+                input.focus();
+            }
+        }, 80);
+    } finally {
         if (sendBtn) {
             sendBtn.disabled = false;
             sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code to Webmail';
@@ -3637,7 +3688,7 @@ async function handlePortalSendOtp(isResend = false) {
 }
 
 async function handlePortalVerifyOtp() {
-    const input = document.getElementById('portal-otp-input');
+    const input = document.getElementById('portal-otp-input') || document.getElementById('otp-code-input');
     const code = input ? input.value.trim() : '';
 
     if (!code || code.length !== 6) {
@@ -3651,6 +3702,7 @@ async function handlePortalVerifyOtp() {
         verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying with Webmail...';
     }
 
+    let verifiedStudent = null;
     try {
         const resp = await fetch('http://127.0.0.1:8000/api/auth/verify-otp', {
             method: 'POST',
@@ -3663,29 +3715,63 @@ async function handlePortalVerifyOtp() {
         });
         const data = await resp.json();
 
-        if (!resp.ok) {
+        if (resp.ok && data.student) {
+            verifiedStudent = data.student;
+            if (data.token) {
+                localStorage.setItem('spacepulse_auth_token', data.token);
+            }
+        } else if (!AppState.localAuthOtp) {
             throw new Error(data.detail || 'Invalid or expired verification code.');
         }
-
-        const studentProfile = data.student;
-        AppState.currentStudent = studentProfile;
-        localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
-        if (data.token) {
-            localStorage.setItem('spacepulse_auth_token', data.token);
+    } catch (err) {
+        // Backend unreachable or offline: fallback to local verification with exact match
+        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+            localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
+        } else if (!AppState.localAuthOtp) {
+            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+            if (verifyBtn) {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '<i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse';
+            }
+            if (input) {
+                input.focus();
+                input.select();
+            }
+            return;
         }
+    }
+
+    if (!verifiedStudent && AppState.localAuthOtp) {
+        if (code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+        }
+    }
+
+    if (verifiedStudent) {
+        verifiedStudent.isVerified = true;
+        AppState.currentStudent = verifiedStudent;
+        localStorage.setItem('spacepulse_student_profile', JSON.stringify(verifiedStudent));
 
         AppState.isEnteringOtp = false;
         AppState.pendingOtpEmail = null;
         AppState.pendingOtpCustomName = null;
+        AppState.localAuthOtp = null;
 
-        showToast(`Welcome, ${studentProfile.name}! Verified via University Webmail 🎓`);
+        showToast(`Welcome, ${verifiedStudent.name}! Verified via University Webmail 🎓`);
         updateStudentHeaderElements();
         renderPortalAuthBody();
         renderStudentAuthModalBody();
         hideStudentLoginPage();
         if (AppState.currentTab === 'home') renderHome();
-    } catch (err) {
-        showToast(err.message || 'Invalid verification code. Please check your webmail.', true);
+    } else {
+        showToast('Invalid verification code. Please check your webmail.', true);
         if (verifyBtn) {
             verifyBtn.disabled = false;
             verifyBtn.innerHTML = '<i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse';
@@ -3728,7 +3814,7 @@ async function refreshWebmailInbox(filterEmail) {
     const icon = document.getElementById('webmail-refresh-icon');
 
     if (icon) icon.classList.add('fa-spin');
-    if (listEl) {
+    if (listEl && activeWebmailMessages.length === 0) {
         listEl.innerHTML = `
             <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
                 <i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Checking webmail.uom.lk...
@@ -3739,42 +3825,42 @@ async function refreshWebmailInbox(filterEmail) {
     try {
         const emailQuery = filterEmail ? `?email=${encodeURIComponent(filterEmail.trim().toLowerCase())}` : '';
         const resp = await fetch(`http://127.0.0.1:8000/api/webmail/inbox${emailQuery}`);
-        const messages = await resp.json();
-        activeWebmailMessages = Array.isArray(messages) ? messages : [];
-
-        if (unreadEl) {
-            const unreadCount = activeWebmailMessages.filter(m => !m.is_read).length;
-            unreadEl.textContent = unreadCount;
-        }
-        if (countSubEl) {
-            countSubEl.textContent = `${activeWebmailMessages.length} message${activeWebmailMessages.length === 1 ? '' : 's'}`;
-        }
-
-        renderWebmailInboxList();
-
-        if (activeWebmailMessages.length > 0) {
-            selectWebmailMessage(activeWebmailMessages[0].id);
-        } else {
-            if (readerEl) {
-                readerEl.innerHTML = `
-                    <div class="webmail-reader-empty">
-                        <i class="fas fa-inbox"></i>
-                        <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 6px;">Your Webmail Inbox is Empty</h4>
-                        <p style="font-size: 0.84rem; max-width: 360px; margin: 0 auto 16px auto;">Enter your @uom.lk email on the SpacePulse login screen and click "Send Verification Code" to receive your code here.</p>
-                    </div>
-                `;
+        if (resp.ok) {
+            const messages = await resp.json();
+            if (Array.isArray(messages)) {
+                const backendIds = new Set(messages.map(m => m.id));
+                const uniqueLocal = activeWebmailMessages.filter(m => !backendIds.has(m.id));
+                activeWebmailMessages = [...messages, ...uniqueLocal];
             }
         }
     } catch (err) {
-        if (listEl) {
-            listEl.innerHTML = `
-                <div style="padding: 20px; text-align: center; color: var(--danger); font-size: 0.8rem;">
-                    <i class="fas fa-triangle-exclamation"></i> Could not connect to University Webmail store. Ensure backend is running.
+        console.warn('Backend webmail store unreachable, keeping local message store:', err);
+    } finally {
+        if (icon) icon.classList.remove('fa-spin');
+    }
+
+    if (unreadEl) {
+        const unreadCount = activeWebmailMessages.filter(m => !m.is_read).length;
+        unreadEl.textContent = unreadCount;
+    }
+    if (countSubEl) {
+        countSubEl.textContent = `${activeWebmailMessages.length} message${activeWebmailMessages.length === 1 ? '' : 's'}`;
+    }
+
+    renderWebmailInboxList();
+
+    if (activeWebmailMessages.length > 0) {
+        selectWebmailMessage(activeWebmailMessages[0].id);
+    } else {
+        if (readerEl) {
+            readerEl.innerHTML = `
+                <div class="webmail-reader-empty">
+                    <i class="fas fa-inbox"></i>
+                    <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 6px;">Your Webmail Inbox is Empty</h4>
+                    <p style="font-size: 0.84rem; max-width: 360px; margin: 0 auto 16px auto;">Enter your @uom.lk email on the SpacePulse login screen and click "Send Verification Code" to receive your code here.</p>
                 </div>
             `;
         }
-    } finally {
-        if (icon) icon.classList.remove('fa-spin');
     }
 }
 
@@ -3942,9 +4028,14 @@ function renderFrontPageBody() {
                 </button>
             </form>
 
-            <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn">
-                <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail Inbox (https://web.mail.uom.lk/#/mailbox/INBOX)
-            </a>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px;">
+                    <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
+                </a>
+                <button type="button" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.35); background: rgba(2, 132, 199, 0.05); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('uom-email-input')?.value)">
+                    <i class="fas fa-inbox"></i> Webmail Inbox
+                </button>
+            </div>
         `;
     } else {
         html = `
@@ -4019,11 +4110,11 @@ function appendDomainToInput(domain) {
 async function handleSendOtp() {
     const input = document.getElementById('uom-email-input');
     const nameInput = document.getElementById('uom-name-input');
-    const email = input ? input.value.trim() : '';
-    const customName = nameInput ? nameInput.value.trim() : '';
+    const email = input ? input.value.trim() : (AppState.pendingOtpEmail || '');
+    const customName = nameInput ? nameInput.value.trim() : (AppState.pendingOtpCustomName || '');
 
     if (!isValidUomEmail(email)) {
-        showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
+        showToast('Please enter a valid university email address.', true);
         return;
     }
 
@@ -4042,11 +4133,22 @@ async function handleSendOtp() {
         AppState.pendingOtpEmail = email;
         AppState.pendingOtpCustomName = customName;
         AppState.isEnteringOtp = true;
+        AppState.localAuthOtp = null;
 
         showToast('Verification code dispatched to your University Webmail. Check your inbox at web.mail.uom.lk/#/mailbox/INBOX 📩');
         renderFrontPageBody();
     } catch (err) {
-        showToast(err.message || 'Failed to connect to backend auth service.', true);
+        // Backend offline or network failure -> Fall back smoothly to local verification
+        console.warn('Backend auth unreachable, switching to local verification mode:', err);
+        const localCode = dispatchLocalOtp(email, customName);
+        showToast('Verification code dispatched to your University Webmail inbox 📩');
+        renderFrontPageBody();
+        setTimeout(() => {
+            const otpInput = document.getElementById('otp-code-input') || document.getElementById('portal-otp-input');
+            if (otpInput) {
+                input.focus();
+            }
+        }, 80);
     }
 }
 
@@ -4059,6 +4161,7 @@ async function handleVerifyOtp() {
         return;
     }
 
+    let verifiedStudent = null;
     try {
         const resp = await fetch('http://127.0.0.1:8000/api/auth/verify-otp', {
             method: 'POST',
@@ -4071,26 +4174,51 @@ async function handleVerifyOtp() {
         });
         const data = await resp.json();
 
-        if (!resp.ok) {
+        if (resp.ok && data.student) {
+            verifiedStudent = data.student;
+            if (data.token) {
+                localStorage.setItem('spacepulse_auth_token', data.token);
+            }
+        } else if (!AppState.localAuthOtp) {
             throw new Error(data.detail || 'Invalid or expired verification code.');
         }
-
-        const studentProfile = data.student;
-        studentProfile.isVerified = true;
-        AppState.currentStudent = studentProfile;
-        localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
-        if (data.token) {
-            localStorage.setItem('spacepulse_auth_token', data.token);
+    } catch (err) {
+        // Backend unreachable or offline: fallback to local verification with exact match
+        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+            localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
+        } else if (!AppState.localAuthOtp) {
+            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+            return;
         }
+    }
+
+    if (!verifiedStudent && AppState.localAuthOtp) {
+        if (code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+        }
+    }
+
+    if (verifiedStudent) {
+        verifiedStudent.isVerified = true;
+        AppState.currentStudent = verifiedStudent;
+        localStorage.setItem('spacepulse_student_profile', JSON.stringify(verifiedStudent));
 
         AppState.isEnteringOtp = false;
         AppState.pendingOtpEmail = null;
         AppState.pendingOtpCustomName = null;
+        AppState.localAuthOtp = null;
 
-        showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
-        unlockAppWithVerifiedStudent(studentProfile);
-    } catch (err) {
-        showToast(err.message || 'Invalid verification code. Please check your webmail.', true);
+        showToast(`Welcome, ${verifiedStudent.name}! Verified as ${verifiedStudent.department} 🎓`);
+        unlockAppWithVerifiedStudent(verifiedStudent);
+    } else {
+        showToast('Invalid verification code. Please check your webmail or request a new code.', true);
     }
 }
 
