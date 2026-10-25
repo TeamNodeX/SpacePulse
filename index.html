@@ -279,7 +279,7 @@
                     </button>
 
                     <!-- Ask SpacePulse AI Button -->
-                    <button class="ask-ai-topbar-btn" id="open-chatbot-btn">
+                    <button class="ask-ai-topbar-btn" id="open-chatbot-btn" onclick="openChatbot()">
                         <i class="fas fa-robot"></i>
                         <span>Ask AI Assistant</span>
                     </button>
@@ -308,7 +308,13 @@
         </div>
     </div>
 
-    <!-- Floating Live Telemetry / Kiosk Showcase Action Button (Matching bottom right button in PDF) -->
+    <!-- Floating AI Chatbot Action Button -->
+    <button class="chatbot-fab" id="chatbot-fab" onclick="openChatbot()" title="Chat with SpacePulse AI Assistant">
+        <i class="fas fa-robot"></i>
+        <span class="fab-pulse-ping"></span>
+    </button>
+
+    <!-- Floating Live Telemetry / Kiosk Showcase Action Button -->
     <button class="kiosk-fab-btn" id="kiosk-fab-btn" onclick="toggleKioskMode()" title="Toggle SpacePulse Live Telemetry & Kiosk Showcase">
         <i class="fas fa-desktop"></i>
     </button>
@@ -320,12 +326,12 @@
                 <div class="ai-avatar"><i class="fas fa-robot"></i></div>
                 <div>
                     <h3>SpacePulse AI</h3>
-                    <p><span class="online-dot"></span> Live University Knowledge Agent</p>
+                    <p><span class="online-dot"></span> Live University Knowledge Agent <span id="gemini-active-pill" style="font-size: 10px; background: rgba(16, 185, 129, 0.25); color: #34d399; padding: 2px 7px; border-radius: 4px; margin-left: 6px; font-weight: 700; border: 1px solid rgba(52, 211, 153, 0.4); display: none;"><i class="fas fa-bolt"></i> GEMINI AI</span></p>
                 </div>
             </div>
             <div class="ai-header-actions">
                 <button id="chatbot-key-btn" class="chat-tool-btn" title="Configure Google Gemini API Key"><i class="fas fa-key"></i></button>
-                <button id="chatbot-close-btn" class="chat-tool-btn" title="Close Assistant"><i class="fas fa-times"></i></button>
+                <button id="chatbot-close-btn" class="chat-tool-btn" onclick="toggleChatbot()" title="Close Assistant"><i class="fas fa-times"></i></button>
             </div>
         </div>
 

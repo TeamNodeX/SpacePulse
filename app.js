@@ -4452,48 +4452,105 @@ const chatMessages = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input');
 const chatSendBtn = document.getElementById('chat-send-btn');
 
+function updateChatbotKeyStatus() {
+    const keyBtn = document.getElementById('chatbot-key-btn');
+    const pill = document.getElementById('gemini-active-pill');
+    const hasKey = Boolean(AppState.geminiApiKey && AppState.geminiApiKey.trim().length > 0);
+
+    if (keyBtn) {
+        if (hasKey) {
+            keyBtn.classList.add('has-key');
+            keyBtn.title = 'Gemini API Key Active • Click to change or remove';
+        } else {
+            keyBtn.classList.remove('has-key');
+            keyBtn.title = 'Configure Google Gemini API Key (aistudio.google.com)';
+        }
+    }
+
+    if (pill) {
+        pill.style.display = hasKey ? 'inline-flex' : 'none';
+    }
+}
+
 function initChatbot() {
+    if (!chatMessages || !chatbotDrawer) return;
+
     if (chatMessages.children.length === 0) {
         addChatMessage('bot', "Hello! I am **SpacePulse AI**, your live university assistant for University of Moratuwa. I have real-time telemetry on library vacancies, canteen crowds, and ATM queues. What can I help you find right now?");
     }
 
-    document.getElementById('chatbot-fab').addEventListener('click', toggleChatbot);
-    document.getElementById('open-chatbot-btn').addEventListener('click', toggleChatbot);
-    document.getElementById('chatbot-close-btn').addEventListener('click', toggleChatbot);
-    chatbotOverlay.addEventListener('click', toggleChatbot);
+    const chatbotFab = document.getElementById('chatbot-fab');
+    if (chatbotFab) chatbotFab.addEventListener('click', toggleChatbot);
 
-    chatSendBtn.addEventListener('click', handleChatSend);
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleChatSend();
-    });
+    const openChatbotBtn = document.getElementById('open-chatbot-btn');
+    if (openChatbotBtn) openChatbotBtn.addEventListener('click', toggleChatbot);
+
+    const closeChatbotBtn = document.getElementById('chatbot-close-btn');
+    if (closeChatbotBtn) closeChatbotBtn.addEventListener('click', toggleChatbot);
+
+    if (chatbotOverlay) chatbotOverlay.addEventListener('click', toggleChatbot);
+
+    if (chatSendBtn) chatSendBtn.addEventListener('click', handleChatSend);
+    if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleChatSend();
+        });
+    }
 
     document.querySelectorAll('#chat-quick-chips .chip').forEach(chip => {
         chip.addEventListener('click', () => {
             const prompt = chip.getAttribute('data-prompt');
-            chatInput.value = prompt;
-            handleChatSend();
+            if (chatInput) {
+                chatInput.value = prompt;
+                handleChatSend();
+            }
         });
     });
 
-    document.getElementById('chatbot-key-btn').addEventListener('click', () => {
-        const key = prompt('Enter your Google Gemini API Key (Optional for AI reasoning):', AppState.geminiApiKey);
-        if (key !== null) {
-            AppState.geminiApiKey = key.trim();
-            localStorage.setItem('spacepulse_gemini_key', AppState.geminiApiKey);
-            showToast('Gemini API key saved! 🔑');
-        }
-    });
+    const keyBtn = document.getElementById('chatbot-key-btn');
+    if (keyBtn) {
+        keyBtn.addEventListener('click', () => {
+            const current = AppState.geminiApiKey || '';
+            const key = prompt(
+                'Enter your Google Gemini API Key:\n(Get a free API key at https://aistudio.google.com)\n\nLeave empty to remove stored key:',
+                current
+            );
+            if (key !== null) {
+                const trimmed = key.trim();
+                AppState.geminiApiKey = trimmed;
+                if (trimmed) {
+                    localStorage.setItem('spacepulse_gemini_key', trimmed);
+                    showToast('Google Gemini API key saved! 🔑 AI Reasoning Active.');
+                } else {
+                    localStorage.removeItem('spacepulse_gemini_key');
+                    showToast('Gemini API key removed. Using local reasoning engine.');
+                }
+                updateChatbotKeyStatus();
+            }
+        });
+    }
+
+    updateChatbotKeyStatus();
 }
 
 function toggleChatbot() {
+    if (!chatbotDrawer) return;
     chatbotDrawer.classList.toggle('open');
-    chatbotOverlay.classList.toggle('open');
-    if (chatbotDrawer.classList.contains('open')) {
+    if (chatbotOverlay) chatbotOverlay.classList.toggle('open');
+    if (chatbotDrawer.classList.contains('open') && chatInput) {
         chatInput.focus();
     }
 }
 
+function openChatbot() {
+    if (!chatbotDrawer) return;
+    if (!chatbotDrawer.classList.contains('open')) {
+        toggleChatbot();
+    }
+}
+
 function addChatMessage(role, text) {
+    if (!chatMessages) return;
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${role}`;
     bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -4502,38 +4559,85 @@ function addChatMessage(role, text) {
 }
 
 async function handleChatSend() {
+    if (!chatInput) return;
     const text = chatInput.value.trim();
     if (!text) return;
 
     addChatMessage('user', text);
     chatInput.value = '';
 
-    const reply = await generateAiResponse(text);
-    addChatMessage('bot', reply);
+    // Add typing indicator bubble
+    const typingBubble = document.createElement('div');
+    typingBubble.className = 'chat-bubble bot';
+    typingBubble.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Thinking...';
+    chatMessages.appendChild(typingBubble);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        const reply = await generateAiResponse(text);
+        typingBubble.remove();
+        addChatMessage('bot', reply);
+    } catch (err) {
+        typingBubble.remove();
+        addChatMessage('bot', "I encountered an issue processing that query. Please ask again.");
+    }
+}
+
+async function callGeminiApi(modelName, systemPrompt, query) {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(AppState.geminiApiKey)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: [
+                {
+                    role: 'user',
+                    parts: [{ text: `${systemPrompt}\n\nStudent Inquiry: "${query}"` }]
+                }
+            ]
+        })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+        const errMsg = (data.error && data.error.message) ? data.error.message : `HTTP ${res.status}`;
+        throw new Error(errMsg);
+    }
+
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+        return data.candidates[0].content.parts[0].text;
+    }
+    throw new Error('No candidate content in Gemini response.');
 }
 
 async function generateAiResponse(query) {
     const q = query.toLowerCase();
     const stats = getStats();
 
-    if (AppState.geminiApiKey) {
+    // 1. If Gemini API key is configured, query Gemini with full campus live telemetry snapshot
+    if (AppState.geminiApiKey && AppState.geminiApiKey.trim()) {
         try {
-            const systemPrompt = `You are SpacePulse AI for University of Moratuwa. Current snapshot: Total Free Seats: ${stats.availableLibrarySeats}, Best Floor: ${stats.bestFloor.floor} (${stats.bestFloor.availableSeats} free), Best Food: ${stats.bestCanteen ? stats.bestCanteen.name : 'None'}, Shortest ATM: ${stats.shortestAtmName} (${stats.shortestAtmQueue} in line). Answer concisely in friendly tone.`;
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${AppState.geminiApiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [
-                        { role: 'user', parts: [{ text: systemPrompt + '\nStudent asks: ' + query }] }
-                    ]
-                })
-            });
-            const data = await res.json();
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
-                return data.candidates[0].content.parts[0].text;
+            const bestFloorName = stats.bestFloor ? stats.bestFloor.floor : 'Second Floor';
+            const bestFloorSeats = stats.bestFloor ? stats.bestFloor.availableSeats : 50;
+            const bestCanteenName = stats.bestCanteen ? stats.bestCanteen.name : 'Wala Canteen';
+
+            const systemPrompt = `You are SpacePulse AI, the official live intelligent assistant for the University of Moratuwa.
+Current Real-Time University Snapshot:
+- Library Total Desks Free: ${stats.availableLibrarySeats}
+- Best Study Spot Floor: ${bestFloorName} (${bestFloorSeats} desks free)
+- Dining / Canteens: ${stats.openCanteensCount} open (Least crowded: ${bestCanteenName})
+- Bank of Ceylon & Peoples Bank ATMs: Working (Shortest line: ${stats.shortestAtmName} with ${stats.shortestAtmQueue} students)
+Answer the student's question concisely, warmly, and helpfully using markdown bolding and emojis.`;
+
+            // Try gemini-1.5-flash (primary standard model), fallback to gemini-2.0-flash
+            try {
+                return await callGeminiApi('gemini-1.5-flash', systemPrompt, query);
+            } catch (err1) {
+                console.warn('gemini-1.5-flash failed, trying gemini-2.0-flash:', err1.message);
+                return await callGeminiApi('gemini-2.0-flash', systemPrompt, query);
             }
         } catch (e) {
-            console.warn('Gemini API fallback to local reasoning engine:', e);
+            console.warn('Gemini API call failed, falling back to local reasoning engine:', e);
+            showToast('Gemini API notice: ' + (e.message || 'Falling back to local reasoning'), true);
         }
     }
 

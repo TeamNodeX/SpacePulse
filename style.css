@@ -2159,27 +2159,34 @@ body {
    ========================================================================== */
 .chatbot-fab {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
-    width: 58px;
-    height: 58px;
-    border-radius: 18px;
+    bottom: 84px;
+    right: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     background: var(--pulse-gradient);
     color: #ffffff;
     border: none;
-    font-size: 1.45rem;
+    font-size: 20px;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
-    z-index: 100;
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+    z-index: 990;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .chatbot-fab:hover {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 12px 28px rgba(16, 185, 129, 0.6);
+    transform: scale(1.08);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.65);
+}
+
+.chat-tool-btn.has-key {
+    background: rgba(16, 185, 129, 0.3);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.5);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
 }
 
 .fab-pulse-ping {
