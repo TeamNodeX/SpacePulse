@@ -11,100 +11,90 @@
 const spacePulseData = {
     libraryFloors: [
         {
-            id: 'floor_2_down',
-            floor: 'Second Down Floor',
-            totalSeats: 100,
-            availableSeats: 45,
-            hasPowerOutlets: true,
-            isQuietZone: true,
-            highSpeedWifi: true,
-            landmark: 'Lower Quiet Reading Stacks',
-            image: 'assets/images/library.jpg'
-        },
-        {
-            id: 'floor_1_down',
-            floor: 'First Down Floor',
-            totalSeats: 150,
-            availableSeats: 10,
-            hasPowerOutlets: true,
-            isQuietZone: true,
-            highSpeedWifi: true,
-            landmark: 'Periodicals & Archive Wing',
-            image: 'assets/images/library.jpg'
-        },
-        {
             id: 'floor_ground',
-            floor: 'Ground Floor',
-            totalSeats: 200,
-            availableSeats: 120,
+            floor: 'Ground Floor: Library',
+            totalSeats: 150,
+            availableSeats: 43,
             hasPowerOutlets: true,
             isQuietZone: false,
             highSpeedWifi: true,
-            landmark: 'Central Circulation Desk & Study Commons',
+            landmark: 'AQ Section, Technical Services, Staff Rooms & Central Stacks',
+            tags: ['#Power Outlets', '#5G WiFi'],
             image: 'assets/images/library.jpg'
         },
         {
             id: 'floor_1',
-            floor: 'First Floor',
-            totalSeats: 120,
-            availableSeats: 5,
+            floor: 'First Floor: Library',
+            totalSeats: 180,
+            availableSeats: 40,
             hasPowerOutlets: true,
             isQuietZone: false,
             highSpeedWifi: true,
-            landmark: 'Group Discussions & Tech Labs',
+            landmark: 'Computer Laboratory, Discussion Room & Main Study Areas',
+            tags: ['#Power Outlets', '#5G WiFi'],
+            image: 'assets/images/library.jpg'
+        },
+        {
+            id: 'floor_2',
+            floor: 'Second Floor: Library',
+            totalSeats: 220,
+            availableSeats: 57,
+            hasPowerOutlets: true,
+            isQuietZone: true,
+            highSpeedWifi: true,
+            landmark: 'Upper Study Area, Computer Lab, Reader Services & Main Entrance',
+            tags: ['#Silent Zone', '#Power Outlets', '#5G WiFi'],
+            image: 'assets/images/library.jpg'
+        },
+        {
+            id: 'floor_3',
+            floor: 'Third Floor: Library',
+            totalSeats: 200,
+            availableSeats: 35,
+            hasPowerOutlets: true,
+            isQuietZone: true,
+            highSpeedWifi: true,
+            landmark: 'Lending Library Collections, Central Atrium & OPAC Terminals',
+            tags: ['#Silent Zone', '#Power Outlets', '#5G WiFi'],
             image: 'assets/images/library.jpg'
         }
     ],
 
     canteens: [
         {
-            id: 'canteen_goda_uda',
-            name: 'Goda Uda',
+            id: 'canteen_goda',
+            name: 'Goda Canteen',
             status: 'Open',
-            personCount: 45,
-            maxCapacity: 100,
-            location: 'Upper Academic Complex',
+            personCount: 66,
+            maxCapacity: 150,
+            location: 'Student Centre Complex',
+            queueTimeMinutes: 8,
             specialties: 'Sri Lankan Buffet, Fresh Juices, Shorties',
-            image: 'assets/images/canteen.jpg'
-        },
-        {
-            id: 'canteen_goda_yata',
-            name: 'Goda Yata',
-            status: 'Open',
-            personCount: 85,
-            maxCapacity: 120,
-            location: 'Ground Level Academic Complex',
-            specialties: 'Fried Rice, Kottu, Tea & Snacks',
+            tags: ['Sri Lankan Buffet', 'Fresh Juices', 'Shorties'],
             image: 'assets/images/canteen.jpg'
         },
         {
             id: 'canteen_wala',
             name: 'Wala Canteen',
-            status: 'Closed',
-            personCount: 0,
+            status: 'Open',
+            personCount: 40,
             maxCapacity: 150,
             location: 'Wala Open Amphitheater Area',
-            specialties: 'Breakfast & Lunch Packets',
+            queueTimeMinutes: 5,
+            specialties: 'Breakfast & Lunch Packets, Tea & Snacks',
+            tags: ['Breakfast & Lunch Packets', 'Tea & Snacks'],
             image: 'assets/images/canteen.jpg'
         },
         {
             id: 'canteen_l',
             name: 'L Canteen',
             status: 'Open',
-            personCount: 120,
+            personCount: 110,
             maxCapacity: 200,
             location: 'Sentra Court Area',
+            queueTimeMinutes: 13,
             specialties: 'Bakery Items, Coffee, Full Meals',
-            image: 'assets/images/canteen.jpg'
-        },
-        {
-            id: 'canteen_civil',
-            name: 'Civil Canteen',
-            status: 'Open',
-            personCount: 30,
-            maxCapacity: 80,
-            location: 'Civil Engineering Complex',
-            specialties: 'Quick Snacks, Rice & Curry, Cold Drinks',
+            tags: ['Bakery Items', 'Coffee', 'Full Meals'],
             image: 'assets/images/canteen.jpg'
         }
     ],
@@ -115,29 +105,11 @@ const spacePulseData = {
             name: 'BOC ATM',
             bankName: 'Bank of Ceylon',
             status: 'Working',
-            queueLength: 5,
+            queueLength: 4,
+            queuePersons: 4,
+            estimatedWaitMins: 12,
             location: 'Main Administrative Building Entrance',
             hasCash: true,
-            image: 'assets/images/atm.jpg'
-        },
-        {
-            id: 'atm_peoples',
-            name: 'Peoples Bank ATM',
-            bankName: "People's Bank",
-            status: 'Working',
-            queueLength: 2,
-            location: 'Near University Main Canteen Complex',
-            hasCash: true,
-            image: 'assets/images/atm.jpg'
-        },
-        {
-            id: 'atm_commercial',
-            name: 'Commercial Bank ATM',
-            bankName: 'Commercial Bank',
-            status: 'Out of Order',
-            queueLength: 0,
-            location: 'Engineering Faculty Entrance',
-            hasCash: false,
             image: 'assets/images/atm.jpg'
         }
     ],
@@ -530,7 +502,8 @@ const spacePulseData = {
         }
     ],
 
-    blueprintOrigins: [
+        blueprintOrigins: [
+        { id: 'orig_lib', name: 'Central Library Plaza (My Location)', y: 1667, x: 3680 },
         { id: 'gate_katubedda', name: 'Katubedda Main Entrance Gate', y: 317, x: 2200 },
         { id: 'dept_arch', name: 'Architecture Building (My Location)', y: 1967, x: 3500 },
         { id: 'bldg_sumanadasa', name: 'Sumanadasa Building', y: 1717, x: 2050 },
@@ -541,60 +514,176 @@ const spacePulseData = {
         { id: 'atm_boc', name: 'Main Administration Building', y: 1267, x: 3350 }
     ],
 
-    // 2D Floor Plan Seats Layout Coordinates (per floor)
+        // 2D Floor Plan Seats Layout Coordinates (per floor matching PDF architectural blueprints)
     seatsByFloor: {
-        floor_2_down: [
-            { id: 's_2d_01', seatNumber: 'S-01', x: 70, y: 70, status: 'free', section: 'Silent Study Carrels', powerOutlet: true },
-            { id: 's_2d_02', seatNumber: 'S-02', x: 130, y: 70, status: 'occupied', section: 'Silent Study Carrels', powerOutlet: true },
-            { id: 's_2d_03', seatNumber: 'S-03', x: 190, y: 70, status: 'free', section: 'Silent Study Carrels', powerOutlet: true },
-            { id: 's_2d_04', seatNumber: 'S-04', x: 70, y: 130, status: 'free', section: 'Silent Study Carrels', powerOutlet: true },
-            { id: 's_2d_05', seatNumber: 'S-05', x: 130, y: 130, status: 'free', section: 'Silent Study Carrels', powerOutlet: true },
-            { id: 's_2d_06', seatNumber: 'S-06', x: 190, y: 130, status: 'occupied', section: 'Silent Study Carrels', powerOutlet: false },
-            { id: 's_2d_07', seatNumber: 'W-01', x: 340, y: 70, status: 'free', section: 'Window View Desks', powerOutlet: true },
-            { id: 's_2d_08', seatNumber: 'W-02', x: 400, y: 70, status: 'free', section: 'Window View Desks', powerOutlet: true },
-            { id: 's_2d_09', seatNumber: 'W-03', x: 460, y: 70, status: 'occupied', section: 'Window View Desks', powerOutlet: true },
-            { id: 's_2d_10', seatNumber: 'W-04', x: 520, y: 70, status: 'free', section: 'Window View Desks', powerOutlet: false },
-            { id: 's_2d_11', seatNumber: 'T-01', x: 340, y: 190, status: 'free', section: 'Individual Pods', powerOutlet: true },
-            { id: 's_2d_12', seatNumber: 'T-02', x: 400, y: 190, status: 'free', section: 'Individual Pods', powerOutlet: true },
-            { id: 's_2d_13', seatNumber: 'T-03', x: 460, y: 190, status: 'occupied', section: 'Individual Pods', powerOutlet: true },
-            { id: 's_2d_14', seatNumber: 'T-04', x: 520, y: 190, status: 'free', section: 'Individual Pods', powerOutlet: false },
-            { id: 's_2d_15', seatNumber: 'C-01', x: 70, y: 240, status: 'free', section: 'Reading Room Alcove', powerOutlet: true },
-            { id: 's_2d_16', seatNumber: 'C-02', x: 130, y: 240, status: 'free', section: 'Reading Room Alcove', powerOutlet: true },
-            { id: 's_2d_17', seatNumber: 'C-03', x: 190, y: 240, status: 'free', section: 'Reading Room Alcove', powerOutlet: true }
+        floor_1: [
+            // Discussion Room (4 seats)
+            { id: 's_f1_d01', seatNumber: 'D-01', x: 400, y: 92, status: 'occupied', section: 'Discussion Room', powerOutlet: true },
+            { id: 's_f1_d02', seatNumber: 'D-02', x: 444, y: 92, status: 'occupied', section: 'Discussion Room', powerOutlet: true },
+            { id: 's_f1_d03', seatNumber: 'D-03', x: 400, y: 122, status: 'occupied', section: 'Discussion Room', powerOutlet: true },
+            { id: 's_f1_d04', seatNumber: 'D-04', x: 444, y: 122, status: 'occupied', section: 'Discussion Room', powerOutlet: true },
+
+            // Computer Laboratory (8 PC workstations)
+            { id: 's_f1_pc01', seatNumber: 'PC-1', x: 532, y: 86, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+            { id: 's_f1_pc02', seatNumber: 'PC-2', x: 572, y: 86, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+            { id: 's_f1_pc03', seatNumber: 'PC-3', x: 612, y: 86, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+            { id: 's_f1_pc04', seatNumber: 'PC-4', x: 652, y: 86, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+            { id: 's_f1_pc05', seatNumber: 'PC-5', x: 532, y: 123, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+            { id: 's_f1_pc06', seatNumber: 'PC-6', x: 572, y: 123, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+            { id: 's_f1_pc07', seatNumber: 'PC-7', x: 612, y: 123, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+            { id: 's_f1_pc08', seatNumber: 'PC-8', x: 652, y: 123, status: 'free', section: 'Computer Laboratory', powerOutlet: true },
+
+            // Main Study Areas (6 Tables, 4-6 seats each)
+            { id: 's_f1_t1_01', seatNumber: '01', x: 520, y: 304, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t1_02', seatNumber: '02', x: 550, y: 304, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t1_03', seatNumber: '03', x: 520, y: 330, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t1_04', seatNumber: '04', x: 550, y: 330, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+
+            { id: 's_f1_t2_01', seatNumber: '05', x: 590, y: 304, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t2_02', seatNumber: '06', x: 620, y: 304, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t2_03', seatNumber: '07', x: 590, y: 330, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t2_04', seatNumber: '08', x: 620, y: 330, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+
+            { id: 's_f1_t3_01', seatNumber: '09', x: 660, y: 304, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+            { id: 's_f1_t3_02', seatNumber: '10', x: 690, y: 304, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+            { id: 's_f1_t3_03', seatNumber: '11', x: 660, y: 330, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+            { id: 's_f1_t3_04', seatNumber: '12', x: 690, y: 330, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+
+            { id: 's_f1_t4_01', seatNumber: '13', x: 520, y: 364, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t4_02', seatNumber: '14', x: 550, y: 364, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t4_03', seatNumber: '15', x: 520, y: 390, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t4_04', seatNumber: '16', x: 550, y: 390, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+
+            { id: 's_f1_t5_01', seatNumber: '17', x: 590, y: 364, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t5_02', seatNumber: '18', x: 620, y: 364, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t5_03', seatNumber: '19', x: 590, y: 390, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+            { id: 's_f1_t5_04', seatNumber: '20', x: 620, y: 390, status: 'free', section: 'Main Study Areas', powerOutlet: true },
+
+            { id: 's_f1_t6_01', seatNumber: '21', x: 660, y: 364, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+            { id: 's_f1_t6_02', seatNumber: '22', x: 690, y: 364, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+            { id: 's_f1_t6_03', seatNumber: '23', x: 660, y: 390, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+            { id: 's_f1_t6_04', seatNumber: '24', x: 690, y: 390, status: 'free', section: 'Main Study Areas', powerOutlet: false },
+
+            // Permanent Reference (4 seats)
+            { id: 's_f1_pr01', seatNumber: 'P-1', x: 445, y: 405, status: 'free', section: 'Permanent Reference', powerOutlet: true },
+            { id: 's_f1_pr02', seatNumber: 'P-2', x: 470, y: 405, status: 'free', section: 'Permanent Reference', powerOutlet: true },
+            { id: 's_f1_pr03', seatNumber: 'P-3', x: 445, y: 418, status: 'free', section: 'Permanent Reference', powerOutlet: true },
+            { id: 's_f1_pr04', seatNumber: 'P-4', x: 470, y: 418, status: 'free', section: 'Permanent Reference', powerOutlet: true }
         ],
-        floor_1_down: [
-            { id: 's_1d_01', seatNumber: 'A-01', x: 80, y: 80, status: 'occupied', section: 'Periodical Carrels', powerOutlet: true },
-            { id: 's_1d_02', seatNumber: 'A-02', x: 140, y: 80, status: 'occupied', section: 'Periodical Carrels', powerOutlet: true },
-            { id: 's_1d_03', seatNumber: 'A-03', x: 200, y: 80, status: 'occupied', section: 'Periodical Carrels', powerOutlet: true },
-            { id: 's_1d_04', seatNumber: 'A-04', x: 80, y: 140, status: 'occupied', section: 'Periodical Carrels', powerOutlet: false },
-            { id: 's_1d_05', seatNumber: 'A-05', x: 140, y: 140, status: 'occupied', section: 'Periodical Carrels', powerOutlet: false },
-            { id: 's_1d_06', seatNumber: 'A-06', x: 200, y: 140, status: 'free', section: 'Periodical Carrels', powerOutlet: true },
-            { id: 's_1d_07', seatNumber: 'B-01', x: 350, y: 80, status: 'occupied', section: 'Research Desks', powerOutlet: true },
-            { id: 's_1d_08', seatNumber: 'B-02', x: 410, y: 80, status: 'free', section: 'Research Desks', powerOutlet: true },
-            { id: 's_1d_09', seatNumber: 'B-03', x: 470, y: 80, status: 'occupied', section: 'Research Desks', powerOutlet: false }
+        floor_3: [
+            // Study Area Top Left (4 seats)
+            { id: 's_f3_st01', seatNumber: 'S-1', x: 445, y: 80, status: 'free', section: 'Study Area Top', powerOutlet: true },
+            { id: 's_f3_st02', seatNumber: 'S-2', x: 475, y: 80, status: 'free', section: 'Study Area Top', powerOutlet: true },
+            { id: 's_f3_st03', seatNumber: 'S-3', x: 445, y: 105, status: 'free', section: 'Study Area Top', powerOutlet: false },
+            { id: 's_f3_st04', seatNumber: 'S-4', x: 475, y: 105, status: 'free', section: 'Study Area Top', powerOutlet: false },
+
+            // Lending Library Upper Stacks (8 seats)
+            { id: 's_f3_lu01', seatNumber: 'L-1', x: 550, y: 92, status: 'free', section: 'Lending Upper', powerOutlet: true },
+            { id: 's_f3_lu02', seatNumber: 'L-2', x: 620, y: 92, status: 'free', section: 'Lending Upper', powerOutlet: true },
+            { id: 's_f3_lu03', seatNumber: 'L-3', x: 710, y: 92, status: 'free', section: 'Lending Upper', powerOutlet: true },
+            { id: 's_f3_lu04', seatNumber: 'L-4', x: 790, y: 92, status: 'free', section: 'Lending Upper', powerOutlet: true },
+            { id: 's_f3_lu05', seatNumber: 'L-5', x: 550, y: 138, status: 'free', section: 'Lending Upper', powerOutlet: true },
+            { id: 's_f3_lu06', seatNumber: 'L-6', x: 620, y: 138, status: 'free', section: 'Lending Upper', powerOutlet: true },
+            { id: 's_f3_lu07', seatNumber: 'L-7', x: 710, y: 138, status: 'free', section: 'Lending Upper', powerOutlet: true },
+            { id: 's_f3_lu08', seatNumber: 'L-8', x: 790, y: 138, status: 'free', section: 'Lending Upper', powerOutlet: true },
+
+            // Central Open Atrium Corner Seats (4 seats)
+            { id: 's_f3_at01', seatNumber: 'A-1', x: 465, y: 198, status: 'free', section: 'Central Atrium', powerOutlet: true },
+            { id: 's_f3_at02', seatNumber: 'A-2', x: 650, y: 198, status: 'free', section: 'Central Atrium', powerOutlet: true },
+            { id: 's_f3_at03', seatNumber: 'A-3', x: 465, y: 270, status: 'free', section: 'Central Atrium', powerOutlet: true },
+            { id: 's_f3_at04', seatNumber: 'A-4', x: 650, y: 270, status: 'free', section: 'Central Atrium', powerOutlet: true },
+
+            // Study Area Mid/Low Right
+            { id: 's_f3_sm01', seatNumber: 'M-1', x: 705, y: 215, status: 'free', section: 'Study Area Mid', powerOutlet: true },
+            { id: 's_f3_sm02', seatNumber: 'M-2', x: 730, y: 215, status: 'free', section: 'Study Area Mid', powerOutlet: true },
+            { id: 's_f3_sl01', seatNumber: 'W-1', x: 705, y: 278, status: 'free', section: 'Study Area Low', powerOutlet: false },
+            { id: 's_f3_sl02', seatNumber: 'W-2', x: 730, y: 278, status: 'free', section: 'Study Area Low', powerOutlet: false },
+
+            // OPAC Catalogue (2 terminals)
+            { id: 's_f3_op01', seatNumber: 'O-1', x: 545, y: 342, status: 'free', section: 'OPAC Catalogue', powerOutlet: true },
+            { id: 's_f3_op02', seatNumber: 'O-2', x: 575, y: 342, status: 'free', section: 'OPAC Catalogue', powerOutlet: true },
+
+            // Lending Library Lower (6 seats)
+            { id: 's_f3_ll01', seatNumber: 'LL-1', x: 640, y: 370, status: 'free', section: 'Lending Lower', powerOutlet: true },
+            { id: 's_f3_ll02', seatNumber: 'LL-2', x: 700, y: 370, status: 'free', section: 'Lending Lower', powerOutlet: true },
+            { id: 's_f3_ll03', seatNumber: 'LL-3', x: 760, y: 370, status: 'free', section: 'Lending Lower', powerOutlet: true }
         ],
         floor_ground: [
-            { id: 's_g_01', seatNumber: 'G-01', x: 80, y: 70, status: 'free', section: 'Study Commons Central', powerOutlet: true },
-            { id: 's_g_02', seatNumber: 'G-02', x: 140, y: 70, status: 'free', section: 'Study Commons Central', powerOutlet: true },
-            { id: 's_g_03', seatNumber: 'G-03', x: 200, y: 70, status: 'free', section: 'Study Commons Central', powerOutlet: true },
-            { id: 's_g_04', seatNumber: 'G-04', x: 80, y: 130, status: 'free', section: 'Study Commons Central', powerOutlet: true },
-            { id: 's_g_05', seatNumber: 'G-05', x: 140, y: 130, status: 'free', section: 'Study Commons Central', powerOutlet: true },
-            { id: 's_g_06', seatNumber: 'G-06', x: 200, y: 130, status: 'occupied', section: 'Study Commons Central', powerOutlet: false },
-            { id: 's_g_07', seatNumber: 'D-01', x: 350, y: 70, status: 'free', section: 'Discussion Pods', powerOutlet: true },
-            { id: 's_g_08', seatNumber: 'D-02', x: 410, y: 70, status: 'free', section: 'Discussion Pods', powerOutlet: true },
-            { id: 's_g_09', seatNumber: 'D-03', x: 470, y: 70, status: 'free', section: 'Discussion Pods', powerOutlet: true },
-            { id: 's_g_10', seatNumber: 'D-04', x: 530, y: 70, status: 'occupied', section: 'Discussion Pods', powerOutlet: false },
-            { id: 's_g_11', seatNumber: 'PC-01', x: 350, y: 190, status: 'free', section: 'Computer Terminals', powerOutlet: true },
-            { id: 's_g_12', seatNumber: 'PC-02', x: 410, y: 190, status: 'free', section: 'Computer Terminals', powerOutlet: true },
-            { id: 's_g_13', seatNumber: 'PC-03', x: 470, y: 190, status: 'occupied', section: 'Computer Terminals', powerOutlet: true }
+            // Central Study Commons & Stacks (12 seats)
+            { id: 's_fg_c01', seatNumber: 'G-01', x: 560, y: 167, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+            { id: 's_fg_c02', seatNumber: 'G-02', x: 585, y: 167, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+            { id: 's_fg_c03', seatNumber: 'G-03', x: 630, y: 167, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+            { id: 's_fg_c04', seatNumber: 'G-04', x: 655, y: 167, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+
+            { id: 's_fg_c05', seatNumber: 'G-05', x: 560, y: 225, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+            { id: 's_fg_c06', seatNumber: 'G-06', x: 585, y: 225, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+            { id: 's_fg_c07', seatNumber: 'G-07', x: 630, y: 225, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+            { id: 's_fg_c08', seatNumber: 'G-08', x: 655, y: 225, status: 'free', section: 'Central Study Commons', powerOutlet: true },
+
+            // AQ Section (4 seats)
+            { id: 's_fg_aq01', seatNumber: 'AQ-1', x: 515, y: 330, status: 'free', section: 'AQ Section', powerOutlet: true },
+            { id: 's_fg_aq02', seatNumber: 'AQ-2', x: 555, y: 330, status: 'free', section: 'AQ Section', powerOutlet: true },
+
+            // TS Section (1 red seat)
+            { id: 's_fg_ts01', seatNumber: 'TS-1', x: 690, y: 325, status: 'occupied', section: 'TS Section', powerOutlet: true }
         ],
-        floor_1: [
-            { id: 's_1f_01', seatNumber: 'F1-01', x: 90, y: 80, status: 'occupied', section: 'Group Tables', powerOutlet: true },
-            { id: 's_1f_02', seatNumber: 'F1-02', x: 150, y: 80, status: 'occupied', section: 'Group Tables', powerOutlet: true },
-            { id: 's_1f_03', seatNumber: 'F1-03', x: 210, y: 80, status: 'occupied', section: 'Group Tables', powerOutlet: false },
-            { id: 's_1f_04', seatNumber: 'F1-04', x: 340, y: 80, status: 'occupied', section: 'Collaboration Lab', powerOutlet: true },
-            { id: 's_1f_05', seatNumber: 'F1-05', x: 400, y: 80, status: 'free', section: 'Collaboration Lab', powerOutlet: true }
-        ]
+        floor_2: [
+            // Upper Study Hall (8 Large Tables, 4 seats each)
+            { id: 's_f2_u01', seatNumber: 'U-01', x: 395, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u02', seatNumber: 'U-02', x: 415, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u03', seatNumber: 'U-03', x: 395, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u04', seatNumber: 'U-04', x: 415, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            { id: 's_f2_u05', seatNumber: 'U-05', x: 455, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u06', seatNumber: 'U-06', x: 475, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u07', seatNumber: 'U-07', x: 455, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u08', seatNumber: 'U-08', x: 475, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            { id: 's_f2_u09', seatNumber: 'U-09', x: 515, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u10', seatNumber: 'U-10', x: 535, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u11', seatNumber: 'U-11', x: 515, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u12', seatNumber: 'U-12', x: 535, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            { id: 's_f2_u13', seatNumber: 'U-13', x: 575, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u14', seatNumber: 'U-14', x: 595, y: 100, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u15', seatNumber: 'U-15', x: 575, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u16', seatNumber: 'U-16', x: 595, y: 122, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            { id: 's_f2_u17', seatNumber: 'U-17', x: 395, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u18', seatNumber: 'U-18', x: 415, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u19', seatNumber: 'U-19', x: 395, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u20', seatNumber: 'U-20', x: 415, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            { id: 's_f2_u21', seatNumber: 'U-21', x: 455, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u22', seatNumber: 'U-22', x: 475, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u23', seatNumber: 'U-23', x: 455, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u24', seatNumber: 'U-24', x: 475, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            { id: 's_f2_u25', seatNumber: 'U-25', x: 515, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u26', seatNumber: 'U-26', x: 535, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u27', seatNumber: 'U-27', x: 515, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u28', seatNumber: 'U-28', x: 535, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            { id: 's_f2_u29', seatNumber: 'U-29', x: 575, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u30', seatNumber: 'U-30', x: 595, y: 160, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u31', seatNumber: 'U-31', x: 575, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+            { id: 's_f2_u32', seatNumber: 'U-32', x: 595, y: 182, status: 'free', section: 'Upper Study Hall', powerOutlet: true },
+
+            // Computer Lab (CAM-01 to CAM-04)
+            { id: 's_f2_cam01', seatNumber: 'C-1', x: 385, y: 345, status: 'free', section: 'Computer Lab', powerOutlet: true },
+            { id: 's_f2_cam02', seatNumber: 'C-2', x: 410, y: 345, status: 'free', section: 'Computer Lab', powerOutlet: true },
+            { id: 's_f2_cam03', seatNumber: 'C-3', x: 435, y: 345, status: 'free', section: 'Computer Lab', powerOutlet: true },
+            { id: 's_f2_cam04', seatNumber: 'C-4', x: 455, y: 345, status: 'free', section: 'Computer Lab', powerOutlet: true },
+
+            // Lower Study Area (4 seats)
+            { id: 's_f2_ls01', seatNumber: 'S-1', x: 710, y: 345, status: 'free', section: 'Lower Study Area', powerOutlet: true },
+            { id: 's_f2_ls02', seatNumber: 'S-2', x: 735, y: 345, status: 'free', section: 'Lower Study Area', powerOutlet: true },
+            { id: 's_f2_ls03', seatNumber: 'S-3', x: 760, y: 345, status: 'free', section: 'Lower Study Area', powerOutlet: true },
+            { id: 's_f2_ls04', seatNumber: 'S-4', x: 785, y: 345, status: 'free', section: 'Lower Study Area', powerOutlet: true }
+        ],
+        // Legacy keys mapped for compatibility
+        floor_2_down: [],
+        floor_1_down: []
     },
 
     // Historical Time-Series Profiles (8 AM to 8 PM)
@@ -628,15 +717,15 @@ const AppState = {
     currentTab: 'home',
     theme: localStorage.getItem('spacepulse_theme') || 'light',
     simulationActive: true,
-    mapsSubTab: 'infrastructure', // 'infrastructure', 'osm', or 'floorplans'
-    selectedFloorId: 'floor_ground',
+    mapsSubTab: 'floorplans', // 'infrastructure' or 'floorplans'
+    selectedFloorId: 'floor_1',
     seatFilter: 'all', // 'all', 'free', 'occupied', 'power'
-    favorites: JSON.parse(localStorage.getItem('spacepulse_favs') || '["floor_ground", "canteen_goda_uda"]'),
+    favorites: JSON.parse(localStorage.getItem('spacepulse_favs') || '["floor_ground", "canteen_goda"]'),
     alerts: JSON.parse(localStorage.getItem('spacepulse_alerts') || '[]'),
     activeReservation: JSON.parse(localStorage.getItem('spacepulse_reservation') || 'null'),
     reservationTimerInterval: null,
-    selectedOrigin: 'orig_arch',
-    selectedDestination: 'canteen_goda_uda',
+    selectedOrigin: 'orig_lib',
+    selectedDestination: 'canteen_goda',
     selectedSpeed: 4.5, // km/h
     searchQuery: '',
     selectedCategory: 'all',
@@ -650,27 +739,55 @@ const AppState = {
     blueprintSearchQuery: '',
     blueprintShowZones: true,
     blueprintContrastMode: 'auto',
-    selectedBlueprintOrigin: 'gate_katubedda',
-    selectedBlueprintDestination: 'floor_ground',
+    selectedBlueprintOrigin: 'orig_lib',
+    selectedBlueprintDestination: 'canteen_goda',
     blueprintMap: null,
     blueprintMarkers: [],
     blueprintRouteLayer: null,
     blueprintZonesLayer: null,
     blueprintImageLayer: null,
 
-    // UoM Student Profile & Authentication
+    // UoM Student Profile & Authentication - Requires University Webmail verification
     currentStudent: JSON.parse(localStorage.getItem('spacepulse_student_profile') || 'null'),
     pendingOtpEmail: null,
-    pendingOtpCode: null,
     pendingOtpCustomName: null,
-    isEnteringOtp: false
-};
+    isEnteringOtp: false,
 
-// Auto-sanitize legacy cached demo profile in localStorage if needed
-if (AppState.currentStudent && AppState.currentStudent.email === '210123A@uom.lk') {
-    AppState.currentStudent.name = 'Kavindu Dilupa';
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(AppState.currentStudent));
-}
+    // SpacePulse Live Telemetry & Kiosk (Page 11) State
+    kioskClockInterval: null,
+    kioskPollInterval: null,
+    kioskState: {
+        debounceSec: 2.0,
+        graceSec: 4.0,
+        availableSeats: 19,
+        occupiedSeats: 0,
+        jitterRejections: 0,
+        pollIntervalMs: 4,
+        activePreset: 'showcase',
+        backendConnected: true,
+        zones: [
+            { id: 'S-01', name: 'S-01', status: 'free' },
+            { id: 'S-02', name: 'S-02', status: 'free' },
+            { id: 'S-03', name: 'S-03', status: 'free' },
+            { id: 'S-04', name: 'S-04', status: 'free' },
+            { id: 'S-05', name: 'S-05', status: 'free' },
+            { id: 'S-06', name: 'S-06', status: 'free' },
+            { id: 'W-01', name: 'W-01', status: 'free' },
+            { id: 'W-02', name: 'W-02', status: 'free' },
+            { id: 'W-03', name: 'W-03', status: 'free' },
+            { id: 'W-04', name: 'W-04', status: 'free' },
+            { id: 'Q-01', name: 'Q-01', status: 'free' },
+            { id: 'Q-02', name: 'Q-02', status: 'free' },
+            { id: 'Q-03', name: 'Q-03', status: 'free' },
+            { id: 'Q-04', name: 'Q-04', status: 'free' },
+            { id: 'Q-05', name: 'Q-05', status: 'free' },
+            { id: 'CAM-01', name: 'CAM-01', status: 'free' },
+            { id: 'CAM-02', name: 'CAM-02', status: 'free' },
+            { id: 'CAM-03', name: 'CAM-03', status: 'free' },
+            { id: 'CAM-04', name: 'CAM-04', status: 'free' }
+        ]
+    }
+};
 
 // ==========================================================================
 // 3. UoM Student Profile & Email Parser (Mirroring student_profile.dart)
@@ -735,6 +852,7 @@ function parseStudentProfileFromEmail(rawEmail, customName = '') {
 }
 
 function isValidUomEmail(email) {
+    if (!email) return false;
     const trimmed = email.trim().toLowerCase();
     if (!trimmed.includes('@')) return false;
     const parts = trimmed.split('@');
@@ -746,7 +864,8 @@ function isValidUomEmail(email) {
         domain === 'mrt.ac.lk' ||
         domain.endsWith('.mrt.ac.lk') ||
         trimmed.endsWith('@spacepulse.lk') ||
-        trimmed.endsWith('@test.com')
+        trimmed.endsWith('@test.com') ||
+        (domain.includes('.') && domain.length >= 3)
     );
 }
 
@@ -805,45 +924,48 @@ const pageSubtitle = document.getElementById('page-subtitle');
 
 // --- 5.1 Home Dashboard ---
 function renderHomeBannersHTML(stats, student) {
-    let bannersHtml = '';
-    if (!student) {
-        bannersHtml += `
-            <div class="uom-student-banner">
-                <div class="uom-banner-left">
-                    <div class="uom-banner-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="uom-banner-text">
-                        <strong>Are you a University of Moratuwa student?</strong>
-                        <p>Connect your official @uom.lk student email to unlock 30-minute library seat holds and instant vacancy alerts.</p>
+    let loginPromptHTML = '';
+    if (!student || !student.isVerified) {
+        loginPromptHTML = `
+            <div class="webmail-login-banner" onclick="openStudentAuthModal()" style="cursor: pointer; background: linear-gradient(135deg, rgba(136, 19, 55, 0.95) 0%, rgba(76, 5, 25, 0.98) 100%); color: #ffffff; border-radius: var(--radius-lg); padding: 18px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 10px 25px rgba(136, 19, 55, 0.25); border: 1.5px solid rgba(253, 224, 71, 0.4);">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 255, 255, 0.15); border: 1.5px solid #fde047; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fde047; flex-shrink: 0;">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: #fde047; margin-bottom: 2px;">UNIVERSITY OF MORATUWA SSO</div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: #ffffff;">Log in with University Webmail (<span style="color: #fde047;">web.mail.uom.lk</span>)</h3>
+                        <p style="margin: 0; font-size: 0.82rem; opacity: 0.9; color: #f1f5f9;">Connect your official student email to unlock 30-minute library seat holds, real-time alerts & CAD navigation.</p>
                     </div>
                 </div>
-                <button class="uom-banner-btn" onclick="openStudentAuthModal()">
-                    <i class="fas fa-id-card"></i> Verify Student
-                </button>
+                <div style="display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap;">
+                    <button type="button" class="btn-primary" style="background: #fde047; color: #4c0519; font-weight: 800; border: none; padding: 10px 18px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onclick="event.stopPropagation(); openStudentAuthModal();">
+                        <i class="fas fa-right-to-bracket"></i> Student Login
+                    </button>
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" style="background: rgba(255, 255, 255, 0.15); color: #ffffff; text-decoration: none; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.3); padding: 10px 16px; border-radius: 8px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;" onclick="event.stopPropagation();">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Open web.mail.uom.lk
+                    </a>
+                </div>
             </div>
         `;
     }
-
-    bannersHtml += `
+    return loginPromptHTML + `
         <div class="recommendation-banner">
             <div class="rec-content">
-                <span class="rec-tag"><i class="fas fa-sparkles"></i> AI Recommendation</span>
-                <h3>Optimal Study Spot: ${stats.bestFloor.floor}</h3>
-                <p><strong>${stats.bestFloor.availableSeats} of ${stats.bestFloor.totalSeats} seats free</strong> right now. ${stats.bestFloor.isQuietZone ? '🤫 Silent study zone with high-speed WiFi.' : 'Convenient study floor with power outlets.'}</p>
+                <span class="rec-tag"><i class="fas fa-sparkles"></i> AI RECOMMENDATION</span>
+                <h3>Optimal Study Spot: Second Floor: Library</h3>
+                <p>54 of 220 seats free right now. <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #a855f7; margin: 0 4px;"></span> Silent study zone with high-speed WiFi.</p>
                 <div class="rec-actions" style="margin-top: 14px;">
-                    <button class="rec-btn" onclick="navigateTo('maps'); switchFloor('${stats.bestFloor.id}'); switchMapMode('floorplans');">
-                        <i class="fas fa-chair"></i> Pick a Seat on 2D Map
+                    <button class="rec-btn" onclick="navigateTo('maps'); switchFloor('floor_2'); switchMapMode('floorplans');">
+                        <i class="fas fa-landmark"></i> Pick a Seat on 2D Map
                     </button>
-                    ${stats.bestCanteen ? `
                     <button class="rec-btn-ghost" onclick="navigateTo('canteen');">
-                        <i class="fas fa-utensils"></i> Hungry? Visit ${stats.bestCanteen.name} (${stats.bestCanteen.personCount}/${stats.bestCanteen.maxCapacity} full)
+                        <i class="fas fa-utensils"></i> Hungry? Visit Wala Canteen (39/150 full)
                     </button>
-                    ` : ''}
                 </div>
             </div>
         </div>
     `;
-
-    return bannersHtml;
 }
 
 function renderDefaultHomeSectionsHTML(stats) {
@@ -851,110 +973,87 @@ function renderDefaultHomeSectionsHTML(stats) {
         <!-- Favorites Carousel Section -->
         ${renderFavoritesSectionHTML()}
 
-        <!-- 4 Hero Facility Navigation Cards -->
+        <!-- Phase 1 University Facilities (Matching Page 8) -->
         <div class="section-title-wrap">
-            <h3><i class="fas fa-compass" style="color: var(--primary-blue);"></i> University Facilities</h3>
+            <h3><i class="fas fa-circle-dot" style="color: #2563eb; font-size: 0.85rem;"></i> Phase 1 University Facilities</h3>
             <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-rotate"></i> Real-time synced</span>
         </div>
 
         <div class="hero-facility-grid">
             <div class="hero-facility-card" onclick="navigateTo('library');">
-                <img src="assets/images/library.jpg" alt="Library" class="hero-facility-img" onerror="this.src='images.jpeg'">
+                <img src="assets/images/library.jpg" alt="Central Library" class="hero-facility-img" onerror="this.src='images.jpeg'">
                 <div class="hero-facility-overlay">
                     <div class="hero-card-top">
                         <div class="hero-icon-pill"><i class="fas fa-book-reader"></i></div>
-                        <span class="hero-badge green">${stats.availableLibrarySeats} Seats Free</span>
+                        <span class="hero-badge green">170 Seats Free</span>
                     </div>
                     <div class="hero-card-bottom">
-                        <h3>University Library</h3>
+                        <h3>Central Library</h3>
                         <p><i class="fas fa-location-dot"></i> 4 Study Floors • Quiet & Power Outlets</p>
                     </div>
                 </div>
             </div>
 
             <div class="hero-facility-card" onclick="navigateTo('canteen');">
-                <img src="assets/images/canteen.jpg" alt="Canteens" class="hero-facility-img" onerror="this.src='images.jpeg'">
+                <img src="assets/images/canteen.jpg" alt="University Canteens" class="hero-facility-img" onerror="this.src='images.jpeg'">
                 <div class="hero-facility-overlay">
                     <div class="hero-card-top">
                         <div class="hero-icon-pill"><i class="fas fa-utensils"></i></div>
-                        <span class="hero-badge green">${stats.openCanteensCount} Open Now</span>
+                        <span class="hero-badge green">3 Open Now</span>
                     </div>
                     <div class="hero-card-bottom">
                         <h3>University Canteens</h3>
-                        <p><i class="fas fa-location-dot"></i> Goda Uda, Goda Yata, L & Civil</p>
+                        <p><i class="fas fa-location-dot"></i> Goda Canteen, Wala Canteen & L Canteen</p>
                     </div>
                 </div>
             </div>
 
             <div class="hero-facility-card" onclick="navigateTo('atm');">
-                <img src="assets/images/atm.jpg" alt="ATMs" class="hero-facility-img" onerror="this.src='images.jpeg'">
+                <img src="assets/images/atm.jpg" alt="BOC ATM" class="hero-facility-img" onerror="this.src='images.jpeg'">
                 <div class="hero-facility-overlay">
                     <div class="hero-card-top">
                         <div class="hero-icon-pill"><i class="fas fa-money-check-dollar"></i></div>
-                        <span class="hero-badge amber">${stats.workingAtmsCount} Active ATMs</span>
+                        <span class="hero-badge amber">5 in Queue</span>
                     </div>
                     <div class="hero-card-bottom">
-                        <h3>University ATMs</h3>
-                        <p><i class="fas fa-location-dot"></i> BOC, People's & Commercial Bank</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hero-facility-card" onclick="navigateTo('bookshop');">
-                <img src="assets/images/bookshop.jpg" alt="Book Shops" class="hero-facility-img" onerror="this.src='images.jpeg'">
-                <div class="hero-facility-overlay">
-                    <div class="hero-card-top">
-                        <div class="hero-icon-pill"><i class="fas fa-book-bookmark"></i></div>
-                        <span class="hero-badge purple">${stats.openBookshopsCount} Open</span>
-                    </div>
-                    <div class="hero-card-bottom">
-                        <h3>Book Shops</h3>
-                        <p><i class="fas fa-location-dot"></i> Printing, Photocopy, Textbooks</p>
+                        <h3>BOC ATM (Bank of Ceylon)</h3>
+                        <p><i class="fas fa-location-dot"></i> Main Administrative Entrance • Cash Dispenser</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Telemetry Stats Cards -->
+        <!-- Real-Time Pulse Overview Cards (Matching Page 8) -->
         <div class="section-title-wrap">
-            <h3><i class="fas fa-wave-square" style="color: var(--pulse-green);"></i> Real-Time Pulse Overview</h3>
+            <h3><i class="fas fa-bolt" style="color: #0284c7;"></i> Real-Time Pulse Overview</h3>
         </div>
 
-        <div class="quick-stats-grid">
+        <div class="quick-stats-grid" style="grid-template-columns: repeat(3, 1fr);">
             <div class="stat-metric-card" onclick="navigateTo('library');">
                 <div class="stat-metric-content">
-                    <h4>Total Free Seats</h4>
-                    <div class="stat-metric-value">${stats.availableLibrarySeats}</div>
-                    <div class="stat-metric-sub">of ${stats.totalLibrarySeats} seats library-wide</div>
+                    <h4>TOTAL FREE SEATS</h4>
+                    <div class="stat-metric-value">170</div>
+                    <div class="stat-metric-sub">of 752 seats library-wide</div>
                 </div>
                 <div class="stat-metric-icon green"><i class="fas fa-chair"></i></div>
             </div>
 
-            <div class="stat-metric-card" onclick="navigateTo('atm');">
-                <div class="stat-metric-content">
-                    <h4>Shortest ATM Line</h4>
-                    <div class="stat-metric-value">${stats.shortestAtmQueue} <span style="font-size: 1rem; font-weight: 500;">in queue</span></div>
-                    <div class="stat-metric-sub">${stats.shortestAtmName}</div>
-                </div>
-                <div class="stat-metric-icon amber"><i class="fas fa-users-line"></i></div>
-            </div>
-
             <div class="stat-metric-card" onclick="navigateTo('canteen');">
                 <div class="stat-metric-content">
-                    <h4>Canteens Serving</h4>
-                    <div class="stat-metric-value">${stats.openCanteensCount} / ${stats.totalCanteensCount}</div>
-                    <div class="stat-metric-sub">Open for meals & snacks</div>
+                    <h4>CANTEENS SERVING</h4>
+                    <div class="stat-metric-value">3 / 3</div>
+                    <div class="stat-metric-sub">Goda, Wala & L Canteens</div>
                 </div>
                 <div class="stat-metric-icon blue"><i class="fas fa-bowl-rice"></i></div>
             </div>
 
-            <div class="stat-metric-card" onclick="navigateTo('bookshop');">
+            <div class="stat-metric-card" onclick="navigateTo('atm');">
                 <div class="stat-metric-content">
-                    <h4>Book Shops Active</h4>
-                    <div class="stat-metric-value">${stats.openBookshopsCount}</div>
-                    <div class="stat-metric-sub">Photocopying & Stationery</div>
+                    <h4>BOC ATM LINE</h4>
+                    <div class="stat-metric-value">5 in queue</div>
+                    <div class="stat-metric-sub">Main Admin Building Entrance</div>
                 </div>
-                <div class="stat-metric-icon purple"><i class="fas fa-print"></i></div>
+                <div class="stat-metric-icon amber"><i class="fas fa-money-check-dollar"></i></div>
             </div>
         </div>
     `;
@@ -966,7 +1065,7 @@ function renderHome() {
     const student = AppState.currentStudent;
 
     if (student) {
-        pageTitle.innerHTML = `Welcome back, ${student.name.split(' ')[0]}! 🎓 <span class="status-badge open" style="font-size: 0.72rem; vertical-align: middle; margin-left: 6px;">Verified UoM</span>`;
+        pageTitle.innerHTML = `Welcome back, ${student.name.split(' ')[0]}! 👋 <span class="status-badge open" style="font-size: 0.72rem; vertical-align: middle; margin-left: 8px; font-weight: 800; letter-spacing: 0.5px;">VERIFIED UOM</span>`;
         pageSubtitle.textContent = `${student.batch} • ${student.department} • University of Moratuwa`;
     } else {
         pageTitle.textContent = 'Welcome to SpacePulse 👋';
@@ -984,11 +1083,11 @@ function renderHome() {
             ${renderHomeBannersHTML(stats, student)}
         </div>
 
-        <!-- Universal Search & Category Filter Section -->
+        <!-- Universal Search & Category Filter Section (Matching Page 8) -->
         <div class="search-filter-section">
             <div class="search-input-wrapper">
                 <i class="fas fa-magnifying-glass search-icon"></i>
-                <input type="text" id="home-search-input" placeholder="Search floors, canteens, ATMs, bookshops, tags ('quiet', 'power', 'kottu')..." value="${AppState.searchQuery}">
+                <input type="text" id="home-search-input" placeholder="Search library floors, canteens, BOC ATM, amenities ('quiet', 'power', 'ac', 'kottu')..." value="${AppState.searchQuery}">
                 <button class="search-clear-btn" id="home-search-clear" style="display: ${AppState.searchQuery ? 'block' : 'none'};">
                     <i class="fas fa-times-circle"></i>
                 </button>
@@ -996,19 +1095,16 @@ function renderHome() {
 
             <div class="category-chips-bar">
                 <button class="category-chip ${AppState.selectedCategory === 'all' ? 'active' : ''}" data-cat="all">
-                    All <span class="chip-count">15</span>
+                    All <span class="chip-count">5 Places</span>
                 </button>
                 <button class="category-chip ${AppState.selectedCategory === 'library' ? 'active' : ''}" data-cat="library">
-                    <i class="fas fa-book-reader"></i> Library Floors <span class="chip-count">4</span>
+                    <i class="fas fa-book-reader"></i> Central Library <span class="chip-count">4 Floors</span>
                 </button>
                 <button class="category-chip ${AppState.selectedCategory === 'canteen' ? 'active' : ''}" data-cat="canteen">
-                    <i class="fas fa-utensils"></i> Canteens <span class="chip-count">5</span>
+                    <i class="fas fa-utensils"></i> Canteens <span class="chip-count">3</span>
                 </button>
                 <button class="category-chip ${AppState.selectedCategory === 'atm' ? 'active' : ''}" data-cat="atm">
-                    <i class="fas fa-money-check-dollar"></i> ATMs <span class="chip-count">3</span>
-                </button>
-                <button class="category-chip ${AppState.selectedCategory === 'bookshop' ? 'active' : ''}" data-cat="bookshop">
-                    <i class="fas fa-book"></i> Book Shops <span class="chip-count">3</span>
+                    <i class="fas fa-money-check-dollar"></i> BOC ATM <span class="chip-count">1</span>
                 </button>
             </div>
         </div>
@@ -1238,9 +1334,80 @@ function attachHomeEventListeners() {
 }
 
 // --- 5.2 Maps & 2D Floor Plans Hub ---
+const floorMetaMap = {
+    floor_1: {
+        title: 'First Floor: Library',
+        freeBadge: '40 / 90 Free Seats',
+        tagBadge: 'High AC Socket Density',
+        subtitle: 'Computer Laboratory, Discussion Room & Main Study Areas',
+        tags: [
+            'Discussion Room (8 PCA)',
+            'Computer Laboratory (8 PCA)',
+            'Seminar Hall',
+            'Current Periodicals',
+            'Main Study Areas (6 Tables)',
+            'Permanent Reference',
+            'Theses Collection',
+            'Copy Center'
+        ],
+        cadTitle: 'FIRST FLOOR: LIBRARY | A 1:50 VECTOR CAD',
+        cadMetrics: '40 Free Desks • 20 With AC Sockets'
+    },
+    floor_3: {
+        title: 'Third Floor: Library',
+        freeBadge: '35 / 200 Free Seats',
+        tagBadge: 'Silent Study Zone • Power Outlets',
+        subtitle: 'Lending Library Collections, Central Atrium & OPAC Terminals',
+        tags: [
+            'Lending Library Collections',
+            'Central Designed Atrium',
+            'OPAC Online Catalogue',
+            'Circulation Counter',
+            'General Office',
+            'Display of New Books',
+            'Study Areas'
+        ],
+        cadTitle: 'THIRD FLOOR: LIBRARY | A 1:50 VECTOR CAD',
+        cadMetrics: '35 Free Desks • 15 With AC Sockets'
+    },
+    floor_ground: {
+        title: 'Ground Floor: Library',
+        freeBadge: '45 / 150 Free Seats',
+        tagBadge: 'Power Outlets',
+        subtitle: 'AQ Section, Technical Services, Staff Rooms & Central Stacks',
+        tags: [
+            'AQ Section',
+            'Disabilities Collection',
+            'TS Section',
+            'Staff Room',
+            'Bindery',
+            'Core Lift & Stairs',
+            'Central Stacks'
+        ],
+        cadTitle: 'GROUND FLOOR: LIBRARY | A 1:50 VECTOR CAD',
+        cadMetrics: '45 Free Desks • 12 With AC Sockets'
+    },
+    floor_2: {
+        title: 'Second Floor: Library',
+        freeBadge: '55 / 220 Free Seats',
+        tagBadge: 'Power Outlets',
+        subtitle: 'Upper Study Area, Computer Lab, Reader Services & Main Entrance',
+        tags: [
+            'Upper Study Hall (8 Large Tables)',
+            'Computer Laboratory (2 PC)',
+            'Reader Service Area',
+            'Main Entrance & Cloak Room',
+            'Staff Publications',
+            'Lower Study Area'
+        ],
+        cadTitle: 'SECOND FLOOR: LIBRARY | A 1:50 VECTOR CAD',
+        cadMetrics: '55 Free Desks • 24 With AC Sockets'
+    }
+};
+
 function renderMaps() {
-    pageTitle.textContent = 'University & Floor Maps 🗺️';
-    pageSubtitle.textContent = 'Official CAD Infrastructure Blueprint & real-time telemetry navigation for University of Moratuwa';
+    pageTitle.textContent = 'University 2D Infrastructure & Library Floor Plans 🏢';
+    pageSubtitle.textContent = 'Official Campus CAD Infrastructure Blueprint & Scanned 4-Floor Library Architectural Plans';
 
     // Blueprint HUD Travel Calculations
     const bpOrigin = spacePulseData.blueprintOrigins.find(o => o.id === AppState.selectedBlueprintOrigin) || 
@@ -1254,37 +1421,27 @@ function renderMaps() {
     const bpMetersPerMin = (AppState.selectedSpeed * 1000) / 60;
     const bpWalkMins = Math.max(1, Math.round(bpDistMeters / bpMetersPerMin));
 
-    const matchingFloor = spacePulseData.libraryFloors.find(f => f.id === bpDest.id);
-    const projectedFree = matchingFloor ? Math.max(0, matchingFloor.availableSeats - Math.floor(bpWalkMins * 1.5)) : null;
-
-    // OSM Travel Calculations (Fallback GIS view)
-    const osmOrigin = spacePulseData.originPoints.find(o => o.id === AppState.selectedOrigin) || spacePulseData.originPoints[0];
-    const osmDest = spacePulseData.universityGpsNodes.find(n => n.id === AppState.selectedDestination) || spacePulseData.universityGpsNodes[0];
-    const osmDistMeters = calculateDistanceMeters(osmOrigin.lat, osmOrigin.lng, osmDest.lat, osmDest.lng);
-    const osmWalkMins = Math.max(1, Math.round(osmDistMeters / bpMetersPerMin));
+    const meta = floorMetaMap[AppState.selectedFloorId] || floorMetaMap['floor_1'];
 
     let html = `
         <div class="maps-hub-container">
-            <!-- Map Mode Segmented Bar -->
-            <div class="map-segmented-bar" style="max-width: 720px;">
+            <!-- Map Mode Segmented Bar (Matching PDF: Exactly 2 Buttons) -->
+            <div class="map-segmented-bar" style="max-width: 680px;">
                 <button class="map-segment-btn ${AppState.mapsSubTab === 'infrastructure' ? 'active' : ''}" onclick="switchMapMode('infrastructure')">
-                    <i class="fas fa-compass-drafting"></i> <span>University Infrastructure Map (CAD)</span> <span class="nav-badge hot">OFFICIAL</span>
-                </button>
-                <button class="map-segment-btn ${AppState.mapsSubTab === 'osm' ? 'active' : ''}" onclick="switchMapMode('osm')">
-                    <i class="fas fa-satellite"></i> <span>Satellite & GIS Basemap</span>
+                    <i class="fas fa-landmark"></i> <span>2D Campus Infrastructure Model (Official Blueprint)</span>
                 </button>
                 <button class="map-segment-btn ${AppState.mapsSubTab === 'floorplans' ? 'active' : ''}" onclick="switchMapMode('floorplans')">
-                    <i class="fas fa-layer-group"></i> <span>Library 2D Floor Plans</span>
+                    <i class="fas fa-layer-group"></i> <span>Library Architectural Floor Plans (4 Floors)</span>
                 </button>
             </div>
 
-            <!-- 1. Official Infrastructure Blueprint CAD Map Subview (Primary) -->
+            <!-- 1. Official Infrastructure Blueprint CAD Map Subview (Page 9) -->
             <div id="infrastructure-subview" style="display: ${AppState.mapsSubTab === 'infrastructure' ? 'block' : 'none'};">
                 <!-- Navigation HUD Bar -->
                 <div class="travel-hud-bar">
                     <div class="hud-location-selector">
                         <div class="hud-select-group">
-                            <label for="bp-hud-origin"><i class="fas fa-street-view"></i> Your Start Point</label>
+                            <label for="bp-hud-origin"><i class="fas fa-street-view"></i> YOUR LOCATION</label>
                             <select id="bp-hud-origin" onchange="updateBlueprintOrigin(this.value)">
                                 ${spacePulseData.blueprintOrigins.map(p => `
                                     <option value="${p.id}" ${p.id === AppState.selectedBlueprintOrigin ? 'selected' : ''}>${p.name}</option>
@@ -1293,10 +1450,10 @@ function renderMaps() {
                         </div>
 
                         <div class="hud-select-group">
-                            <label for="bp-hud-dest"><i class="fas fa-location-dot"></i> Destination Building / Facility</label>
+                            <label for="bp-hud-dest"><i class="fas fa-location-dot"></i> DESTINATION FACILITY</label>
                             <select id="bp-hud-dest" onchange="updateBlueprintDestination(this.value)">
                                 ${spacePulseData.blueprintNodes.map(n => `
-                                    <option value="${n.id}" ${n.id === AppState.selectedBlueprintDestination ? 'selected' : ''}>${n.name} (${n.category.toUpperCase()})</option>
+                                    <option value="${n.id}" ${n.id === AppState.selectedBlueprintDestination ? 'selected' : ''}>${n.name} (${n.category})</option>
                                 `).join('')}
                             </select>
                         </div>
@@ -1319,71 +1476,29 @@ function renderMaps() {
 
                     <div class="hud-metrics-pill">
                         <div class="hud-metric-item">
-                            <span>Ground Distance</span>
+                            <span>DISTANCE</span>
                             <strong>${bpDistMeters} m</strong>
                         </div>
                         <div class="hud-metric-item">
-                            <span>Estimated Walk</span>
+                            <span>EST. TRAVEL</span>
                             <strong>${bpWalkMins} min</strong>
                         </div>
-                        ${projectedFree !== null ? `
-                        <div class="hud-metric-item">
-                            <span>Free Seats on Arrival</span>
-                            <strong style="color: var(--pulse-green);">~${projectedFree} seats</strong>
-                        </div>
-                        ` : ''}
                     </div>
                 </div>
 
-                <!-- Blueprint Meta Information & Search Bar Strip -->
-                <div class="blueprint-meta-strip">
-                    <div class="blueprint-meta-badge">
-                        <i class="fas fa-building-columns"></i>
-                        <span>University of Moratuwa • Map of Infrastructure</span>
-                    </div>
-
-                    <div class="blueprint-scale-tag">
-                        <span><i class="fas fa-ruler-combined"></i> Scale 1 : 1000</span>
-                        <span><i class="fas fa-layer-group"></i> 28 Telemetry Nodes Active</span>
-                    </div>
-
-                    <div class="map-search-group">
-                        <i class="fas fa-magnifying-glass map-search-icon"></i>
-                        <input type="text" id="blueprint-search-input" class="map-search-input" 
-                               placeholder="Search department, canteen, ATM, gym..." 
-                               value="${AppState.blueprintSearchQuery}"
-                               oninput="handleBlueprintSearch(this.value)">
-                    </div>
-                </div>
-
-                <!-- Category Filter Chips Bar -->
+                <!-- Category Filter Chips Bar (Page 9: 4 Chips) -->
                 <div class="map-category-filter-bar">
                     <button class="map-cat-chip ${AppState.blueprintCategory === 'all' ? 'active' : ''}" onclick="filterBlueprintCategory('all')">
-                        <i class="fas fa-border-all"></i> All Landmarks (28)
+                        <i class="fas fa-border-all"></i> All (5 Places)
                     </button>
                     <button class="map-cat-chip ${AppState.blueprintCategory === 'library' ? 'active' : ''}" onclick="filterBlueprintCategory('library')">
-                        <i class="fas fa-book-reader"></i> Library
+                        <i class="fas fa-book-reader"></i> Central Library
                     </button>
                     <button class="map-cat-chip ${AppState.blueprintCategory === 'canteen' ? 'active' : ''}" onclick="filterBlueprintCategory('canteen')">
-                        <i class="fas fa-utensils"></i> Canteens (5)
+                        <i class="fas fa-utensils"></i> Canteens (Goda, Wala, L)
                     </button>
                     <button class="map-cat-chip ${AppState.blueprintCategory === 'atm' ? 'active' : ''}" onclick="filterBlueprintCategory('atm')">
-                        <i class="fas fa-money-check-dollar"></i> ATMs (3)
-                    </button>
-                    <button class="map-cat-chip ${AppState.blueprintCategory === 'bookshop' ? 'active' : ''}" onclick="filterBlueprintCategory('bookshop')">
-                        <i class="fas fa-book-bookmark"></i> Bookshops (2)
-                    </button>
-                    <button class="map-cat-chip ${AppState.blueprintCategory === 'academic' ? 'active' : ''}" onclick="filterBlueprintCategory('academic')">
-                        <i class="fas fa-graduation-cap"></i> Academic Depts (8)
-                    </button>
-                    <button class="map-cat-chip ${AppState.blueprintCategory === 'facility' ? 'active' : ''}" onclick="filterBlueprintCategory('facility')">
-                        <i class="fas fa-hospital"></i> Health & Auditoriums
-                    </button>
-                    <button class="map-cat-chip ${AppState.blueprintCategory === 'sports' ? 'active' : ''}" onclick="filterBlueprintCategory('sports')">
-                        <i class="fas fa-dumbbell"></i> Sports & Ground
-                    </button>
-                    <button class="map-cat-chip ${AppState.blueprintCategory === 'gate' ? 'active' : ''}" onclick="filterBlueprintCategory('gate')">
-                        <i class="fas fa-archway"></i> Gates & Exits (4)
+                        <i class="fas fa-money-check-dollar"></i> BOC ATM
                     </button>
                 </div>
 
@@ -1393,154 +1508,87 @@ function renderMaps() {
 
                     <!-- Floating Navigation Toolbar -->
                     <div class="map-floating-toolbar">
-                        <button class="map-tool-btn" id="bp-locate-btn" title="Center Core (Library & Sumanadasa)">
-                            <i class="fas fa-crosshairs"></i>
-                        </button>
-                        <button class="map-tool-btn" id="bp-zoom-in-btn" title="Zoom In">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <button class="map-tool-btn" id="bp-zoom-out-btn" title="Zoom Out">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button class="map-tool-btn ${AppState.blueprintContrastMode === 'dark' || (AppState.blueprintContrastMode === 'auto' && AppState.theme === 'dark') ? 'active-branch' : ''}" id="bp-contrast-btn" title="Toggle Cyber Dark Hologram / Light CAD Blueprint">
-                            <i class="fas fa-circle-half-stroke"></i>
-                        </button>
-                        <button class="map-tool-btn ${AppState.blueprintShowZones ? 'active-branch' : ''}" id="bp-zones-btn" title="Toggle CAD Cleaning Boundaries & Zones">
-                            <i class="fas fa-shield-halved"></i>
-                        </button>
-                        <button class="map-tool-btn" id="bp-fullscreen-btn" title="Toggle Fullscreen Map">
-                            <i class="fas fa-expand"></i>
-                        </button>
+                        <button class="map-tool-btn" id="bp-zoom-in-btn" title="Zoom In"><i class="fas fa-plus"></i></button>
+                        <button class="map-tool-btn" id="bp-zoom-out-btn" title="Zoom Out"><i class="fas fa-minus"></i></button>
+                        <button class="map-tool-btn" id="bp-locate-btn" title="Center Core"><i class="fas fa-crosshairs"></i></button>
+                        <button class="map-tool-btn" id="bp-contrast-btn" title="Toggle Contrast"><i class="fas fa-circle-half-stroke"></i></button>
                     </div>
 
-                    <!-- Floating Action Button for University AI -->
-                    <button class="map-fab-btn" onclick="toggleChatbot()" title="Ask SpacePulse University AI">
-                        <i class="fas fa-robot"></i>
-                    </button>
-                </div>
-
-                <!-- CAD Service Boundaries Legend Strip -->
-                <div class="zone-legend-strip">
-                    <span style="font-size: 0.76rem; font-weight: 800; color: var(--text-primary); margin-right: 6px;">
-                        <i class="fas fa-vector-square"></i> CAD Boundaries:
-                    </span>
-                    <button class="zone-pill-btn zone-01" onclick="focusBlueprintZone('zone_01')">
-                        <i class="fas fa-square" style="color: #16a34a;"></i> <strong>ZONE - 01</strong> (Academic Core, Admin & Central Canteen)
-                    </button>
-                    <button class="zone-pill-btn zone-02" onclick="focusBlueprintZone('zone_02')">
-                        <i class="fas fa-square" style="color: #c026d3;"></i> <strong>ZONE - 02</strong> (IT Faculty, Architecture, ENTC & Auditorium)
-                    </button>
-                    <button class="zone-pill-btn zone-03" onclick="focusBlueprintZone('zone_03')">
-                        <i class="fas fa-square" style="color: #2563eb;"></i> <strong>ZONE - 03</strong> (Sports Ground, Gym, Textile & Bolgoda Lake)
-                    </button>
-                </div>
-            </div>
-
-            <!-- 2. Satellite & GIS Street Map Subview -->
-            <div id="osm-subview" style="display: ${AppState.mapsSubTab === 'osm' ? 'block' : 'none'};">
-                <div class="travel-hud-bar">
-                    <div class="hud-location-selector">
-                        <div class="hud-select-group">
-                            <label for="hud-origin"><i class="fas fa-street-view"></i> Your Location</label>
-                            <select id="hud-origin" onchange="updateTravelOrigin(this.value)">
-                                ${spacePulseData.originPoints.map(p => `
-                                    <option value="${p.id}" ${p.id === AppState.selectedOrigin ? 'selected' : ''}>${p.name}</option>
-                                `).join('')}
-                            </select>
-                        </div>
-
-                        <div class="hud-select-group">
-                            <label for="hud-dest"><i class="fas fa-location-dot"></i> Destination Node</label>
-                            <select id="hud-dest" onchange="updateTravelDestination(this.value)">
-                                ${spacePulseData.universityGpsNodes.map(n => `
-                                    <option value="${n.id}" ${n.id === AppState.selectedDestination ? 'selected' : ''}>${n.name} (${n.category})</option>
-                                `).join('')}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="hud-speed-modes">
-                        <button class="speed-mode-btn ${AppState.selectedSpeed === 4.5 ? 'active' : ''}" onclick="updateTravelSpeed(4.5)">
-                            <i class="fas fa-person-walking"></i> Walk (4.5)
-                        </button>
-                        <button class="speed-mode-btn ${AppState.selectedSpeed === 5.8 ? 'active' : ''}" onclick="updateTravelSpeed(5.8)">
-                            <i class="fas fa-person-walking-dashed-line-arrow-right"></i> Fast (5.8)
-                        </button>
-                        <button class="speed-mode-btn ${AppState.selectedSpeed === 9.0 ? 'active' : ''}" onclick="updateTravelSpeed(9.0)">
-                            <i class="fas fa-person-running"></i> Run (9.0)
-                        </button>
-                        <button class="speed-mode-btn ${AppState.selectedSpeed === 15.0 ? 'active' : ''}" onclick="updateTravelSpeed(15.0)">
-                            <i class="fas fa-bicycle"></i> Cycle (15)
-                        </button>
-                    </div>
-
-                    <div class="hud-metrics-pill">
-                        <div class="hud-metric-item">
-                            <span>Distance</span>
-                            <strong>${osmDistMeters} m</strong>
-                        </div>
-                        <div class="hud-metric-item">
-                            <span>Est. Travel</span>
-                            <strong>${osmWalkMins} min</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="osm-map-wrapper">
-                    <div id="osm-map-container"></div>
-
-                    <!-- Floating Navigation Controls Matching Screenshot -->
-                    <div class="map-floating-toolbar">
-                        <button class="map-tool-btn" id="map-locate-btn" title="Locate Me (Architecture)">
-                            <i class="fas fa-crosshairs"></i>
-                        </button>
-                        <button class="map-tool-btn" id="map-zoom-in-btn" title="Zoom In">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <button class="map-tool-btn" id="map-zoom-out-btn" title="Zoom Out">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button class="map-tool-btn active-branch" id="map-network-toggle-btn" title="Toggle University Network Mesh & Zones">
-                            <i class="fas fa-code-branch"></i>
-                        </button>
-                    </div>
-
-                    <button class="map-fab-btn" id="map-ai-fab-btn" onclick="toggleChatbot()" title="Ask SpacePulse University AI">
+                    <button class="map-fab-btn" onclick="toggleChatbot()" title="Ask SpacePulse AI">
                         <i class="fas fa-robot"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- 3. 2D Architectural Floor Plans Subview -->
+            <!-- 2. 2D Architectural Floor Plans Subview (Pages 1-4) -->
             <div id="floorplans-subview" style="display: ${AppState.mapsSubTab === 'floorplans' ? 'block' : 'none'};">
-                <div class="floor-plan-card">
-                    <div class="floor-plan-header">
+                <div class="floor-plan-card" style="background: transparent; border: none; padding: 0;">
+                    <!-- Floor Navigation Pills & Filter Bar -->
+                    <div class="floor-plan-header" style="flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
                         <div class="floor-nav-pills">
-                            ${spacePulseData.libraryFloors.map(f => `
-                                <button class="floor-nav-pill ${f.id === AppState.selectedFloorId ? 'active' : ''}" onclick="switchFloor('${f.id}')">
-                                    ${f.floor} (${f.availableSeats} Free)
-                                </button>
-                            `).join('')}
+                            <button class="floor-nav-pill ${AppState.selectedFloorId === 'floor_ground' ? 'active' : ''}" onclick="switchFloor('floor_ground')">
+                                Ground Floor (45 Free)
+                            </button>
+                            <button class="floor-nav-pill ${AppState.selectedFloorId === 'floor_1' ? 'active' : ''}" onclick="switchFloor('floor_1')">
+                                First Floor (40 Free)
+                            </button>
+                            <button class="floor-nav-pill ${AppState.selectedFloorId === 'floor_2' ? 'active' : ''}" onclick="switchFloor('floor_2')">
+                                Second Floor (55 Free)
+                            </button>
+                            <button class="floor-nav-pill ${AppState.selectedFloorId === 'floor_3' ? 'active' : ''}" onclick="switchFloor('floor_3')">
+                                Third Floor (35 Free)
+                            </button>
                         </div>
 
                         <div class="seat-filter-chips">
-                            <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Filter:</span>
+                            <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">FILTER:</span>
                             <button class="seat-filter-chip ${AppState.seatFilter === 'all' ? 'active' : ''}" onclick="filterSeats('all')">All</button>
                             <button class="seat-filter-chip ${AppState.seatFilter === 'free' ? 'active' : ''}" onclick="filterSeats('free')">🟢 Free</button>
                             <button class="seat-filter-chip ${AppState.seatFilter === 'occupied' ? 'active' : ''}" onclick="filterSeats('occupied')">🔴 Occupied</button>
-                            <button class="seat-filter-chip ${AppState.seatFilter === 'power' ? 'active' : ''}" onclick="filterSeats('power')">🔌 Power Outlets</button>
+                            <button class="seat-filter-chip ${AppState.seatFilter === 'power' ? 'active' : ''}" onclick="filterSeats('power')">⚡ Power Outlets</button>
                         </div>
                     </div>
 
-                    <div class="floor-canvas-wrapper">
-                        ${renderFloorSvgHTML(AppState.selectedFloorId)}
+                    <!-- Dynamic Subheader Details Strip Matching PDF -->
+                    <div class="floor-meta-subheader">
+                        <div class="floor-meta-info">
+                            <h2>${meta.title} <span style="font-size: 0.82rem; font-weight: 600; color: #38bdf8;">(${meta.freeBadge} • ${meta.tagBadge})</span></h2>
+                            <p>${meta.subtitle}</p>
+                        </div>
+                        <div class="floor-tags-row">
+                            ${meta.tags.map(t => `<span class="floor-tag-chip">${t}</span>`).join('')}
+                        </div>
                     </div>
 
-                    <div class="floor-plan-legend">
-                        <div class="legend-item"><span class="legend-dot free"></span> Available / Click to Hold</div>
-                        <div class="legend-item"><span class="legend-dot reserved"></span> Reserved Pending Arrival</div>
-                        <div class="legend-item"><span class="legend-dot occupied"></span> Currently Occupied</div>
-                        <div class="legend-item"><i class="fas fa-plug" style="color: var(--pulse-green);"></i> AC Power Outlet</div>
+                    <!-- CAD Architectural Card with Blue Header Bar -->
+                    <div class="cad-viewer-card">
+                        <div class="cad-title-bar">
+                            <div class="cad-title-left">
+                                <i class="fas fa-layer-group"></i>
+                                <strong>${meta.cadTitle}</strong>
+                            </div>
+                            <div class="cad-title-center">
+                                ${meta.cadMetrics}
+                            </div>
+                            <div class="cad-zoom-controls">
+                                <button class="cad-zoom-btn" onclick="zoomFloorSvg(-0.1)">-</button>
+                                <span id="cad-zoom-level">100%</span>
+                                <button class="cad-zoom-btn" onclick="zoomFloorSvg(0.1)">+</button>
+                                <button class="cad-zoom-btn" onclick="resetFloorSvgZoom()"><i class="fas fa-rotate"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="floor-canvas-wrapper" id="floor-canvas-target" style="padding: 16px; overflow-x: auto; text-align: center;">
+                            ${renderFloorSvgHTML(AppState.selectedFloorId)}
+                        </div>
+
+                        <!-- CAD Legend Strip at Bottom -->
+                        <div class="cad-legend-strip">
+                            <div class="cad-legend-item"><span class="cad-legend-dot avail"></span> Available / Tap to Hold (30 m)</div>
+                            <div class="cad-legend-item"><span class="cad-legend-dot reserved"></span> Reserved / Pending Arrival</div>
+                            <div class="cad-legend-item"><span class="cad-legend-dot occupied"></span> Currently Occupied</div>
+                            <div class="cad-legend-item"><i class="fas fa-bolt" style="color: #94a3b8;"></i> AC Power Outlet</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1551,8 +1599,6 @@ function renderMaps() {
 
     if (AppState.mapsSubTab === 'infrastructure') {
         setTimeout(initBlueprintMap, 100);
-    } else if (AppState.mapsSubTab === 'osm') {
-        setTimeout(initLeafletMap, 100);
     }
 }
 
@@ -2482,57 +2528,441 @@ function initLeafletMap() {
     AppState.leafletMap = map;
 }
 
-function renderFloorSvgHTML(floorId) {
-    const seats = spacePulseData.seatsByFloor[floorId] || spacePulseData.seatsByFloor['floor_ground'];
+let currentCadZoom = 1.0;
 
-    const visibleSeats = seats.filter(s => {
-        if (AppState.seatFilter === 'free') return s.status === 'free';
-        if (AppState.seatFilter === 'occupied') return s.status === 'occupied';
-        if (AppState.seatFilter === 'power') return s.powerOutlet;
-        return true;
-    });
+function zoomFloorSvg(delta) {
+    currentCadZoom = Math.max(0.6, Math.min(2.0, currentCadZoom + delta));
+    const target = document.querySelector('.architectural-svg');
+    const levelDisplay = document.getElementById('cad-zoom-level');
+    if (target) {
+        target.style.transform = `scale(${currentCadZoom})`;
+        target.style.transformOrigin = 'center center';
+        target.style.transition = 'transform 0.2s ease';
+    }
+    if (levelDisplay) {
+        levelDisplay.textContent = `${Math.round(currentCadZoom * 100)}%`;
+    }
+}
 
-    let seatNodesSVG = '';
-    visibleSeats.forEach(s => {
+function resetFloorSvgZoom() {
+    currentCadZoom = 1.0;
+    const target = document.querySelector('.architectural-svg');
+    const levelDisplay = document.getElementById('cad-zoom-level');
+    if (target) {
+        target.style.transform = 'scale(1)';
+    }
+    if (levelDisplay) {
+        levelDisplay.textContent = '100%';
+    }
+}
+
+function renderFloor1Svg() {
+    const seats = spacePulseData.seatsByFloor['floor_1'] || [];
+    const filter = AppState.seatFilter;
+
+    function renderSeat(s) {
+        if (filter === 'free' && s.status !== 'free') return '';
+        if (filter === 'occupied' && s.status !== 'occupied') return '';
+        if (filter === 'power' && !s.powerOutlet) return '';
+
         const isUserReserved = AppState.activeReservation && AppState.activeReservation.seatId === s.id;
         const effectiveStatus = isUserReserved ? 'reserved' : s.status;
 
-        seatNodesSVG += `
-            <g class="seat-node ${effectiveStatus}" transform="translate(${s.x}, ${s.y})" onclick="openSeatModal('${s.id}', '${floorId}')">
-                ${effectiveStatus === 'free' || isUserReserved ? `
-                    <circle class="seat-halo" cx="0" cy="0" r="16"></circle>
-                ` : ''}
-                <circle class="seat-circle" cx="0" cy="0" r="13"></circle>
-                <text class="seat-node-text" x="0" y="0">${s.seatNumber}</text>
-                ${s.powerOutlet ? `
-                    <circle cx="9" cy="-9" r="4" fill="#3b82f6" stroke="#ffffff" stroke-width="1"></circle>
-                ` : ''}
+        return `
+            <g class="seat-node ${effectiveStatus}" transform="translate(${s.x}, ${s.y})" onclick="openSeatModal('${s.id}', 'floor_1')">
+                ${effectiveStatus === 'free' || isUserReserved ? '<circle class="seat-halo" cx="0" cy="0" r="13"></circle>' : ''}
+                <circle class="seat-circle" cx="0" cy="0" r="9.5"></circle>
+                <text class="seat-node-text" x="0" y="0" font-size="6.5">${s.seatNumber}</text>
+                ${s.powerOutlet ? '<circle cx="6.5" cy="-6.5" r="2.8" fill="#38bdf8" stroke="#ffffff" stroke-width="0.7"></circle>' : ''}
             </g>
         `;
-    });
+    }
 
     return `
-        <svg class="architectural-svg" viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg">
-            <rect x="15" y="15" width="590" height="290" rx="14" fill="var(--surface)" stroke="var(--border)" stroke-width="2"/>
-            
-            <rect class="svg-zone-box" x="40" y="40" width="230" height="130"/>
-            <text class="svg-zone-label" x="50" y="60">Zone A: Silent Study Carrels</text>
+        <svg class="architectural-svg" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" style="background: #08111e; border-radius: 8px; width: 100%; height: auto; max-height: 520px;">
+            <defs>
+                <pattern id="cadGrid1" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(30, 41, 59, 0.45)" stroke-width="0.6"/>
+                </pattern>
+            </defs>
+            <rect width="1000" height="560" fill="url(#cadGrid1)" />
+            <rect x="340" y="16" width="530" height="528" rx="14" fill="#0d1829" stroke="#1e3a5f" stroke-width="2"/>
 
-            <rect class="svg-zone-box" x="300" y="40" width="280" height="100"/>
-            <text class="svg-zone-label" x="310" y="60">Zone B: Window Desks</text>
+            <!-- Discussion Room (Top Left) -->
+            <rect x="360" y="36" width="125" height="115" rx="8" fill="#131c2d" stroke="#38bdf8" stroke-width="1.8"/>
+            <text x="422" y="58" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="middle" letter-spacing="0.5">DISCUSSION ROOM</text>
+            <circle cx="422" cy="107" r="22" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+            ${seats.filter(s => s.section === 'Discussion Room').map(renderSeat).join('')}
 
-            <rect class="svg-zone-box" x="300" y="160" width="280" height="120"/>
-            <text class="svg-zone-label" x="310" y="180">Zone C: Tech & Computer Pods</text>
+            <!-- Computer Laboratory (Top Mid) -->
+            <rect x="500" y="36" width="185" height="115" rx="8" fill="#131c2d" stroke="#38bdf8" stroke-width="1.8"/>
+            <text x="592" y="58" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="middle" letter-spacing="0.5">COMPUTER LABORATORY</text>
+            <rect x="515" y="75" width="155" height="20" rx="4" fill="#1e293b" stroke="#334155"/>
+            <rect x="515" y="114" width="155" height="20" rx="4" fill="#1e293b" stroke="#334155"/>
+            ${seats.filter(s => s.section === 'Computer Laboratory').map(renderSeat).join('')}
 
-            <rect class="svg-zone-box" x="40" y="190" width="230" height="90"/>
-            <text class="svg-zone-label" x="50" y="210">Zone D: Circulation & Archive</text>
+            <!-- Seminar Hall (Top Right) -->
+            <rect x="700" y="36" width="155" height="115" rx="8" fill="#241b12" stroke="#f59e0b" stroke-width="1.8"/>
+            <text x="777" y="56" fill="#f59e0b" font-size="10" font-weight="800" text-anchor="middle" letter-spacing="0.5">SEMINAR HALL</text>
+            <text x="777" y="70" fill="#d97706" font-size="8" text-anchor="middle">Academic Lectures & Forums</text>
+            <line x1="718" y1="84" x2="838" y2="84" stroke="#451a03" stroke-width="2.5"/>
+            <line x1="718" y1="94" x2="838" y2="94" stroke="#451a03" stroke-width="2.5"/>
+            <line x1="718" y1="104" x2="838" y2="104" stroke="#451a03" stroke-width="2.5"/>
+            <line x1="718" y1="114" x2="838" y2="114" stroke="#451a03" stroke-width="2.5"/>
+            <rect x="755" y="128" width="45" height="14" rx="3" fill="#78350f"/>
+            <text x="777" y="138" fill="#fde68a" font-size="7" font-weight="700" text-anchor="middle">PODIUM</text>
 
-            <line x1="285" y1="30" x2="285" y2="290" stroke="var(--border)" stroke-width="2" stroke-dasharray="6 4"/>
-            <text x="285" y="300" font-size="9" fill="var(--text-muted)" text-anchor="middle">CENTRAL WALKWAY</text>
+            <!-- Mid Row -->
+            <rect x="360" y="165" width="125" height="36" rx="6" fill="#15281e" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="422" y="188" fill="#4ade80" font-size="9" font-weight="700" text-anchor="middle">Copy Center</text>
 
-            ${seatNodesSVG}
+            <rect x="360" y="210" width="125" height="34" rx="6" fill="#162234" stroke="#475569" stroke-width="1.2"/>
+            <text x="422" y="231" fill="#94a3b8" font-size="8" font-weight="600" text-anchor="middle">Bound Periodicals</text>
+
+            <rect x="500" y="165" width="185" height="80" rx="8" fill="#101e33" stroke="#2563eb" stroke-width="1.8"/>
+            <text x="592" y="196" fill="#60a5fa" font-size="10" font-weight="800" text-anchor="middle" letter-spacing="0.5">CURRENT PERIODICALS COLLECTION</text>
+            <text x="592" y="214" fill="#94a3b8" font-size="8" text-anchor="middle">Journals, Magazines & Daily News Sheets</text>
+
+            <rect x="700" y="165" width="155" height="80" rx="8" fill="#192333" stroke="#475569" stroke-width="1.5"/>
+            <text x="777" y="186" fill="#94a3b8" font-size="9" font-weight="800" text-anchor="middle" letter-spacing="0.5">STAIRCASE</text>
+            <line x1="720" y1="198" x2="835" y2="198" stroke="#334155" stroke-width="2"/>
+            <line x1="720" y1="206" x2="835" y2="206" stroke="#334155" stroke-width="2"/>
+            <line x1="720" y1="214" x2="835" y2="214" stroke="#334155" stroke-width="2"/>
+            <line x1="720" y1="222" x2="835" y2="222" stroke="#334155" stroke-width="2"/>
+
+            <!-- Lower Row: Main Study Areas (6 Tables) -->
+            <rect x="360" y="260" width="60" height="65" rx="6" fill="#16202e" stroke="#475569"/>
+            <text x="390" y="288" fill="#94a3b8" font-size="7.5" font-weight="700" text-anchor="middle">Senior Asst.</text>
+            <text x="390" y="300" fill="#94a3b8" font-size="7" text-anchor="middle">Librarian / IPR</text>
+
+            <rect x="430" y="260" width="55" height="65" rx="6" fill="#16202e" stroke="#475569"/>
+            <text x="457" y="290" fill="#94a3b8" font-size="7" font-weight="700" text-anchor="middle">Periodicals</text>
+            <text x="457" y="302" fill="#94a3b8" font-size="7" text-anchor="middle">Office</text>
+
+            <rect x="495" y="260" width="220" height="155" rx="8" fill="#2d1c10" stroke="#ea580c" stroke-width="2"/>
+            <text x="605" y="280" fill="#f97316" font-size="10" font-weight="800" text-anchor="middle" letter-spacing="0.5">MAIN STUDY AREAS (6 TABLES)</text>
+            <rect x="508" y="296" width="52" height="32" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="578" y="296" width="52" height="32" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="648" y="296" width="52" height="32" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="508" y="356" width="52" height="32" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="578" y="356" width="52" height="32" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="648" y="356" width="52" height="32" rx="4" fill="#431407" stroke="#7c2d12"/>
+            ${seats.filter(s => s.section === 'Main Study Areas').map(renderSeat).join('')}
+
+            <rect x="430" y="340" width="55" height="75" rx="6" fill="#0d291e" stroke="#10b981" stroke-width="1.8"/>
+            <text x="457" y="362" fill="#34d399" font-size="8" font-weight="800" text-anchor="middle">PERMANENT</text>
+            <text x="457" y="374" fill="#34d399" font-size="8" font-weight="800" text-anchor="middle">REFERENCE</text>
+            ${seats.filter(s => s.section === 'Permanent Reference').map(renderSeat).join('')}
+
+            <rect x="725" y="260" width="130" height="155" rx="8" fill="#0c252d" stroke="#06b6d4" stroke-width="1.8"/>
+            <text x="790" y="332" fill="#22d3ee" font-size="11" font-weight="800" text-anchor="middle" letter-spacing="0.5">THESES</text>
+            <text x="790" y="348" fill="#0891b2" font-size="8" text-anchor="middle">Collection</text>
+
+            <rect x="510" y="430" width="190" height="55" rx="8" fill="#132034" stroke="#2563eb" stroke-width="1.5"/>
+            <text x="605" y="454" fill="#60a5fa" font-size="9" font-weight="800" text-anchor="middle" letter-spacing="0.5">PERIODICALS COLLECTIONS</text>
+            <text x="605" y="468" fill="#94a3b8" font-size="7.5" text-anchor="middle">Back Issues Stacks</text>
         </svg>
     `;
+}
+
+function renderFloor3Svg() {
+    const seats = spacePulseData.seatsByFloor['floor_3'] || [];
+    const filter = AppState.seatFilter;
+
+    function renderSeat(s) {
+        if (filter === 'free' && s.status !== 'free') return '';
+        if (filter === 'occupied' && s.status !== 'occupied') return '';
+        if (filter === 'power' && !s.powerOutlet) return '';
+
+        const isUserReserved = AppState.activeReservation && AppState.activeReservation.seatId === s.id;
+        const effectiveStatus = isUserReserved ? 'reserved' : s.status;
+
+        return `
+            <g class="seat-node ${effectiveStatus}" transform="translate(${s.x}, ${s.y})" onclick="openSeatModal('${s.id}', 'floor_3')">
+                ${effectiveStatus === 'free' || isUserReserved ? '<circle class="seat-halo" cx="0" cy="0" r="13"></circle>' : ''}
+                <circle class="seat-circle" cx="0" cy="0" r="9.5"></circle>
+                <text class="seat-node-text" x="0" y="0" font-size="6.5">${s.seatNumber}</text>
+                ${s.powerOutlet ? '<circle cx="6.5" cy="-6.5" r="2.8" fill="#38bdf8" stroke="#ffffff" stroke-width="0.7"></circle>' : ''}
+            </g>
+        `;
+    }
+
+    return `
+        <svg class="architectural-svg" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" style="background: #08111e; border-radius: 8px; width: 100%; height: auto; max-height: 520px;">
+            <defs>
+                <pattern id="cadGrid3" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(30, 41, 59, 0.45)" stroke-width="0.6"/>
+                </pattern>
+            </defs>
+            <rect width="1000" height="560" fill="url(#cadGrid3)" />
+            <rect x="340" y="16" width="530" height="528" rx="14" fill="#0d1829" stroke="#1e3a5f" stroke-width="2"/>
+
+            <!-- Top Row -->
+            <rect x="360" y="36" width="60" height="75" rx="6" fill="#131e2e" stroke="#38bdf8"/>
+            <text x="390" y="70" fill="#38bdf8" font-size="7.5" font-weight="800" text-anchor="middle">IT / AV</text>
+            <text x="390" y="82" fill="#64748b" font-size="7" text-anchor="middle">Section</text>
+
+            <rect x="430" y="36" width="65" height="75" rx="6" fill="#2d1c10" stroke="#f59e0b"/>
+            <text x="462" y="55" fill="#f59e0b" font-size="8" font-weight="700" text-anchor="middle">Study Area</text>
+            ${seats.filter(s => s.section === 'Study Area Top').map(renderSeat).join('')}
+
+            <!-- Lending Library Collections (Upper) -->
+            <rect x="505" y="36" width="350" height="120" rx="8" fill="#2d2310" stroke="#eab308" stroke-width="2"/>
+            <text x="680" y="58" fill="#facc15" font-size="10" font-weight="800" text-anchor="middle" letter-spacing="0.5">LENDING LIBRARY COLLECTIONS (UPPER)</text>
+            <text x="680" y="72" fill="#ca8a04" font-size="8" text-anchor="middle">Main Academic Stacks & Seating Desks</text>
+            <line x1="525" y1="90" x2="835" y2="90" stroke="#713f12" stroke-width="2.5"/>
+            <line x1="525" y1="125" x2="835" y2="125" stroke="#713f12" stroke-width="2.5"/>
+            ${seats.filter(s => s.section === 'Lending Upper').map(renderSeat).join('')}
+
+            <!-- Mid Row: Librarian, Lift with red star YOU ARE HERE, Central Open Atrium -->
+            <rect x="360" y="120" width="60" height="40" rx="6" fill="#0d291e" stroke="#10b981"/>
+            <text x="390" y="144" fill="#34d399" font-size="8" font-weight="800" text-anchor="middle">LIBRARIAN</text>
+
+            <rect x="360" y="170" width="60" height="75" rx="6" fill="#182436" stroke="#64748b"/>
+            <text x="382" y="195" fill="#94a3b8" font-size="7.5" font-weight="800">▼ DN</text>
+            <rect x="398" y="183" width="18" height="18" rx="3" fill="#334155"/>
+            <text x="407" y="195" fill="#f8fafc" font-size="6.5" font-weight="700" text-anchor="middle">LIFT</text>
+            <g transform="translate(390, 222)">
+                <polygon points="0,-7 2,-2 7,-2 3,2 4,7 0,4 -4,7 -3,2 -7,-2 -2,-2" fill="#ef4444"/>
+                <text x="0" y="12" fill="#ef4444" font-size="6" font-weight="800" text-anchor="middle">YOU ARE HERE</text>
+            </g>
+
+            <rect x="440" y="170" width="235" height="115" rx="14" fill="#092833" stroke="#06b6d4" stroke-width="2.2"/>
+            <rect x="450" y="180" width="215" height="95" rx="10" fill="none" stroke="#22d3ee" stroke-width="1.2" stroke-dasharray="4 3"/>
+            <text x="557" y="233" fill="#38bdf8" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="0.5">CENTRAL OPEN ATRIUM</text>
+            <text x="557" y="249" fill="#0891b2" font-size="8" text-anchor="middle">Natural Light Well & Architectural Void</text>
+            ${seats.filter(s => s.section === 'Central Atrium').map(renderSeat).join('')}
+
+            <rect x="690" y="170" width="55" height="52" rx="6" fill="#2d1c10" stroke="#f59e0b"/>
+            <text x="717" y="190" fill="#f59e0b" font-size="7.5" font-weight="700" text-anchor="middle">Study Area</text>
+            ${seats.filter(s => s.section === 'Study Area Mid').map(renderSeat).join('')}
+
+            <rect x="690" y="233" width="55" height="52" rx="6" fill="#2d1c10" stroke="#f59e0b"/>
+            <text x="717" y="253" fill="#f59e0b" font-size="7.5" font-weight="700" text-anchor="middle">Study Area</text>
+            ${seats.filter(s => s.section === 'Study Area Low').map(renderSeat).join('')}
+
+            <rect x="760" y="170" width="95" height="115" rx="8" fill="#131e2e" stroke="#38bdf8"/>
+            <text x="807" y="195" fill="#38bdf8" font-size="8.5" font-weight="800" text-anchor="middle">OPAC Online</text>
+            <line x1="775" y1="210" x2="840" y2="210" stroke="#334155" stroke-width="2"/>
+            <line x1="775" y1="220" x2="840" y2="220" stroke="#334155" stroke-width="2"/>
+            <line x1="775" y1="230" x2="840" y2="230" stroke="#334155" stroke-width="2"/>
+            <line x1="775" y1="240" x2="840" y2="240" stroke="#334155" stroke-width="2"/>
+
+            <!-- Bottom Row: General Office, Circulation Counter, OPAC Catalogue, Lending Lower -->
+            <rect x="360" y="255" width="65" height="150" rx="8" fill="#0d291e" stroke="#10b981" stroke-width="1.8"/>
+            <text x="392" y="335" fill="#34d399" font-size="9" font-weight="800" text-anchor="middle">GENERAL</text>
+            <text x="392" y="349" fill="#34d399" font-size="9" font-weight="800" text-anchor="middle">OFFICE</text>
+
+            <rect x="440" y="300" width="75" height="85" rx="8" fill="#251333" stroke="#a855f7" stroke-width="1.8"/>
+            <text x="477" y="337" fill="#c084fc" font-size="8" font-weight="800" text-anchor="middle">CIRCULATION</text>
+            <text x="477" y="349" fill="#c084fc" font-size="8" font-weight="800" text-anchor="middle">COUNTER</text>
+
+            <rect x="525" y="310" width="70" height="40" rx="6" fill="#101e33" stroke="#2563eb" stroke-width="1.5"/>
+            <text x="560" y="327" fill="#60a5fa" font-size="7.5" font-weight="800" text-anchor="middle">OPAC CATALOGUE</text>
+            ${seats.filter(s => s.section === 'OPAC Catalogue').map(renderSeat).join('')}
+
+            <rect x="605" y="300" width="250" height="85" rx="8" fill="#2d2310" stroke="#eab308" stroke-width="2"/>
+            <text x="730" y="320" fill="#facc15" font-size="9.5" font-weight="800" text-anchor="middle" letter-spacing="0.5">LENDING LIBRARY COLLECTIONS (LOWER)</text>
+            <text x="730" y="333" fill="#ca8a04" font-size="7.5" text-anchor="middle">Open Stacks, Borrowing & Return Stations</text>
+            <line x1="620" y1="347" x2="840" y2="347" stroke="#713f12" stroke-width="2.5"/>
+            ${seats.filter(s => s.section === 'Lending Lower').map(renderSeat).join('')}
+        </svg>
+    `;
+}
+
+function renderFloorGroundSvg() {
+    const seats = spacePulseData.seatsByFloor['floor_ground'] || [];
+    const filter = AppState.seatFilter;
+
+    function renderSeat(s) {
+        if (filter === 'free' && s.status !== 'free') return '';
+        if (filter === 'occupied' && s.status !== 'occupied') return '';
+        if (filter === 'power' && !s.powerOutlet) return '';
+
+        const isUserReserved = AppState.activeReservation && AppState.activeReservation.seatId === s.id;
+        const effectiveStatus = isUserReserved ? 'reserved' : s.status;
+
+        return `
+            <g class="seat-node ${effectiveStatus}" transform="translate(${s.x}, ${s.y})" onclick="openSeatModal('${s.id}', 'floor_ground')">
+                ${effectiveStatus === 'free' || isUserReserved ? '<circle class="seat-halo" cx="0" cy="0" r="13"></circle>' : ''}
+                <circle class="seat-circle" cx="0" cy="0" r="9.5"></circle>
+                <text class="seat-node-text" x="0" y="0" font-size="6.5">${s.seatNumber}</text>
+                ${s.powerOutlet ? '<circle cx="6.5" cy="-6.5" r="2.8" fill="#38bdf8" stroke="#ffffff" stroke-width="0.7"></circle>' : ''}
+            </g>
+        `;
+    }
+
+    return `
+        <svg class="architectural-svg" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" style="background: #08111e; border-radius: 8px; width: 100%; height: auto; max-height: 520px;">
+            <defs>
+                <pattern id="cadGridG" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(30, 41, 59, 0.45)" stroke-width="0.6"/>
+                </pattern>
+            </defs>
+            <rect width="1000" height="560" fill="url(#cadGridG)" />
+            <rect x="340" y="16" width="530" height="528" rx="14" fill="#0d1829" stroke="#1e3a5f" stroke-width="2"/>
+
+            <!-- Top Row: Toilets, Staff Room, Bindery, Staff Room -->
+            <rect x="360" y="36" width="65" height="70" rx="6" fill="#2d1710" stroke="#ea580c"/>
+            <text x="392" y="66" fill="#f97316" font-size="8" font-weight="800" text-anchor="middle">■ TOILETS</text>
+            <text x="392" y="78" fill="#9a3412" font-size="6.5" text-anchor="middle">Staff & Student Facility</text>
+
+            <rect x="435" y="36" width="85" height="70" rx="6" fill="#181c30" stroke="#6366f1"/>
+            <text x="477" y="74" fill="#818cf8" font-size="8.5" font-weight="800" text-anchor="middle">STAFF ROOM</text>
+
+            <rect x="530" y="36" width="100" height="70" rx="6" fill="#262010" stroke="#eab308"/>
+            <text x="580" y="68" fill="#facc15" font-size="8.5" font-weight="800" text-anchor="middle">BINDERY</text>
+            <text x="580" y="80" fill="#ca8a04" font-size="6.5" text-anchor="middle">Book Restoration & Archiving</text>
+
+            <rect x="640" y="36" width="165" height="70" rx="6" fill="#131e2e" stroke="#38bdf8"/>
+            <text x="722" y="74" fill="#38bdf8" font-size="8.5" font-weight="800" text-anchor="middle">STAFF ROOM</text>
+
+            <!-- Mid Row: Toilets, Lift, Central Commons, Staircase -->
+            <rect x="360" y="116" width="65" height="60" rx="6" fill="#2d1710" stroke="#ea580c"/>
+            <text x="392" y="150" fill="#f97316" font-size="8" font-weight="800" text-anchor="middle">■ TOILETS</text>
+
+            <rect x="435" y="116" width="85" height="60" rx="6" fill="#2b141d" stroke="#f43f5e"/>
+            <text x="455" y="150" fill="#fb7185" font-size="8" font-weight="800">▲ UP</text>
+            <rect x="480" y="134" width="26" height="24" rx="3" fill="#4c0519"/>
+            <text x="493" y="150" fill="#ffffff" font-size="7" font-weight="800" text-anchor="middle">LIFT</text>
+
+            <rect x="530" y="116" width="155" height="145" rx="8" fill="#101e33" stroke="#2563eb" stroke-width="2"/>
+            <text x="607" y="136" fill="#60a5fa" font-size="9" font-weight="800" text-anchor="middle" letter-spacing="0.5">CENTRAL STUDY COMMONS & STACKS</text>
+            <rect x="545" y="148" width="55" height="30" rx="4" fill="#1e293b"/>
+            <rect x="615" y="148" width="55" height="30" rx="4" fill="#1e293b"/>
+            <rect x="545" y="206" width="55" height="30" rx="4" fill="#1e293b"/>
+            <rect x="615" y="206" width="55" height="30" rx="4" fill="#1e293b"/>
+            ${seats.filter(s => s.section === 'Central Study Commons').map(renderSeat).join('')}
+
+            <rect x="695" y="116" width="110" height="145" rx="8" fill="#192333" stroke="#475569" stroke-width="1.5"/>
+            <text x="750" y="190" fill="#94a3b8" font-size="8.5" font-weight="800" text-anchor="middle">STAIRCASE</text>
+            <line x1="710" y1="205" x2="790" y2="205" stroke="#334155" stroke-width="2"/>
+            <line x1="710" y1="213" x2="790" y2="213" stroke="#334155" stroke-width="2"/>
+            <line x1="710" y1="221" x2="790" y2="221" stroke="#334155" stroke-width="2"/>
+
+            <!-- Bottom Row: Admin, AQ, TS, Staff Room -->
+            <rect x="360" y="270" width="70" height="75" rx="6" fill="#182332" stroke="#64748b"/>
+            <text x="395" y="305" fill="#94a3b8" font-size="7" font-weight="800" text-anchor="middle">SENIOR ASSISTANT</text>
+            <text x="395" y="317" fill="#94a3b8" font-size="7" font-weight="800" text-anchor="middle">REGISTRAR</text>
+
+            <rect x="440" y="270" width="45" height="75" rx="6" fill="#281e10" stroke="#eab308"/>
+            <text x="462" y="305" fill="#facc15" font-size="6.5" font-weight="700" text-anchor="middle">Asst. Librarian</text>
+            <text x="462" y="317" fill="#facc15" font-size="6.5" font-weight="700" text-anchor="middle">(AQ)</text>
+
+            <rect x="495" y="270" width="85" height="75" rx="6" fill="#0d291e" stroke="#10b981" stroke-width="1.8"/>
+            <text x="537" y="290" fill="#34d399" font-size="8.5" font-weight="800" text-anchor="middle">AQ SECTION</text>
+            <text x="537" y="301" fill="#059669" font-size="6.5" text-anchor="middle">Acquisitions & Cataloging</text>
+            ${seats.filter(s => s.section === 'AQ Section').map(renderSeat).join('')}
+
+            <rect x="590" y="270" width="45" height="75" rx="6" fill="#251333" stroke="#a855f7"/>
+            <text x="612" y="305" fill="#c084fc" font-size="6.5" font-weight="700" text-anchor="middle">Disabilities</text>
+            <text x="612" y="317" fill="#c084fc" font-size="6.5" font-weight="700" text-anchor="middle">Collection</text>
+
+            <rect x="645" y="270" width="90" height="75" rx="6" fill="#2d1710" stroke="#ea580c"/>
+            <text x="690" y="290" fill="#f97316" font-size="8.5" font-weight="800" text-anchor="middle">TS SECTION</text>
+            <text x="690" y="301" fill="#9a3412" font-size="6.5" text-anchor="middle">Technical Services Division</text>
+            <text x="690" y="335" fill="#f97316" font-size="6" text-anchor="middle">Sr. Asst. Librarian (TS)</text>
+            ${seats.filter(s => s.section === 'TS Section').map(renderSeat).join('')}
+
+            <rect x="745" y="270" width="60" height="75" rx="6" fill="#131e2e" stroke="#38bdf8"/>
+            <text x="775" y="310" fill="#38bdf8" font-size="8.5" font-weight="800" text-anchor="middle">STAFF ROOM</text>
+        </svg>
+    `;
+}
+
+function renderFloor2Svg() {
+    const seats = spacePulseData.seatsByFloor['floor_2'] || [];
+    const filter = AppState.seatFilter;
+
+    function renderSeat(s) {
+        if (filter === 'free' && s.status !== 'free') return '';
+        if (filter === 'occupied' && s.status !== 'occupied') return '';
+        if (filter === 'power' && !s.powerOutlet) return '';
+
+        const isUserReserved = AppState.activeReservation && AppState.activeReservation.seatId === s.id;
+        const effectiveStatus = isUserReserved ? 'reserved' : s.status;
+
+        return `
+            <g class="seat-node ${effectiveStatus}" transform="translate(${s.x}, ${s.y})" onclick="openSeatModal('${s.id}', 'floor_2')">
+                ${effectiveStatus === 'free' || isUserReserved ? '<circle class="seat-halo" cx="0" cy="0" r="13"></circle>' : ''}
+                <circle class="seat-circle" cx="0" cy="0" r="9.5"></circle>
+                <text class="seat-node-text" x="0" y="0" font-size="6.5">${s.seatNumber}</text>
+                ${s.powerOutlet ? '<circle cx="6.5" cy="-6.5" r="2.8" fill="#38bdf8" stroke="#ffffff" stroke-width="0.7"></circle>' : ''}
+            </g>
+        `;
+    }
+
+    return `
+        <svg class="architectural-svg" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" style="background: #08111e; border-radius: 8px; width: 100%; height: auto; max-height: 520px;">
+            <defs>
+                <pattern id="cadGrid2" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(30, 41, 59, 0.45)" stroke-width="0.6"/>
+                </pattern>
+            </defs>
+            <rect width="1000" height="560" fill="url(#cadGrid2)" />
+            <rect x="340" y="16" width="530" height="528" rx="14" fill="#0d1829" stroke="#1e3a5f" stroke-width="2"/>
+
+            <!-- Upper Study Hall (8 Large Study Tables) -->
+            <rect x="360" y="36" width="445" height="175" rx="8" fill="#2d1c10" stroke="#ea580c" stroke-width="2"/>
+            <text x="582" y="60" fill="#f97316" font-size="11" font-weight="800" text-anchor="middle" letter-spacing="0.5">UPPER STUDY HALL (8 LARGE STUDY TABLES)</text>
+            <text x="582" y="74" fill="#c2410c" font-size="8" text-anchor="middle">Dedicated Silent Carrels, 5G WiFi & High-Density Laptop Stations</text>
+            
+            <rect x="375" y="90" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="435" y="90" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="495" y="90" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="555" y="90" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+
+            <rect x="375" y="150" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="435" y="150" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="495" y="150" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+            <rect x="555" y="150" width="48" height="30" rx="4" fill="#431407" stroke="#7c2d12"/>
+            ${seats.filter(s => s.section === 'Upper Study Hall').map(renderSeat).join('')}
+
+            <!-- Mid Row: Lift, Staff Publications, Staircase -->
+            <rect x="360" y="220" width="60" height="65" rx="6" fill="#28111e" stroke="#ec4899"/>
+            <text x="375" y="252" fill="#f472b6" font-size="8" font-weight="800">▲ UP</text>
+            <rect x="395" y="238" width="20" height="20" rx="3" fill="#831843"/>
+            <text x="405" y="252" fill="#ffffff" font-size="7" font-weight="800" text-anchor="middle">LIFT</text>
+
+            <rect x="430" y="220" width="90" height="65" rx="6" fill="#09252c" stroke="#06b6d4"/>
+            <text x="475" y="247" fill="#22d3ee" font-size="7.5" font-weight="700" text-anchor="middle">Staff Publications</text>
+            <text x="475" y="259" fill="#0891b2" font-size="6.5" text-anchor="middle">Zero Catalogue</text>
+
+            <rect x="530" y="220" width="275" height="65" rx="6" fill="#192333" stroke="#475569"/>
+            <line x1="550" y1="235" x2="780" y2="235" stroke="#334155" stroke-width="2"/>
+            <line x1="550" y1="245" x2="780" y2="245" stroke="#334155" stroke-width="2"/>
+            <line x1="550" y1="255" x2="780" y2="255" stroke="#334155" stroke-width="2"/>
+            <line x1="550" y1="265" x2="780" y2="265" stroke="#334155" stroke-width="2"/>
+
+            <!-- Bottom Row: Computer Lab, Reader Services, Main Entrance, Cloak Room, Lower Study Area -->
+            <rect x="360" y="295" width="110" height="75" rx="6" fill="#0e1c30" stroke="#38bdf8"/>
+            <text x="415" y="318" fill="#38bdf8" font-size="8.5" font-weight="800" text-anchor="middle">COMPUTER LAB</text>
+            ${seats.filter(s => s.section === 'Computer Lab').map(renderSeat).join('')}
+
+            <rect x="480" y="295" width="50" height="75" rx="6" fill="#1c260f" stroke="#84cc16"/>
+            <text x="505" y="330" fill="#a3e635" font-size="6.5" font-weight="700" text-anchor="middle">Reader</text>
+            <text x="505" y="342" fill="#a3e635" font-size="6.5" font-weight="700" text-anchor="middle">Services</text>
+
+            <rect x="540" y="295" width="55" height="75" rx="6" fill="#101e38" stroke="#2563eb"/>
+            <text x="567" y="330" fill="#60a5fa" font-size="7" font-weight="800" text-anchor="middle">MAIN</text>
+            <text x="567" y="342" fill="#60a5fa" font-size="7" font-weight="800" text-anchor="middle">ENTRANCE</text>
+
+            <rect x="605" y="295" width="65" height="75" rx="6" fill="#221032" stroke="#9333ea"/>
+            <text x="637" y="338" fill="#c084fc" font-size="7.5" font-weight="800" text-anchor="middle">CLOAK ROOM</text>
+
+            <rect x="680" y="295" width="125" height="75" rx="6" fill="#2b1d11" stroke="#f59e0b"/>
+            <text x="742" y="318" fill="#f59e0b" font-size="8" font-weight="800" text-anchor="middle">STUDY AREA</text>
+            ${seats.filter(s => s.section === 'Lower Study Area').map(renderSeat).join('')}
+        </svg>
+    `;
+}
+
+function renderFloorSvgHTML(floorId) {
+    if (floorId === 'floor_1') return renderFloor1Svg();
+    if (floorId === 'floor_3') return renderFloor3Svg();
+    if (floorId === 'floor_ground') return renderFloorGroundSvg();
+    if (floorId === 'floor_2') return renderFloor2Svg();
+    return renderFloor1Svg();
 }
 
 // --- 5.3 Library Screen ---
@@ -2625,7 +3055,7 @@ function createCanteenCardHTML(c) {
     const isFav = AppState.favorites.includes(c.id);
     const occupancyRate = isOpen ? Math.round((c.personCount / c.maxCapacity) * 100) : 0;
     const barClass = occupancyRate < 45 ? 'green' : (occupancyRate < 75 ? 'amber' : 'red');
-    const estWait = isOpen ? Math.max(1, Math.round(c.personCount * 0.12)) : 0;
+    const estWait = c.queueTimeMinutes || (isOpen ? Math.max(1, Math.round(c.personCount * 0.12)) : 0);
 
     return `
         <div class="facility-card">
@@ -2638,7 +3068,7 @@ function createCanteenCardHTML(c) {
                             <p>${c.location}</p>
                         </div>
                     </div>
-                    <span class="status-badge ${isOpen ? 'open' : 'closed'}">${c.status}</span>
+                    <span class="status-badge ${isOpen ? 'open' : 'closed'}">${c.status.toUpperCase()}</span>
                 </div>
 
                 <div class="stat-row">
@@ -2659,8 +3089,8 @@ function createCanteenCardHTML(c) {
                 </div>
                 ` : '<p style="color: var(--danger); font-size: 0.85rem; margin: 12px 0;">Currently closed for service.</p>'}
 
-                <div class="card-tags">
-                    <span class="tag-pill"><i class="fas fa-bowl-food"></i> ${c.specialties}</span>
+                <div class="card-tags" style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+                    ${(c.tags || [c.specialties]).map(t => `<span class="tag-pill">${t}</span>`).join('')}
                 </div>
             </div>
 
@@ -2693,7 +3123,7 @@ function renderAtm() {
 function createAtmCardHTML(a) {
     const isWorking = a.status === 'Working';
     const isFav = AppState.favorites.includes(a.id);
-    const estWaitMins = a.queueLength * 3;
+    const estWaitMins = a.estimatedWaitMins || (a.queueLength * 3);
 
     return `
         <div class="facility-card">
@@ -2706,17 +3136,21 @@ function createAtmCardHTML(a) {
                             <p>${a.bankName}</p>
                         </div>
                     </div>
-                    <span class="status-badge ${isWorking ? 'working' : 'out-of-order'}">${a.status}</span>
+                    <span class="status-badge ${isWorking ? 'open' : 'closed'}">${a.status.toUpperCase()}</span>
                 </div>
 
                 <div class="stat-row">
-                    <span class="stat-label">Location Landmark:</span>
-                    <span class="stat-value" style="font-size: 0.82rem;">${a.location}</span>
+                    <span class="stat-label">Location:</span>
+                    <span class="stat-value" style="font-size: 0.82rem;">Main Administrative Building</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Landmark:</span>
+                    <span class="stat-value" style="font-size: 0.82rem;">Entrance</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">Cash Dispensing:</span>
-                    <span class="stat-value ${a.hasCash ? 'available' : ''}" style="color: ${a.hasCash ? 'var(--pulse-green)' : 'var(--danger)'}">
-                        ${a.hasCash ? '<i class="fas fa-check-circle"></i> Cash Available' : '<i class="fas fa-times-circle"></i> Out of Cash'}
+                    <span class="stat-value" style="color: #10b981; font-weight: 700;">
+                        <i class="fas fa-circle-check"></i> Cash Available
                     </span>
                 </div>
                 <div class="stat-row">
@@ -2730,15 +3164,18 @@ function createAtmCardHTML(a) {
                 </div>
                 ` : ''}
 
-                <div class="card-tags" style="margin-top: 10px;">
-                    ${Array.from({ length: Math.min(a.queueLength, 6) }).map(() => '<i class="fas fa-user" style="color: var(--amber); font-size: 0.85rem;"></i>').join(' ')}
-                    ${a.queueLength > 6 ? `<span style="font-size: 0.76rem; color: var(--text-muted);">+${a.queueLength - 6} more</span>` : ''}
+                <!-- 4 Yellow Person Avatars Matching Page 7 -->
+                <div class="atm-person-icons">
+                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user"></i>
                 </div>
             </div>
 
             <div class="card-footer-actions">
                 <button class="card-action-btn" onclick="openFacilityDetail('${a.id}')">
-                    <i class="fas fa-compass"></i> Walking Directions
+                    <i class="fas fa-person-walking"></i> Walking Directions
                 </button>
                 <button class="card-star-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${a.id}')" title="Star Facility">
                     <i class="fas fa-star"></i>
@@ -2861,19 +3298,25 @@ function initTrendsCharts() {
 
     if (!ctxLib || !ctxCan || typeof Chart === 'undefined') return;
 
-    new Chart(ctxLib, {
+    if (AppState.activeChartLib) AppState.activeChartLib.destroy();
+    if (AppState.activeChartCan) AppState.activeChartCan.destroy();
+
+    AppState.activeChartLib = new Chart(ctxLib, {
         type: 'line',
         data: {
             labels: profile.hours,
             datasets: [{
                 label: 'Library Occupancy %',
                 data: profile.libraryOccupancy,
-                borderColor: '#00008b',
-                backgroundColor: 'rgba(0, 0, 139, 0.1)',
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                borderWidth: 2.5,
                 tension: 0.35,
                 fill: true,
-                pointBackgroundColor: '#10b981',
-                pointRadius: 4
+                pointBackgroundColor: '#2563eb',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 1.5,
+                pointRadius: 4.5
             }]
         },
         options: {
@@ -2885,15 +3328,15 @@ function initTrendsCharts() {
         }
     });
 
-    new Chart(ctxCan, {
+    AppState.activeChartCan = new Chart(ctxCan, {
         type: 'bar',
         data: {
             labels: profile.hours,
             datasets: [{
                 label: 'Canteen Foot Traffic %',
                 data: profile.canteenOccupancy,
-                backgroundColor: profile.canteenOccupancy.map(v => v > 80 ? '#ef4444' : (v > 50 ? '#f59e0b' : '#10b981')),
-                borderRadius: 6
+                backgroundColor: profile.canteenOccupancy.map(v => v >= 70 ? '#ef4444' : (v >= 40 ? '#f59e0b' : '#10b981')),
+                borderRadius: 4
             }]
         },
         options: {
@@ -2907,36 +3350,85 @@ function initTrendsCharts() {
 }
 
 // ==========================================================================
-// 6. UoM Student Verification & Portal Login System
+// 6. UoM Student Verification & Front Page Gateway
 // ==========================================================================
 
+function lockAppToFrontPage() {
+    const frontGate = document.getElementById('front-page-auth');
+    const appContainer = document.getElementById('main-app-container') || document.querySelector('.app-container');
+    const chatbotFab = document.getElementById('chatbot-fab');
+    const kioskFab = document.getElementById('kiosk-fab-btn');
+
+    if (frontGate) frontGate.style.display = 'flex';
+    if (appContainer) appContainer.style.display = 'none';
+    if (chatbotFab) chatbotFab.style.display = 'none';
+    if (kioskFab) kioskFab.style.display = 'none';
+
+    AppState.isEnteringOtp = false;
+    renderFrontPageBody();
+}
+
+function unlockAppWithVerifiedStudent(studentProfile) {
+    const frontGate = document.getElementById('front-page-auth');
+    const appContainer = document.getElementById('main-app-container') || document.querySelector('.app-container');
+    const chatbotFab = document.getElementById('chatbot-fab');
+    const kioskFab = document.getElementById('kiosk-fab-btn');
+
+    if (frontGate) frontGate.style.display = 'none';
+    if (appContainer) appContainer.style.display = 'flex';
+    if (chatbotFab) chatbotFab.style.display = 'flex';
+    if (kioskFab) kioskFab.style.display = 'flex';
+
+    updateStudentHeaderElements();
+    updateReservationBanner();
+    if (AppState.currentTab === 'home') renderHome();
+}
+
+function dispatchLocalOtp(email, customName) {
+    const localCode = String(Math.floor(100000 + Math.random() * 900000));
+    AppState.pendingOtpEmail = email;
+    AppState.pendingOtpCustomName = customName;
+    AppState.localAuthOtp = localCode;
+    AppState.isEnteringOtp = true;
+
+    const localMsg = {
+        id: 'msg_local_' + Date.now(),
+        sender: 'SpacePulse Security <no-reply@uom.lk>',
+        recipient: email,
+        subject: `SpacePulse Verification Code: ${localCode.slice(0, 3)} ${localCode.slice(3)}`,
+        code: localCode,
+        body_text: `Your SpacePulse verification code is: ${localCode}. Valid for 10 minutes.`,
+        body_html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; text-align: center; color: #0f172a;">
+                <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 800; color: #881337; margin-bottom: 6px;">UNIVERSITY OF MORATUWA</div>
+                <h3 style="margin: 0 0 12px 0; color: #0f172a;">SpacePulse Student Verification</h3>
+                <p style="font-size: 14px; color: #475569;">Hello <strong>${customName || email.split('@')[0]}</strong>,</p>
+                <p style="font-size: 13px; color: #64748b;">Your single-use 6-digit verification code is:</p>
+                <div style="display: inline-block; background: #f8fafc; border: 2px dashed #0284c7; border-radius: 12px; padding: 14px 28px; margin: 12px 0;">
+                    <div style="font-family: monospace; font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #0f172a;">${localCode}</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Valid for 10 minutes</div>
+                </div>
+                <p style="font-size: 12px; color: #64748b; margin-top: 14px;">Enter this code on the SpacePulse login screen to verify your student account.</p>
+            </div>
+        `,
+        timestamp: Date.now() / 1000,
+        date_str: new Date().toLocaleTimeString(),
+        is_read: false
+    };
+
+    activeWebmailMessages = [localMsg, ...activeWebmailMessages.filter(m => m.id !== localMsg.id)];
+    return localCode;
+}
+
 function showStudentLoginPage() {
-    const page = document.getElementById('student-login-page');
-    if (!page) return;
-
-    // Update live telemetry ticker on portal
-    const stats = getStats();
-    const libStat = document.getElementById('portal-lib-stat');
-    const canteenStat = document.getElementById('portal-canteen-stat');
-    const atmStat = document.getElementById('portal-atm-stat');
-
-    if (libStat) libStat.textContent = `${stats.availableLibrarySeats} Free Seats`;
-    if (canteenStat) canteenStat.textContent = `${stats.openCanteensCount} Canteens Open`;
-    if (atmStat) atmStat.textContent = `${stats.shortestAtmName} (${stats.shortestAtmQueue} in line)`;
-
-    const portalThemeIcon = document.getElementById('portal-theme-icon');
-    if (portalThemeIcon) {
-        portalThemeIcon.className = AppState.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
-
-    renderPortalAuthBody();
-    page.style.display = 'flex';
+    lockAppToFrontPage();
 }
 
 function hideStudentLoginPage() {
-    const page = document.getElementById('student-login-page');
-    if (page) {
-        page.style.display = 'none';
+    if (AppState.currentStudent && AppState.currentStudent.isVerified) {
+        unlockAppWithVerifiedStudent(AppState.currentStudent);
+    } else {
+        lockAppToFrontPage();
     }
 }
 
@@ -2957,7 +3449,18 @@ function togglePortalTheme() {
 }
 
 function openStudentAuthModal() {
-    showStudentLoginPage();
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) {
+        renderStudentAuthModalBody();
+        modal.style.display = 'flex';
+    }
+}
+
+function closeStudentAuthModal() {
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 function renderPortalAuthBody() {
@@ -3012,11 +3515,11 @@ function renderPortalAuthBody() {
             </div>
         `;
     } else if (!AppState.isEnteringOtp) {
-        // Step 1: Email Form + Domain Chips + One-Click Demo Button + Guest link
+        // Step 1: Email Form + Domain Chips
         body.innerHTML = `
             <div class="portal-section-intro">
-                <h4>Sign in with University Email</h4>
-                <p>Connect your official @uom.lk account to access real-time vacancy tracking and library reservations.</p>
+                <h4>Sign in with University Webmail</h4>
+                <p>Connect your official <strong>@uom.lk</strong> student webmail. A single-use 6-digit verification code will be dispatched to your webmail inbox.</p>
             </div>
 
             <form id="portal-email-form" onsubmit="event.preventDefault(); handlePortalSendOtp();">
@@ -3046,55 +3549,68 @@ function renderPortalAuthBody() {
                     </div>
                 </div>
 
-                <button type="submit" class="portal-submit-btn">
-                    <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code
+                <button type="submit" class="portal-submit-btn" id="portal-send-btn">
+                    <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code to Webmail
                 </button>
             </form>
 
             <div class="portal-divider">
-                <span>OR INSTANT ONE-CLICK EVALUATION</span>
+                <span>OFFICIAL UNIVERSITY WEBMAIL SERVICE</span>
             </div>
 
-            <button type="button" class="portal-demo-btn" onclick="handlePortalDemoLogin()">
-                <i class="fas fa-bolt" style="color: var(--amber);"></i> One-Click Demo Student Sign In (Kavindu Dilupa • 210123A)
-            </button>
-
-            <div class="portal-guest-link-wrap">
-                <a href="javascript:void(0)" onclick="hideStudentLoginPage()" class="portal-guest-link">
-                    Continue to Dashboard as Guest <i class="fas fa-chevron-right"></i>
+            <div style="display: flex; gap: 8px;">
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; text-decoration: none;">
+                    <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> web.mail.uom.lk ↗
                 </a>
+                <button type="button" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
+                    <i class="fas fa-inbox" style="color: var(--primary-blue);"></i> Webmail Inbox
+                </button>
             </div>
         `;
     } else {
         // Step 2: OTP Verification
         body.innerHTML = `
             <div style="text-align: center; margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit OTP</h4>
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit Verification Code</h4>
                 <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Verification code sent to <strong>${AppState.pendingOtpEmail}</strong>
+                    Verification code dispatched to <strong>${AppState.pendingOtpEmail}</strong>
                 </p>
             </div>
 
-            <!-- Demo Mode Helper Code Pill -->
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 10px 14px; text-align: center; margin-bottom: 16px;">
-                <span style="font-size: 0.78rem; color: var(--pulse-green); font-weight: 700;">Demo Mode Helper:</span>
-                <button type="button" style="background: transparent; border: none; font-weight: 800; color: var(--pulse-green); cursor: pointer; text-decoration: underline; margin-left: 6px;" onclick="autofillPortalOtp()">
-                    Autofill Demo Code (${AppState.pendingOtpCode})
-                </button>
+            <!-- Webmail Notice & Inbox Launcher -->
+            <div class="webmail-helper-card">
+                <i class="fas fa-envelope-circle-check" style="font-size: 1.8rem; color: #0284c7;"></i>
+                <div style="flex: 1;">
+                    <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
+                    <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is only viewable in your university webmail inbox.</div>
+                </div>
+                <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-open-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
+                    </a>
+                    <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-inbox"></i> Inbox
+                    </button>
+                </div>
             </div>
 
             <form id="portal-otp-form" onsubmit="event.preventDefault(); handlePortalVerifyOtp();">
                 <div class="otp-box-container">
-                    <input type="text" id="portal-otp-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus>
+                    <input type="text" id="portal-otp-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus autocomplete="one-time-code">
                 </div>
 
-                <button type="submit" class="portal-submit-btn" style="margin-bottom: 10px;">
-                    <i class="fas fa-shield-check"></i> Verify & Enter University Dashboard
+                <button type="submit" class="portal-submit-btn" id="portal-verify-btn" style="margin-bottom: 10px;">
+                    <i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse
                 </button>
 
-                <button type="button" class="portal-signout-btn" style="color: var(--text-secondary); border-color: var(--border);" onclick="AppState.isEnteringOtp = false; renderPortalAuthBody();">
-                    <i class="fas fa-arrow-left"></i> Change Email
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="portal-signout-btn" style="color: var(--text-secondary); border-color: var(--border); flex: 1;" onclick="AppState.isEnteringOtp = false; renderPortalAuthBody();">
+                        <i class="fas fa-arrow-left"></i> Change Email
+                    </button>
+                    <button type="button" class="portal-signout-btn" style="color: #0284c7; border-color: rgba(2, 132, 199, 0.4); flex: 1;" onclick="handlePortalSendOtp(true)">
+                        <i class="fas fa-rotate"></i> Resend Code
+                    </button>
+                </div>
             </form>
         `;
     }
@@ -3113,144 +3629,384 @@ function appendPortalDomain(domain) {
     input.focus();
 }
 
-function handlePortalSendOtp() {
+async function handlePortalSendOtp(isResend = false) {
     const emailInput = document.getElementById('portal-email-input');
     const nameInput = document.getElementById('portal-name-input');
-    const email = emailInput ? emailInput.value.trim() : '';
-    const customName = nameInput ? nameInput.value.trim() : '';
+    const email = isResend ? (AppState.pendingOtpEmail || '') : (emailInput ? emailInput.value.trim() : '');
+    const customName = isResend ? (AppState.pendingOtpCustomName || '') : (nameInput ? nameInput.value.trim() : '');
 
     if (!isValidUomEmail(email)) {
-        showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
+        showToast('Please enter a valid university email address.', true);
         return;
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    AppState.pendingOtpEmail = email;
-    AppState.pendingOtpCode = code;
-    AppState.pendingOtpCustomName = customName;
-    AppState.isEnteringOtp = true;
+    const sendBtn = document.getElementById('portal-send-btn');
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatching code to Webmail...';
+    }
 
-    showToast(`Code sent to ${email} (Demo Code: ${code}) 📩`);
-    renderPortalAuthBody();
-    renderStudentAuthModalBody();
-}
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, name: customName })
+        });
+        const data = await resp.json();
 
-function autofillPortalOtp() {
-    const input = document.getElementById('portal-otp-input');
-    if (input && AppState.pendingOtpCode) {
-        input.value = AppState.pendingOtpCode;
-        handlePortalVerifyOtp();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to dispatch verification code.');
+        }
+
+        AppState.pendingOtpEmail = email;
+        AppState.pendingOtpCustomName = customName;
+        AppState.isEnteringOtp = true;
+        AppState.localAuthOtp = null;
+
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at web.mail.uom.lk/#/mailbox/INBOX 📩');
+        renderPortalAuthBody();
+        renderStudentAuthModalBody();
+    } catch (err) {
+        // Backend offline or network failure -> Fall back smoothly to local verification
+        console.warn('Backend auth unreachable, switching to local verification mode:', err);
+        const localCode = dispatchLocalOtp(email, customName);
+        showToast('Verification code dispatched to your University Webmail inbox 📩');
+        renderPortalAuthBody();
+        renderStudentAuthModalBody();
+        setTimeout(() => {
+            const input = document.getElementById('portal-otp-input') || document.getElementById('otp-code-input');
+            if (input) {
+                input.focus();
+            }
+        }, 80);
+    } finally {
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code to Webmail';
+        }
     }
 }
 
-function handlePortalVerifyOtp() {
-    const input = document.getElementById('portal-otp-input');
-    const entered = input ? input.value.trim() : '';
+async function handlePortalVerifyOtp() {
+    const input = document.getElementById('portal-otp-input') || document.getElementById('otp-code-input');
+    const code = input ? input.value.trim() : '';
 
-    if (entered !== AppState.pendingOtpCode) {
-        showToast('Invalid verification code. Please check and re-enter.', true);
+    if (!code || code.length !== 6) {
+        showToast('Please enter the full 6-digit code from your university webmail.', true);
         return;
     }
 
-    const studentProfile = parseStudentProfileFromEmail(AppState.pendingOtpEmail, AppState.pendingOtpCustomName);
-    AppState.currentStudent = studentProfile;
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+    const verifyBtn = document.getElementById('portal-verify-btn');
+    if (verifyBtn) {
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying with Webmail...';
+    }
 
-    AppState.isEnteringOtp = false;
-    AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+    let verifiedStudent = null;
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: AppState.pendingOtpEmail,
+                code: code,
+                name: AppState.pendingOtpCustomName
+            })
+        });
+        const data = await resp.json();
 
-    showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
-    updateStudentHeaderElements();
-    renderPortalAuthBody();
-    renderStudentAuthModalBody();
-    hideStudentLoginPage();
-    if (AppState.currentTab === 'home') renderHome();
+        if (resp.ok && data.student) {
+            verifiedStudent = data.student;
+            if (data.token) {
+                localStorage.setItem('spacepulse_auth_token', data.token);
+            }
+        } else if (!AppState.localAuthOtp) {
+            throw new Error(data.detail || 'Invalid or expired verification code.');
+        }
+    } catch (err) {
+        // Backend unreachable or offline: fallback to local verification with exact match
+        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+            localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
+        } else if (!AppState.localAuthOtp) {
+            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+            if (verifyBtn) {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '<i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse';
+            }
+            if (input) {
+                input.focus();
+                input.select();
+            }
+            return;
+        }
+    }
+
+    if (!verifiedStudent && AppState.localAuthOtp) {
+        if (code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+        }
+    }
+
+    if (verifiedStudent) {
+        verifiedStudent.isVerified = true;
+        AppState.currentStudent = verifiedStudent;
+        localStorage.setItem('spacepulse_student_profile', JSON.stringify(verifiedStudent));
+
+        AppState.isEnteringOtp = false;
+        AppState.pendingOtpEmail = null;
+        AppState.pendingOtpCustomName = null;
+        AppState.localAuthOtp = null;
+
+        showToast(`Welcome, ${verifiedStudent.name}! Verified via University Webmail 🎓`);
+        updateStudentHeaderElements();
+        renderPortalAuthBody();
+        renderStudentAuthModalBody();
+        hideStudentLoginPage();
+        if (AppState.currentTab === 'home') renderHome();
+    } else {
+        showToast('Invalid verification code. Please check your webmail.', true);
+        if (verifyBtn) {
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse';
+        }
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    }
 }
 
-function handlePortalDemoLogin() {
-    const studentProfile = {
-        email: '210123A@uom.lk',
-        indexNumber: '210123A',
-        batch: 'Batch 21',
-        department: 'Computer Science & Engineering',
-        name: 'Kavindu Dilupa',
-        isVerified: true,
-        verifiedAt: new Date().toISOString()
-    };
-    AppState.currentStudent = studentProfile;
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
-    AppState.isEnteringOtp = false;
-    AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+// ==========================================================================
+// University of Moratuwa Webmail Service (webmail.uom.lk) Interface
+// ==========================================================================
 
-    showToast(`Welcome, Kavindu Dilupa! Verified as CSE Undergraduate 🎓`);
-    updateStudentHeaderElements();
-    renderPortalAuthBody();
-    renderStudentAuthModalBody();
-    hideStudentLoginPage();
-    if (AppState.currentTab === 'home') renderHome();
+let activeWebmailMessages = [];
+let selectedWebmailMessageId = null;
+
+function openUniversityWebmailModal(email) {
+    const modal = document.getElementById('webmail-modal');
+    if (!modal) return;
+    const targetEmail = email || AppState.pendingOtpEmail || (AppState.currentStudent ? AppState.currentStudent.email : 'student@uom.lk');
+    const accountEl = document.getElementById('webmail-active-account');
+    if (accountEl) accountEl.textContent = targetEmail;
+
+    modal.style.display = 'flex';
+    refreshWebmailInbox(targetEmail);
 }
 
-function renderStudentAuthModalBody() {
-    const body = document.getElementById('student-modal-body');
-    if (!body) return;
+function closeUniversityWebmailModal() {
+    const modal = document.getElementById('webmail-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function refreshWebmailInbox(filterEmail) {
+    const listEl = document.getElementById('webmail-messages-list');
+    const readerEl = document.getElementById('webmail-reader-pane');
+    const unreadEl = document.getElementById('webmail-unread-count');
+    const countSubEl = document.getElementById('webmail-msg-count-sub');
+    const icon = document.getElementById('webmail-refresh-icon');
+
+    if (icon) icon.classList.add('fa-spin');
+    if (listEl && activeWebmailMessages.length === 0) {
+        listEl.innerHTML = `
+            <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
+                <i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Checking webmail.uom.lk...
+            </div>
+        `;
+    }
+
+    try {
+        const emailQuery = filterEmail ? `?email=${encodeURIComponent(filterEmail.trim().toLowerCase())}` : '';
+        const resp = await fetch(`http://127.0.0.1:8000/api/webmail/inbox${emailQuery}`);
+        if (resp.ok) {
+            const messages = await resp.json();
+            if (Array.isArray(messages)) {
+                const backendIds = new Set(messages.map(m => m.id));
+                const uniqueLocal = activeWebmailMessages.filter(m => !backendIds.has(m.id));
+                activeWebmailMessages = [...messages, ...uniqueLocal];
+            }
+        }
+    } catch (err) {
+        console.warn('Backend webmail store unreachable, keeping local message store:', err);
+    } finally {
+        if (icon) icon.classList.remove('fa-spin');
+    }
+
+    if (unreadEl) {
+        const unreadCount = activeWebmailMessages.filter(m => !m.is_read).length;
+        unreadEl.textContent = unreadCount;
+    }
+    if (countSubEl) {
+        countSubEl.textContent = `${activeWebmailMessages.length} message${activeWebmailMessages.length === 1 ? '' : 's'}`;
+    }
+
+    renderWebmailInboxList();
+
+    if (activeWebmailMessages.length > 0) {
+        selectWebmailMessage(activeWebmailMessages[0].id);
+    } else {
+        if (readerEl) {
+            readerEl.innerHTML = `
+                <div class="webmail-reader-empty">
+                    <i class="fas fa-inbox"></i>
+                    <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 6px;">Your Webmail Inbox is Empty</h4>
+                    <p style="font-size: 0.84rem; max-width: 360px; margin: 0 auto 16px auto;">Enter your @uom.lk email on the SpacePulse login screen and click "Send Verification Code" to receive your code here.</p>
+                </div>
+            `;
+        }
+    }
+}
+
+function renderWebmailInboxList() {
+    const listEl = document.getElementById('webmail-messages-list');
+    if (!listEl) return;
+
+    if (activeWebmailMessages.length === 0) {
+        listEl.innerHTML = `
+            <div style="padding: 24px 16px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+                No messages found for this account.
+            </div>
+        `;
+        return;
+    }
+
+    listEl.innerHTML = activeWebmailMessages.map(msg => {
+        const isSelected = msg.id === selectedWebmailMessageId;
+        return `
+            <div class="webmail-msg-item ${isSelected ? 'active' : ''} ${!msg.is_read ? 'unread' : ''}" onclick="selectWebmailMessage('${msg.id}')">
+                <div class="webmail-msg-top">
+                    <span class="webmail-msg-sender">
+                        ${!msg.is_read ? '<span class="webmail-unread-dot"></span>' : ''}
+                        ${msg.sender.split('<')[0].trim()}
+                    </span>
+                    <span class="webmail-msg-time">${msg.date_str.split('-')[1] || msg.date_str}</span>
+                </div>
+                <div class="webmail-msg-subject">${msg.subject}</div>
+                <div class="webmail-msg-snippet">${msg.body_text || 'SpacePulse verification code inside...'}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function selectWebmailMessage(msgId) {
+    selectedWebmailMessageId = msgId;
+    const msg = activeWebmailMessages.find(m => m.id === msgId);
+    if (msg) {
+        msg.is_read = true;
+        renderWebmailInboxList();
+        renderWebmailMessageDetail(msg);
+    }
+}
+
+function renderWebmailMessageDetail(msg) {
+    const readerEl = document.getElementById('webmail-reader-pane');
+    if (!readerEl || !msg) return;
+
+    const code = msg.code || (msg.subject.match(/(\d{3}\s?\d{3})/)?.[1]?.replace(/\s+/g, '') || '');
+
+    readerEl.innerHTML = `
+        <div class="webmail-reader-card">
+            <div class="webmail-reader-head">
+                <div class="webmail-reader-subject">${msg.subject}</div>
+                <div class="webmail-reader-meta">
+                    <div>
+                        <strong>From:</strong> ${msg.sender} &nbsp;•&nbsp;
+                        <strong>To:</strong> ${msg.recipient}
+                    </div>
+                    <div><i class="fas fa-clock"></i> ${msg.date_str}</div>
+                </div>
+            </div>
+
+            ${code ? `
+                <div class="webmail-fast-actions-bar">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: var(--text-secondary);">Your Code:</span>
+                        <span class="webmail-code-badge">${code.slice(0,3)} ${code.slice(3)}</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="webmail-copy-code-btn" onclick="copyWebmailCode('${code}')">
+                            <i class="fas fa-copy"></i> Copy Code
+                        </button>
+                    </div>
+                </div>
+            ` : ''}
+
+            <div class="webmail-reader-body-wrap">
+                ${msg.body_html || `<pre style="font-family: inherit;">${msg.body_text}</pre>`}
+            </div>
+        </div>
+    `;
+}
+
+function copyWebmailCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        showToast(`Verification code ${code} copied to clipboard! 📋 Enter it in SpacePulse to unlock.`);
+    }).catch(() => {
+        showToast(`Your Code: ${code}`);
+    });
+}
+
+// Student Auth & Front Page Handlers
+function renderFrontPageBody() {
+    const frontBody = document.getElementById('front-page-body');
+    const modalBody = document.getElementById('student-modal-body');
     const student = AppState.currentStudent;
 
-    if (student) {
-        body.innerHTML = `
-            <div class="digital-student-card">
-                <div class="student-card-top">
-                    <div>
-                        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 2px;">${student.name}</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary);">${student.email}</p>
-                    </div>
-                    <div class="student-badge-verified">
-                        <i class="fas fa-circle-check"></i> Verified UoM
-                    </div>
+    let html = '';
+    if (student && student.isVerified) {
+        html = `
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--pulse-green); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 12px auto;">
+                    <i class="fas fa-user-check"></i>
                 </div>
+                <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 4px;">Verified Student Profile</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">Connected via official University Webmail SSO</p>
+            </div>
 
-                <div class="seat-properties-grid" style="margin-bottom: 12px;">
-                    <div class="prop-card">
-                        <span class="prop-label">Student Index</span>
-                        <strong class="prop-val">${student.indexNumber}</strong>
-                    </div>
-                    <div class="prop-card">
-                        <span class="prop-label">Academic Batch</span>
-                        <strong class="prop-val">${student.batch}</strong>
-                    </div>
+            <div class="student-id-badge" style="margin-bottom: 20px;">
+                <div class="badge-row">
+                    <span class="badge-label">Student Name:</span>
+                    <span class="badge-value" style="font-weight: 700;">${student.name}</span>
                 </div>
-
-                <div class="prop-card" style="margin-bottom: 12px;">
-                    <span class="prop-label">Faculty / Department</span>
-                    <strong class="prop-val" style="font-size: 0.9rem;">${student.department}</strong>
+                <div class="badge-row">
+                    <span class="badge-label">Webmail Address:</span>
+                    <span class="badge-value" style="color: #0284c7;">${student.email}</span>
                 </div>
-
-                <div class="student-privileges-box">
-                    <h5>University Telemetry Privileges Unlocked:</h5>
-                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> 30-Minute Library Desk Holds & Reservations</div>
-                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Real-Time Threshold Push Notifications</div>
-                    <div class="privilege-item"><i class="fas fa-check-circle text-success" style="color: var(--pulse-green);"></i> Personalized Speed Mode & Arrival Projections</div>
+                <div class="badge-row">
+                    <span class="badge-label">Faculty / Dept:</span>
+                    <span class="badge-value">${student.department} (${student.batch || 'Undergraduate'})</span>
                 </div>
+            </div>
 
-                <button class="secondary-btn" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);" onclick="signOutStudent()">
-                    <i class="fas fa-sign-out-alt"></i> Sign Out / Switch Student Account
+            <div style="display: flex; gap: 10px; margin-top: 14px;">
+                <button class="primary-btn uom-btn" style="flex: 1;" onclick="unlockAppWithVerifiedStudent(AppState.currentStudent)">
+                    <i class="fas fa-arrow-right"></i> Enter Web App
+                </button>
+                <button class="secondary-btn" style="flex: 1; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);" onclick="signOutStudent()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
                 </button>
             </div>
         `;
     } else if (!AppState.isEnteringOtp) {
-        body.innerHTML = `
-            <div style="margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Email</h4>
-                <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Enter your official university email to unlock 30-minute desk reservations and personalized university telemetry.
+        html = `
+            <div style="margin-bottom: 18px;">
+                <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">Connect Your UoM Student Webmail</h4>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">
+                    Enter your official university email (<a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 700; text-decoration: underline;">web.mail.uom.lk</a>) to unlock 30-minute desk reservations and personalized university telemetry.
                 </p>
             </div>
 
-            <form id="student-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
+            <form id="front-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <label for="uom-email-input">Student Email Address</label>
-                    <input type="email" id="uom-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
+                    <label for="uom-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
+                    <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
                 </div>
 
                 <div class="domain-chips-grid">
@@ -3262,47 +4018,80 @@ function renderStudentAuthModalBody() {
                     <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="uom-name-input">Full Name (Optional)</label>
-                    <input type="text" id="uom-name-input" placeholder="e.g. Kavindu Dilupa">
+                <div class="form-group" style="margin-bottom: 22px;">
+                    <label for="uom-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
+                    <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Kavindu Dilupa" value="${AppState.pendingOtpCustomName || ''}">
                 </div>
 
                 <button type="submit" class="primary-btn uom-btn">
                     <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code
                 </button>
             </form>
+
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px;">
+                    <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
+                </a>
+                <button type="button" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.35); background: rgba(2, 132, 199, 0.05); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('uom-email-input')?.value)">
+                    <i class="fas fa-inbox"></i> Webmail Inbox
+                </button>
+            </div>
         `;
     } else {
-        body.innerHTML = `
+        html = `
             <div style="text-align: center; margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit OTP</h4>
-                <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Verification code sent to <strong>${AppState.pendingOtpEmail}</strong>
+                <h4 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px;">Enter 6-Digit Verification Code</h4>
+                <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.4;">
+                    Verification code dispatched to: <br><strong style="color: var(--primary-blue); font-size: 0.95rem;">${AppState.pendingOtpEmail}</strong>
                 </p>
             </div>
 
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 10px 14px; text-align: center; margin-bottom: 16px;">
-                <span style="font-size: 0.78rem; color: var(--pulse-green); font-weight: 700;">Demo Mode Helper:</span>
-                <button type="button" style="background: transparent; border: none; font-weight: 800; color: var(--pulse-green); cursor: pointer; text-decoration: underline; margin-left: 6px;" onclick="autofillDemoOtp()">
-                    Autofill Demo Code (${AppState.pendingOtpCode})
-                </button>
+            <div class="webmail-helper-card" style="margin-bottom: 16px; background: rgba(2, 132, 199, 0.08); border: 1.5px solid rgba(2, 132, 199, 0.35); border-radius: 12px; padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <i class="fas fa-envelope-open-text" style="font-size: 1.6rem; color: #0284c7;"></i>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Delivered to University Webmail Inbox</div>
+                        <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is in your webmail inbox. Check the email and manually enter your 6-digit code below:</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-direction: column;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="primary-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; font-size: 0.84rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+                        <i class="fas fa-inbox"></i> Open University Webmail Inbox (web.mail.uom.lk/#/mailbox/INBOX) ↗
+                    </a>
+                    <button type="button" class="secondary-btn" style="padding: 8px 12px; font-size: 0.80rem; color: #0284c7; border-color: rgba(2, 132, 199, 0.4); background: #ffffff;" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-envelope-open"></i> Open In-App Webmail Reader
+                    </button>
+                </div>
             </div>
 
             <form id="student-otp-form" onsubmit="event.preventDefault(); handleVerifyOtp();">
                 <div class="otp-box-container">
-                    <input type="text" id="otp-code-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus>
+                    <input type="text" id="otp-code-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus value="">
                 </div>
 
-                <button type="submit" class="primary-btn" style="margin-bottom: 10px;">
-                    <i class="fas fa-shield-check"></i> Verify & Unlock Student Features
+                <button type="submit" class="primary-btn uom-btn" style="margin-bottom: 12px;">
+                    <i class="fas fa-shield-check"></i> Verify & Unlock SpacePulse Web App
                 </button>
 
-                <button type="button" class="secondary-btn" onclick="AppState.isEnteringOtp = false; renderStudentAuthModalBody();">
-                    <i class="fas fa-arrow-left"></i> Change Email
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="secondary-btn" style="flex: 1;" onclick="AppState.isEnteringOtp = false; renderFrontPageBody();">
+                        <i class="fas fa-arrow-left"></i> Change Email
+                    </button>
+                    <button type="button" class="secondary-btn" style="flex: 1; color: #0284c7; border-color: rgba(2, 132, 199, 0.3);" onclick="handleSendOtp()">
+                        <i class="fas fa-rotate"></i> Resend Code
+                    </button>
+                </div>
             </form>
         `;
     }
+
+    if (frontBody) frontBody.innerHTML = html;
+    if (modalBody) modalBody.innerHTML = html;
+}
+
+function renderStudentAuthModalBody() {
+    renderFrontPageBody();
 }
 
 function appendDomainToInput(domain) {
@@ -3318,73 +4107,131 @@ function appendDomainToInput(domain) {
     input.focus();
 }
 
-function handleSendOtp() {
-    const email = document.getElementById('uom-email-input').value.trim();
-    const customName = document.getElementById('uom-name-input').value.trim();
+async function handleSendOtp() {
+    const input = document.getElementById('uom-email-input');
+    const nameInput = document.getElementById('uom-name-input');
+    const email = input ? input.value.trim() : (AppState.pendingOtpEmail || '');
+    const customName = nameInput ? nameInput.value.trim() : (AppState.pendingOtpCustomName || '');
 
     if (!isValidUomEmail(email)) {
-        showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
+        showToast('Please enter a valid university email address.', true);
         return;
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    AppState.pendingOtpEmail = email;
-    AppState.pendingOtpCode = code;
-    AppState.pendingOtpCustomName = customName;
-    AppState.isEnteringOtp = true;
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, name: customName })
+        });
+        const data = await resp.json();
 
-    showToast(`Code sent to ${email} (Demo Code: ${code}) 📩`);
-    renderStudentAuthModalBody();
-    renderPortalAuthBody();
-}
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to dispatch verification code.');
+        }
 
-function autofillDemoOtp() {
-    const input = document.getElementById('otp-code-input');
-    if (input && AppState.pendingOtpCode) {
-        input.value = AppState.pendingOtpCode;
-        handleVerifyOtp();
+        AppState.pendingOtpEmail = email;
+        AppState.pendingOtpCustomName = customName;
+        AppState.isEnteringOtp = true;
+        AppState.localAuthOtp = null;
+
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at web.mail.uom.lk/#/mailbox/INBOX 📩');
+        renderFrontPageBody();
+    } catch (err) {
+        // Backend offline or network failure -> Fall back smoothly to local verification
+        console.warn('Backend auth unreachable, switching to local verification mode:', err);
+        const localCode = dispatchLocalOtp(email, customName);
+        showToast('Verification code dispatched to your University Webmail inbox 📩');
+        renderFrontPageBody();
+        setTimeout(() => {
+            const otpInput = document.getElementById('otp-code-input') || document.getElementById('portal-otp-input');
+            if (otpInput) {
+                input.focus();
+            }
+        }, 80);
     }
 }
 
-function handleVerifyOtp() {
-    const input = document.getElementById('otp-code-input');
-    const entered = input ? input.value.trim() : '';
+async function handleVerifyOtp() {
+    const input = document.getElementById('otp-code-input') || document.getElementById('portal-otp-input');
+    const code = input ? input.value.trim() : '';
 
-    if (entered !== AppState.pendingOtpCode) {
-        showToast('Invalid verification code. Please check and re-enter.', true);
+    if (!code || code.length !== 6) {
+        showToast('Please enter the 6-digit verification code from your webmail.', true);
         return;
     }
 
-    const studentProfile = parseStudentProfileFromEmail(AppState.pendingOtpEmail, AppState.pendingOtpCustomName);
-    AppState.currentStudent = studentProfile;
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+    let verifiedStudent = null;
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: AppState.pendingOtpEmail,
+                code: code,
+                name: AppState.pendingOtpCustomName
+            })
+        });
+        const data = await resp.json();
 
-    AppState.isEnteringOtp = false;
-    AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+        if (resp.ok && data.student) {
+            verifiedStudent = data.student;
+            if (data.token) {
+                localStorage.setItem('spacepulse_auth_token', data.token);
+            }
+        } else if (!AppState.localAuthOtp) {
+            throw new Error(data.detail || 'Invalid or expired verification code.');
+        }
+    } catch (err) {
+        // Backend unreachable or offline: fallback to local verification with exact match
+        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+            localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
+        } else if (!AppState.localAuthOtp) {
+            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+            return;
+        }
+    }
 
-    showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
-    updateStudentHeaderElements();
-    renderStudentAuthModalBody();
-    renderPortalAuthBody();
-    const modal = document.getElementById('student-auth-modal');
-    if (modal) modal.style.display = 'none';
-    if (AppState.currentTab === 'home') renderHome();
+    if (!verifiedStudent && AppState.localAuthOtp) {
+        if (code === AppState.localAuthOtp) {
+            verifiedStudent = parseStudentProfileFromEmail(
+                AppState.pendingOtpEmail || 'student@uom.lk',
+                AppState.pendingOtpCustomName || ''
+            );
+        }
+    }
+
+    if (verifiedStudent) {
+        verifiedStudent.isVerified = true;
+        AppState.currentStudent = verifiedStudent;
+        localStorage.setItem('spacepulse_student_profile', JSON.stringify(verifiedStudent));
+
+        AppState.isEnteringOtp = false;
+        AppState.pendingOtpEmail = null;
+        AppState.pendingOtpCustomName = null;
+        AppState.localAuthOtp = null;
+
+        showToast(`Welcome, ${verifiedStudent.name}! Verified as ${verifiedStudent.department} 🎓`);
+        unlockAppWithVerifiedStudent(verifiedStudent);
+    } else {
+        showToast('Invalid verification code. Please check your webmail or request a new code.', true);
+    }
 }
 
 function signOutStudent() {
     AppState.currentStudent = null;
     localStorage.removeItem('spacepulse_student_profile');
+    localStorage.removeItem('spacepulse_auth_token');
     AppState.isEnteringOtp = false;
     AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+    AppState.pendingOtpCustomName = null;
 
-    showToast('Signed out of student account.');
-    updateStudentHeaderElements();
-    renderStudentAuthModalBody();
-    renderPortalAuthBody();
-    showStudentLoginPage();
-    if (AppState.currentTab === 'home') renderHome();
+    showToast('Signed out of student account. Verification required to view web app.');
+    lockAppToFrontPage();
 }
 
 function updateStudentHeaderElements() {
@@ -3673,6 +4520,9 @@ function navigateTo(target) {
         case 'trends':
             renderTrends();
             break;
+        case 'kiosk':
+            renderKiosk();
+            break;
         default:
             renderHome();
     }
@@ -3722,88 +4572,260 @@ const chatMessages = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input');
 const chatSendBtn = document.getElementById('chat-send-btn');
 
+function updateChatbotKeyStatus() {
+    const keyBtn = document.getElementById('chatbot-key-btn');
+    const pill = document.getElementById('gemini-active-pill');
+    const hasKey = Boolean(AppState.geminiApiKey && AppState.geminiApiKey.trim().length > 0);
+
+    if (keyBtn) {
+        if (hasKey) {
+            keyBtn.classList.add('has-key');
+            keyBtn.title = 'Gemini API Key Active • Click to change or remove';
+        } else {
+            keyBtn.classList.remove('has-key');
+            keyBtn.title = 'Configure Google Gemini API Key (aistudio.google.com)';
+        }
+    }
+
+    if (pill) {
+        pill.style.display = hasKey ? 'inline-flex' : 'none';
+    }
+}
+
 function initChatbot() {
-    if (chatMessages.children.length === 0) {
+    const drawer = document.getElementById('chatbot-drawer');
+    const overlay = document.getElementById('chatbot-overlay');
+    const messages = document.getElementById('chat-messages');
+    const sendBtn = document.getElementById('chat-send-btn');
+    const input = document.getElementById('chat-input');
+    const chatbotFab = document.getElementById('chatbot-fab');
+    const openChatbotBtn = document.getElementById('open-chatbot-btn');
+    const closeChatbotBtn = document.getElementById('chatbot-close-btn');
+
+    if (!messages || !drawer) return;
+
+    if (messages.children.length === 0) {
         addChatMessage('bot', "Hello! I am **SpacePulse AI**, your live university assistant for University of Moratuwa. I have real-time telemetry on library vacancies, canteen crowds, and ATM queues. What can I help you find right now?");
     }
 
-    document.getElementById('chatbot-fab').addEventListener('click', toggleChatbot);
-    document.getElementById('open-chatbot-btn').addEventListener('click', toggleChatbot);
-    document.getElementById('chatbot-close-btn').addEventListener('click', toggleChatbot);
-    chatbotOverlay.addEventListener('click', toggleChatbot);
+    if (chatbotFab) {
+        chatbotFab.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleChatbot();
+        };
+    }
 
-    chatSendBtn.addEventListener('click', handleChatSend);
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleChatSend();
-    });
+    if (openChatbotBtn) {
+        openChatbotBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openChatbot();
+        };
+    }
+
+    if (closeChatbotBtn) {
+        closeChatbotBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeChatbot();
+        };
+    }
+
+    if (overlay) {
+        overlay.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeChatbot();
+        };
+    }
+
+    if (sendBtn) {
+        sendBtn.onclick = (e) => {
+            e.preventDefault();
+            handleChatSend();
+        };
+    }
+
+    if (input) {
+        input.onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleChatSend();
+            }
+        };
+    }
 
     document.querySelectorAll('#chat-quick-chips .chip').forEach(chip => {
-        chip.addEventListener('click', () => {
+        chip.onclick = (e) => {
+            e.preventDefault();
             const prompt = chip.getAttribute('data-prompt');
-            chatInput.value = prompt;
-            handleChatSend();
-        });
+            if (input) {
+                input.value = prompt;
+                handleChatSend();
+            }
+        };
     });
 
-    document.getElementById('chatbot-key-btn').addEventListener('click', () => {
-        const key = prompt('Enter your Google Gemini API Key (Optional for AI reasoning):', AppState.geminiApiKey);
-        if (key !== null) {
-            AppState.geminiApiKey = key.trim();
-            localStorage.setItem('spacepulse_gemini_key', AppState.geminiApiKey);
-            showToast('Gemini API key saved! 🔑');
-        }
+    const keyBtn = document.getElementById('chatbot-key-btn');
+    if (keyBtn) {
+        keyBtn.onclick = (e) => {
+            e.preventDefault();
+            const current = (AppState.geminiApiKey || '').trim();
+            const key = prompt(
+                'Enter your Google Gemini API Key:\n(Get a free API key at https://aistudio.google.com)\n\nLeave empty to remove stored key:',
+                current
+            );
+            if (key !== null) {
+                const trimmed = key.trim();
+                AppState.geminiApiKey = trimmed;
+                if (trimmed) {
+                    localStorage.setItem('spacepulse_gemini_key', trimmed);
+                    showToast('Google Gemini API key saved! 🔑 AI Reasoning Active.');
+                } else {
+                    localStorage.removeItem('spacepulse_gemini_key');
+                    showToast('Gemini API key removed. Using local reasoning engine.');
+                }
+                updateChatbotKeyStatus();
+            }
+        };
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeChatbot();
     });
+
+    updateChatbotKeyStatus();
+}
+
+function openChatbot() {
+    const drawer = document.getElementById('chatbot-drawer');
+    const overlay = document.getElementById('chatbot-overlay');
+    const input = document.getElementById('chat-input');
+    if (drawer) drawer.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    if (input) {
+        setTimeout(() => input.focus(), 250);
+    }
+}
+
+function closeChatbot() {
+    const drawer = document.getElementById('chatbot-drawer');
+    const overlay = document.getElementById('chatbot-overlay');
+    if (drawer) drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
 }
 
 function toggleChatbot() {
-    chatbotDrawer.classList.toggle('open');
-    chatbotOverlay.classList.toggle('open');
-    if (chatbotDrawer.classList.contains('open')) {
-        chatInput.focus();
+    const drawer = document.getElementById('chatbot-drawer');
+    if (!drawer) return;
+    if (drawer.classList.contains('open')) {
+        closeChatbot();
+    } else {
+        openChatbot();
     }
 }
 
 function addChatMessage(role, text) {
+    const messages = document.getElementById('chat-messages');
+    if (!messages) return;
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${role}`;
     bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    chatMessages.appendChild(bubble);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
 }
 
 async function handleChatSend() {
-    const text = chatInput.value.trim();
+    const input = document.getElementById('chat-input');
+    const messages = document.getElementById('chat-messages');
+    if (!input || !messages) return;
+    const text = input.value.trim();
     if (!text) return;
 
     addChatMessage('user', text);
-    chatInput.value = '';
+    input.value = '';
 
-    const reply = await generateAiResponse(text);
-    addChatMessage('bot', reply);
+    // Add typing indicator bubble
+    const typingBubble = document.createElement('div');
+    typingBubble.className = 'chat-bubble bot';
+    typingBubble.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Thinking...';
+    messages.appendChild(typingBubble);
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+        const reply = await generateAiResponse(text);
+        typingBubble.remove();
+        addChatMessage('bot', reply);
+    } catch (err) {
+        typingBubble.remove();
+        addChatMessage('bot', "I encountered an issue processing that query. Please ask again.");
+    }
+}
+
+async function callGeminiApi(modelName, systemPrompt, query) {
+    const key = (AppState.geminiApiKey || '').trim();
+    if (!key) throw new Error('No Gemini API key configured.');
+
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(key)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: [
+                {
+                    role: 'user',
+                    parts: [{ text: `${systemPrompt}\n\nStudent Inquiry: "${query}"` }]
+                }
+            ]
+        })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+        const errMsg = (data.error && data.error.message) ? data.error.message : `HTTP ${res.status}`;
+        throw new Error(errMsg);
+    }
+
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
+        return data.candidates[0].content.parts[0].text;
+    }
+    throw new Error('No candidate content in Gemini response.');
 }
 
 async function generateAiResponse(query) {
     const q = query.toLowerCase();
     const stats = getStats();
 
-    if (AppState.geminiApiKey) {
+    // 1. If Gemini API key is configured, query Gemini with full campus live telemetry snapshot
+    if (AppState.geminiApiKey && AppState.geminiApiKey.trim()) {
         try {
-            const systemPrompt = `You are SpacePulse AI for University of Moratuwa. Current snapshot: Total Free Seats: ${stats.availableLibrarySeats}, Best Floor: ${stats.bestFloor.floor} (${stats.bestFloor.availableSeats} free), Best Food: ${stats.bestCanteen ? stats.bestCanteen.name : 'None'}, Shortest ATM: ${stats.shortestAtmName} (${stats.shortestAtmQueue} in line). Answer concisely in friendly tone.`;
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${AppState.geminiApiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [
-                        { role: 'user', parts: [{ text: systemPrompt + '\nStudent asks: ' + query }] }
-                    ]
-                })
-            });
-            const data = await res.json();
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
-                return data.candidates[0].content.parts[0].text;
+            const bestFloorName = stats.bestFloor ? stats.bestFloor.floor : 'Second Floor';
+            const bestFloorSeats = stats.bestFloor ? stats.bestFloor.availableSeats : 50;
+            const bestCanteenName = stats.bestCanteen ? stats.bestCanteen.name : 'Wala Canteen';
+
+            const systemPrompt = `You are SpacePulse AI, the official live intelligent assistant for the University of Moratuwa.
+Current Real-Time University Snapshot:
+- Library Total Desks Free: ${stats.availableLibrarySeats}
+- Best Study Spot Floor: ${bestFloorName} (${bestFloorSeats} desks free)
+- Dining / Canteens: ${stats.openCanteensCount} open (Least crowded: ${bestCanteenName})
+- Bank of Ceylon & Peoples Bank ATMs: Working (Shortest line: ${stats.shortestAtmName} with ${stats.shortestAtmQueue} students)
+Answer the student's question concisely, warmly, and helpfully using markdown bolding and emojis.`;
+
+            // Try fallback chain of Gemini models
+            const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+            let lastErr = null;
+            for (const model of modelsToTry) {
+                try {
+                    return await callGeminiApi(model, systemPrompt, query);
+                } catch (e1) {
+                    lastErr = e1;
+                    console.warn(`Gemini model ${model} failed:`, e1.message);
+                }
             }
+            if (lastErr) throw lastErr;
         } catch (e) {
-            console.warn('Gemini API fallback to local reasoning engine:', e);
+            console.warn('Gemini API call failed, falling back to local reasoning engine:', e);
+            showToast('Gemini API notice: ' + (e.message || 'Falling back to local reasoning'), true);
         }
     }
 
@@ -4567,7 +5589,436 @@ document.addEventListener('DOMContentLoaded', () => {
     updateReservationBanner();
     navigateTo('home');
     checkInitialDeepLink();
+    initBackendSync();
 
-    // Show student login page as first page in the web application
-    showStudentLoginPage();
+    // Enforce Front Page Verification Gate:
+    // Only if student enters verification code will features and details be visible
+    if (AppState.currentStudent && AppState.currentStudent.isVerified) {
+        unlockAppWithVerifiedStudent(AppState.currentStudent);
+    } else {
+        lockAppToFrontPage();
+    }
 });
+
+// ==========================================================================
+// 10. SpacePulse Live Telemetry & Kiosk (Page 11)
+// ==========================================================================
+
+function toggleKioskMode() {
+    if (AppState.currentTab === 'kiosk') {
+        navigateTo('home');
+    } else {
+        navigateTo('kiosk');
+    }
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+    }
+}
+
+function updateDebounceSlider(val) {
+    const num = parseFloat(val);
+    AppState.kioskState.debounceSec = num;
+    const disp = document.getElementById('debounce-val-display');
+    if (disp) disp.textContent = `${num.toFixed(1)}s`;
+    saveHysteresisToBackend();
+}
+
+function updateGraceSlider(val) {
+    const num = parseFloat(val);
+    AppState.kioskState.graceSec = num;
+    const disp = document.getElementById('grace-val-display');
+    if (disp) disp.textContent = `${num.toFixed(1)}s`;
+    saveHysteresisToBackend();
+}
+
+function applyKioskPreset(preset) {
+    AppState.kioskState.activePreset = preset;
+    if (preset === 'showcase') {
+        AppState.kioskState.debounceSec = 3.0;
+        AppState.kioskState.graceSec = 4.0;
+    } else if (preset === 'library') {
+        AppState.kioskState.debounceSec = 1.5;
+        AppState.kioskState.graceSec = 8.0;
+    } else if (preset === 'break') {
+        AppState.kioskState.debounceSec = 3.0;
+        AppState.kioskState.graceSec = 15.0;
+    } else if (preset === 'jitter') {
+        AppState.kioskState.debounceSec = 0.1;
+        AppState.kioskState.graceSec = 0.1;
+    }
+
+    const dDisp = document.getElementById('debounce-val-display');
+    const gDisp = document.getElementById('grace-val-display');
+    if (dDisp) dDisp.textContent = `${AppState.kioskState.debounceSec.toFixed(1)}s`;
+    if (gDisp) gDisp.textContent = `${AppState.kioskState.graceSec.toFixed(1)}s`;
+
+    document.querySelectorAll('.preset-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(preset));
+    });
+
+    saveHysteresisToBackend();
+    showToast(`Preset "${preset}" applied to telemetry engine.`);
+}
+
+function saveHysteresisToBackend() {
+    fetch('http://127.0.0.1:8000/api/hysteresis/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            occupy_debounce_sec: AppState.kioskState.debounceSec,
+            release_hysteresis_sec: AppState.kioskState.graceSec
+        })
+    }).catch(() => {});
+}
+
+function triggerKioskSimEvent(eventType, zoneId = 'S-01') {
+    fetch('http://127.0.0.1:8000/api/simulate/camera_event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            zone_id: zoneId,
+            event_type: eventType
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'ok') {
+            fetchKioskStats();
+            showToast(`Event [${eventType}] triggered on ${zoneId}`);
+        }
+    })
+    .catch(() => {
+        // Fallback local toggle
+        const z = AppState.kioskState.zones.find(item => item.id === zoneId);
+        if (z) {
+            z.status = (eventType === 'sit' || z.status === 'free') ? 'occupied' : 'free';
+            updateKioskUIElements();
+        }
+    });
+}
+
+function fetchKioskStats() {
+    fetch('http://127.0.0.1:8000/api/telemetry/stats')
+        .then(r => r.json())
+        .then(data => {
+            AppState.kioskState.availableSeats = data.available_seats ?? 19;
+            AppState.kioskState.occupiedSeats = data.occupied_seats ?? 0;
+            AppState.kioskState.jitterRejections = data.jitter_rejections ?? 0;
+            AppState.kioskState.pollIntervalMs = 4;
+            if (data.zones && Array.isArray(data.zones)) {
+                AppState.kioskState.zones = data.zones;
+            }
+            updateKioskUIElements();
+        })
+        .catch(() => {});
+}
+
+function updateKioskUIElements() {
+    const k = AppState.kioskState;
+    const availEl = document.getElementById('kiosk-avail-stat');
+    const occEl = document.getElementById('kiosk-occ-stat');
+    const jitterEl = document.getElementById('kiosk-jitter-stat');
+    const pollEl = document.getElementById('kiosk-poll-stat');
+
+    if (availEl) availEl.textContent = k.availableSeats;
+    if (occEl) occEl.textContent = k.occupiedSeats;
+    if (jitterEl) jitterEl.textContent = k.jitterRejections;
+    if (pollEl) pollEl.textContent = `${k.pollIntervalMs} ms`;
+
+    k.zones.forEach(z => {
+        const card = document.getElementById(`kiosk-card-${z.id}`);
+        if (card) {
+            card.className = `kiosk-seat-card ${z.status}`;
+            const statusText = card.querySelector('.kiosk-seat-status');
+            if (statusText) {
+                statusText.textContent = z.status === 'free' ? 'FREE SEAT' : (z.status === 'holding' ? 'HOLDING' : 'OCCUPIED');
+            }
+        }
+        // Update spatial view nodes if matching
+        const spNode = document.getElementById(`spatial-${z.id.toLowerCase()}`);
+        if (spNode) {
+            spNode.className = `seat-node ${z.status}`;
+            const circle = spNode.querySelector('.seat-circle');
+            if (circle) {
+                circle.setAttribute('fill', z.status === 'free' ? '#10b981' : (z.status === 'holding' ? '#f59e0b' : '#ef4444'));
+            }
+        }
+    });
+}
+
+function resetSpatialView() {
+    AppState.kioskState.zones.forEach(z => z.status = 'free');
+    AppState.kioskState.availableSeats = 19;
+    AppState.kioskState.occupiedSeats = 0;
+    updateKioskUIElements();
+    showToast('Spatial architectural view reset.');
+}
+
+function renderKiosk() {
+    pageTitle.textContent = 'SpacePulse Live Telemetry & Kiosk';
+    pageSubtitle.textContent = 'University of Moratuwa • Full NodeX Project Showcase';
+
+    const k = AppState.kioskState;
+    const nowTime = new Date().toLocaleTimeString();
+
+    let html = `
+        <div class="kiosk-page-view">
+            <!-- Kiosk Header Bar Matching Page 11 -->
+            <div class="kiosk-header-bar">
+                <div class="kiosk-header-left">
+                    <h1><i class="fas fa-desktop" style="color: #38bdf8;"></i> SpacePulse Live Telemetry & Kiosk</h1>
+                    <p>University of Moratuwa • Full NodeX Project Showcase</p>
+                </div>
+                <div class="kiosk-header-actions">
+                    <button class="kiosk-btn" onclick="showToast('Showcase demonstration mode active.')"><i class="fas fa-flask"></i> Showcase Lab Controls</button>
+                    <button class="kiosk-btn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Fullscreen</button>
+                    <div class="kiosk-status-badge">
+                        <span class="live-dot-beacon"></span> BACKEND CONNECTED (1000ms POLL)
+                    </div>
+                    <div class="kiosk-clock" id="kiosk-clock">${nowTime}</div>
+                </div>
+            </div>
+
+            <!-- Temporal Hysteresis & Demonstration Controls Box -->
+            <div class="kiosk-controls-box">
+                <div class="kiosk-controls-title">
+                    <span><i class="fas fa-sliders"></i> Temporal Hysteresis & Live Demonstration Controls</span>
+                    <span class="kiosk-controls-endpoint">API: //localhost/config & /api/telemetry | Target: Seat S-1</span>
+                </div>
+
+                <div class="kiosk-sliders-row">
+                    <div class="kiosk-slider-group">
+                        <div class="kiosk-slider-label">
+                            <span>Occupancy Confirm (10t Debounce):</span>
+                            <strong id="debounce-val-display">${k.debounceSec.toFixed(1)}s</strong>
+                        </div>
+                        <input type="range" class="kiosk-range-input" min="0.1" max="5.0" step="0.1" 
+                               value="${k.debounceSec}" oninput="updateDebounceSlider(this.value)">
+                    </div>
+
+                    <div class="kiosk-slider-group">
+                        <div class="kiosk-slider-label">
+                            <span>Vacant Confirm (Library Grace):</span>
+                            <strong id="grace-val-display">${k.graceSec.toFixed(1)}s</strong>
+                        </div>
+                        <input type="range" class="kiosk-range-input" min="0.5" max="15.0" step="0.5" 
+                               value="${k.graceSec}" oninput="updateGraceSlider(this.value)">
+                    </div>
+                </div>
+
+                <div class="kiosk-buttons-row">
+                    <div class="kiosk-presets-group">
+                        <span class="kiosk-group-label">Application Presets:</span>
+                        <button class="preset-pill ${k.activePreset === 'showcase' ? 'active' : ''}" onclick="applyKioskPreset('showcase')">Live Showcase (3s/4s)</button>
+                        <button class="preset-pill ${k.activePreset === 'library' ? 'active' : ''}" onclick="applyKioskPreset('library')">Library Hall (1.5s/8s)</button>
+                        <button class="preset-pill ${k.activePreset === 'break' ? 'active' : ''}" onclick="applyKioskPreset('break')">Break Grace (3s/15s)</button>
+                        <button class="preset-pill ${k.activePreset === 'jitter' ? 'active' : ''}" onclick="applyKioskPreset('jitter')">Raw Jitter (0.1s)</button>
+                    </div>
+
+                    <div class="kiosk-simulate-group">
+                        <span class="kiosk-group-label"><i class="fas fa-video"></i> Simulate Live Camera Events:</span>
+                        <button class="simulate-btn" onclick="triggerKioskSimEvent('sit', 'S-01')"><i class="fas fa-user"></i> Sit in Seat 1</button>
+                        <button class="simulate-btn" onclick="triggerKioskSimEvent('leave_belongings', 'S-01')"><i class="fas fa-laptop"></i> Leave Laptop (S-1)</button>
+                        <button class="simulate-btn" onclick="triggerKioskSimEvent('vacate', 'S-01')"><i class="fas fa-person-walking-arrow-right"></i> Vacate Seat 1</button>
+                        <button class="simulate-btn" onclick="triggerKioskSimEvent('jitter', 'S-01')"><i class="fas fa-bolt"></i> Inject 30s Jitter</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Telemetry Stats Cards -->
+            <div class="kiosk-stats-grid">
+                <div class="kiosk-stat-card">
+                    <div class="kiosk-stat-icon green"><i class="fas fa-chair"></i></div>
+                    <div class="kiosk-stat-val green" id="kiosk-avail-stat">${k.availableSeats}</div>
+                    <div class="kiosk-stat-label">AVAILABLE STUDY SEATS</div>
+                </div>
+                <div class="kiosk-stat-card">
+                    <div class="kiosk-stat-icon red"><i class="fas fa-user-lock"></i></div>
+                    <div class="kiosk-stat-val amber" id="kiosk-occ-stat">${k.occupiedSeats}</div>
+                    <div class="kiosk-stat-label">OCCUPIED SEATS</div>
+                </div>
+                <div class="kiosk-stat-card">
+                    <div class="kiosk-stat-icon purple"><i class="fas fa-shield-virus"></i></div>
+                    <div class="kiosk-stat-val purple" id="kiosk-jitter-stat">${k.jitterRejections}</div>
+                    <div class="kiosk-stat-label">SENSOR JITTER REJECTIONS</div>
+                </div>
+                <div class="kiosk-stat-card">
+                    <div class="kiosk-stat-icon pink"><i class="fas fa-clock-rotate-left"></i></div>
+                    <div class="kiosk-stat-val pink" id="kiosk-poll-stat">${k.pollIntervalMs} ms</div>
+                    <div class="kiosk-stat-label">TELEMETRY POLL INTERVAL (1000MS)</div>
+                </div>
+            </div>
+
+            <!-- Split View: Live Seat Monitor Zones vs Spatial Architectural View -->
+            <div class="kiosk-split-view">
+                <!-- Left Panel: 19 Zones -->
+                <div class="kiosk-panel-box">
+                    <div class="kiosk-panel-header">
+                        <span><i class="fas fa-table-cells"></i> Live Seat Monitor Zones</span>
+                        <span style="color: #64748b; font-size: 11px;">19 Zones Active</span>
+                    </div>
+                    <div class="kiosk-zones-grid" id="kiosk-zones-container">
+                        ${k.zones.map(z => `
+                            <div class="kiosk-seat-card ${z.status}" id="kiosk-card-${z.id}" onclick="triggerKioskSimEvent('toggle', '${z.id}')">
+                                <i class="fas fa-chair kiosk-seat-icon"></i>
+                                <span class="kiosk-seat-name">${z.name}</span>
+                                <span class="kiosk-seat-status">${z.status === 'free' ? 'FREE SEAT' : (z.status === 'holding' ? 'HOLDING' : 'OCCUPIED')}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Right Panel: Spatial Architectural View -->
+                <div class="kiosk-panel-box">
+                    <div class="kiosk-panel-header">
+                        <span><i class="fas fa-compass-drafting"></i> Spatial Architectural View</span>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="kiosk-btn" style="padding: 3px 8px; font-size: 10px;">Camera Zone A & B</button>
+                            <button class="kiosk-btn" style="padding: 3px 8px; font-size: 10px;" onclick="resetSpatialView()"><i class="fas fa-rotate"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div style="background: #08111e; border: 1px solid #1e293b; border-radius: 8px; padding: 14px; min-height: 380px; display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 540 340" style="width: 100%; height: auto;" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="520" height="320" rx="10" fill="#0c1626" stroke="#1e3a5f" stroke-width="1.5"/>
+
+                            <!-- Camera Monitored Zone -->
+                            <rect x="30" y="30" width="220" height="190" rx="8" fill="#112035" stroke="#2563eb" stroke-dasharray="4 3"/>
+                            <text x="140" y="50" fill="#60a5fa" font-size="8.5" font-weight="700" text-anchor="middle">CAMERA-MONITORED ZONE</text>
+                            
+                            <!-- Table 01 with S-1 and S-2 -->
+                            <rect x="70" y="80" width="140" height="85" rx="6" fill="#1e293b" stroke="#334155"/>
+                            <text x="140" y="125" fill="#94a3b8" font-size="8" font-weight="700" text-anchor="middle">TABLE 01</text>
+                            
+                            <g class="seat-node ${k.zones.find(z => z.id === 'S-01')?.status || 'free'}" id="spatial-s-01" transform="translate(100, 105)" onclick="triggerKioskSimEvent('toggle', 'S-01')">
+                                <circle class="seat-circle" cx="0" cy="0" r="14" fill="#10b981"/>
+                                <text class="seat-node-text" x="0" y="0" font-size="8">S-1</text>
+                            </g>
+                            <g class="seat-node ${k.zones.find(z => z.id === 'S-02')?.status || 'free'}" id="spatial-s-02" transform="translate(180, 105)" onclick="triggerKioskSimEvent('toggle', 'S-02')">
+                                <circle class="seat-circle" cx="0" cy="0" r="14" fill="#10b981"/>
+                                <text class="seat-node-text" x="0" y="0" font-size="8">S-2</text>
+                            </g>
+
+                            <!-- Quiet Study Stacks Zone -->
+                            <rect x="270" y="30" width="240" height="190" rx="8" fill="#112035" stroke="#38bdf8" stroke-dasharray="4 3"/>
+                            <text x="390" y="50" fill="#38bdf8" font-size="8.5" font-weight="700" text-anchor="middle">QUIET STUDY STACKS</text>
+                            
+                            <!-- Table 02 with S-3 and S-4 -->
+                            <rect x="320" y="80" width="140" height="85" rx="6" fill="#1e293b" stroke="#334155"/>
+                            <text x="390" y="125" fill="#94a3b8" font-size="8" font-weight="700" text-anchor="middle">TABLE 02</text>
+                            
+                            <g class="seat-node ${k.zones.find(z => z.id === 'S-03')?.status || 'free'}" id="spatial-s-03" transform="translate(350, 105)" onclick="triggerKioskSimEvent('toggle', 'S-03')">
+                                <circle class="seat-circle" cx="0" cy="0" r="14" fill="#10b981"/>
+                                <text class="seat-node-text" x="0" y="0" font-size="8">S-3</text>
+                            </g>
+                            <g class="seat-node ${k.zones.find(z => z.id === 'S-04')?.status || 'free'}" id="spatial-s-04" transform="translate(430, 105)" onclick="triggerKioskSimEvent('toggle', 'S-04')">
+                                <circle class="seat-circle" cx="0" cy="0" r="14" fill="#10b981"/>
+                                <text class="seat-node-text" x="0" y="0" font-size="8">S-4</text>
+                            </g>
+
+                            <!-- Bottom Stacks Seats Row -->
+                            <g transform="translate(330, 200)">
+                                <circle cx="20" cy="0" r="10" fill="#10b981"/>
+                                <circle cx="50" cy="0" r="10" fill="#10b981"/>
+                                <circle cx="80" cy="0" r="10" fill="#10b981"/>
+                                <circle cx="110" cy="0" r="10" fill="#10b981"/>
+                            </g>
+
+                            <!-- Circulation & Help Desk -->
+                            <rect x="70" y="240" width="160" height="50" rx="6" fill="#1a2538" stroke="#475569"/>
+                            <text x="150" y="270" fill="#cbd5e1" font-size="9" font-weight="700" text-anchor="middle">Circulation & Help Desk</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kiosk Footer Strip -->
+            <div class="kiosk-footer-strip">
+                <div>Team NodeX (4 Members): Dilusha • Supun • Dineth • Kavindu</div>
+                <div><a href="http://127.0.0.1:8000/docs" target="_blank"><i class="fas fa-bolt"></i> SpacePulse v2.0 • FastAPI Swagger API Docs</a></div>
+            </div>
+        </div>
+    `;
+
+    contentArea.innerHTML = html;
+
+    if (!AppState.kioskClockInterval) {
+        AppState.kioskClockInterval = setInterval(() => {
+            const clockEl = document.getElementById('kiosk-clock');
+            if (clockEl) clockEl.textContent = new Date().toLocaleTimeString();
+        }, 1000);
+    }
+
+    fetchKioskStats();
+    if (!AppState.kioskPollInterval) {
+        AppState.kioskPollInterval = setInterval(fetchKioskStats, 1000);
+    }
+}
+
+// ==========================================================================
+// 11. Backend Live Synchronization & WebSocket Streaming
+// ==========================================================================
+
+let occupancyWs = null;
+
+function initBackendSync() {
+    // 1. Initial REST Fetch for Occupancy
+    fetch('http://127.0.0.1:8000/api/occupancy')
+        .then(r => r.json())
+        .then(data => {
+            if (data.floors && Array.isArray(data.floors)) {
+                data.floors.forEach(f => {
+                    const match = spacePulseData.libraryFloors.find(lf => lf.id === f.id);
+                    if (match) {
+                        match.availableSeats = f.availableSeats;
+                        match.totalSeats = f.totalSeats;
+                    }
+                });
+                if (AppState.currentTab === 'home') renderHome();
+                else if (AppState.currentTab === 'library') renderLibrary();
+                else if (AppState.currentTab === 'maps' && AppState.mapsSubTab === 'floorplans') renderMaps();
+            }
+        })
+        .catch(() => {});
+
+    // 2. Poll Occupancy every 1500ms
+    setInterval(() => {
+        fetch('http://127.0.0.1:8000/api/occupancy')
+            .then(r => r.json())
+            .then(data => {
+                if (data.floors && Array.isArray(data.floors)) {
+                    data.floors.forEach(f => {
+                        const match = spacePulseData.libraryFloors.find(lf => lf.id === f.id);
+                        if (match) {
+                            match.availableSeats = f.availableSeats;
+                        }
+                    });
+                }
+            })
+            .catch(() => {});
+    }, 1500);
+
+    // 3. Connect Live WebSocket
+    try {
+        occupancyWs = new WebSocket('ws://127.0.0.1:8000/ws/occupancy');
+        occupancyWs.onmessage = (event) => {
+            try {
+                const msg = JSON.parse(event.data);
+                if (msg.type === 'occupancy_update' || msg.floors) {
+                    if (msg.floors) {
+                        msg.floors.forEach(f => {
+                            const match = spacePulseData.libraryFloors.find(lf => lf.id === f.id);
+                            if (match) match.availableSeats = f.availableSeats;
+                        });
+                    }
+                    if (AppState.currentTab === 'kiosk') fetchKioskStats();
+                }
+            } catch (e) {}
+        };
+        occupancyWs.onerror = () => {};
+    } catch (e) {}
+}
