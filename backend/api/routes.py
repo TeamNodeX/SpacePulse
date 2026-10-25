@@ -10,9 +10,11 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, HTTPExcept
 from ..models.schemas import (
     TelemetryItem, BatchTelemetryPayload, OccupancyResponse,
     SeatState, ReservationRequest, ReservationResponse, HealthResponse,
-    HysteresisConfigRequest
+    HysteresisConfigRequest, SendOtpRequest, SendOtpResponse,
+    VerifyOtpRequest, VerifyOtpResponse, WebmailMessageResponse
 )
 from ..core.state_manager import state_manager
+from ..core.email_service import email_service
 from ..api.websocket_manager import ws_manager
 
 logger = logging.getLogger("spacepulse.routes")
@@ -273,3 +275,70 @@ async def health_check():
         telemetry_packets_received=stats["telemetry_packet_count"],
         last_telemetry_timestamp=stats["last_telemetry"]
     )
+
+# ==============================================================================
+# 7. University Webmail Authentication & Mailbox Endpoints
+# ==============================================================================
+
+@router.post("/auth/send-otp", response_model=SendOtpResponse)
+async def send_auth_otp(req: SendOtpRequest):
+    """
+    Sends a 6-digit verification code to the student's University Webmail.
+    The code is delivered strictly to the webmail inbox and is NEVER returned in this API response.
+    """
+    try:
+        res = state_manager.send_auth_otp(req.email, req.name)
+        return SendOtpResponse(
+            status="ok",
+            message="Verification code has been dispatched to your University Webmail.",
+            email=res["email"]
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error sending OTP: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to dispatch verification code.")
+
+@router.post("/auth/verify-otp", response_model=VerifyOtpResponse)
+async def verify_auth_otp(req: VerifyOtpRequest):
+    """
+    Verifies the 6-digit code received via University Webmail.
+    Returns the verified Student Profile and session token.
+    """
+    try:
+        res = state_manager.verify_auth_otp(req.email, req.code, req.name)
+        return VerifyOtpResponse(
+            status="ok",
+            message=res["message"],
+            student=res["student"],
+            token=res["token"]
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error verifying OTP: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to verify code.")
+
+@router.get("/webmail/inbox", response_model=List[WebmailMessageResponse])
+async def get_webmail_inbox(email: Optional[str] = Query(None, description="Filter by recipient student webmail")):
+    """
+    Retrieves incoming official emails for the student's University Webmail mailbox.
+    Used by the in-app Webmail Reader modal to check the official SpacePulse verification email.
+    """
+    messages = email_service.get_inbox_messages(email)
+    return [WebmailMessageResponse(**msg) for msg in messages]
+
+@router.get("/webmail/message/{msg_id}", response_model=WebmailMessageResponse)
+async def get_webmail_message(msg_id: str):
+    """Retrieves a single email message from the University Webmail store and marks it as read."""
+    msg = email_service.get_message_by_id(msg_id)
+    if not msg:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Message not found in webmail.")
+    return WebmailMessageResponse(**msg)
+
+@router.delete("/webmail/clear")
+async def clear_webmail_inbox():
+    """Clears the simulated university webmail inbox."""
+    email_service.inbox_store.clear()
+    return {"status": "ok", "message": "University Webmail inbox cleared."}
+

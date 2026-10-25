@@ -3107,12 +3107,12 @@ body {
     transform: translateY(-2px);
 }
 
-.portal-guest-btn {
-    padding: 9px 18px;
+.portal-webmail-btn {
+    padding: 8px 18px;
     border-radius: var(--radius-full);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
+    background: rgba(136, 19, 55, 0.12);
+    border: 1.5px solid rgba(136, 19, 55, 0.35);
+    color: #9f1239;
     font-size: 0.84rem;
     font-weight: 700;
     cursor: pointer;
@@ -3122,11 +3122,24 @@ body {
     transition: var(--transition);
 }
 
-.portal-guest-btn:hover {
-    background: var(--bg-alt);
-    border-color: var(--primary-blue);
-    color: var(--primary-blue);
-    transform: translateX(3px);
+.portal-webmail-btn:hover {
+    background: #881337;
+    border-color: #881337;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(136, 19, 55, 0.3);
+}
+
+[data-theme="dark"] .portal-webmail-btn {
+    background: rgba(244, 63, 94, 0.14);
+    border-color: rgba(244, 63, 94, 0.35);
+    color: #fda4af;
+}
+
+[data-theme="dark"] .portal-webmail-btn:hover {
+    background: #e11d48;
+    border-color: #e11d48;
+    color: #ffffff;
 }
 
 /* Portal Main Center Card */
@@ -3511,6 +3524,509 @@ body {
     .portal-footer {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+/* ==========================================================================
+   University of Moratuwa Webmail Service (mail.uom.lk) Modal & Auth Styles
+   ========================================================================== */
+.webmail-helper-card {
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(136, 19, 55, 0.06) 100%);
+    border: 1.5px solid rgba(2, 132, 199, 0.3);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+}
+
+[data-theme="dark"] .webmail-helper-card {
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.16) 0%, rgba(244, 63, 94, 0.1) 100%);
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.webmail-open-action-btn {
+    margin-left: auto;
+    padding: 8px 14px;
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+}
+
+.webmail-open-action-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);
+}
+
+.webmail-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.webmail-modal-window {
+    width: 100%;
+    max-width: 960px;
+    height: 84vh;
+    min-height: 560px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: webmailModalPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes webmailModalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.webmail-header-bar {
+    background: linear-gradient(135deg, #881337 0%, #4c0519 100%);
+    color: #ffffff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.webmail-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.webmail-crest-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(253, 224, 71, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: #fde047;
+    flex-shrink: 0;
+}
+
+.webmail-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.webmail-service-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+}
+
+.webmail-service-subtitle {
+    font-size: 0.74rem;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+.webmail-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.webmail-action-btn {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 7px 13px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.webmail-action-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.webmail-action-btn.external {
+    background: rgba(253, 224, 71, 0.2);
+    border-color: rgba(253, 224, 71, 0.5);
+    color: #fde047;
+}
+
+.webmail-action-btn.external:hover {
+    background: rgba(253, 224, 71, 0.35);
+}
+
+.webmail-close-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    border: none;
+    color: #ffffff;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.webmail-close-btn:hover {
+    background: rgba(239, 68, 68, 0.7);
+}
+
+.webmail-status-strip {
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.webmail-account-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.webmail-account-info strong {
+    color: var(--primary-blue);
+}
+
+[data-theme="dark"] .webmail-account-info strong {
+    color: #38bdf8;
+}
+
+.webmail-security-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--pulse-green);
+    font-weight: 700;
+}
+
+.webmail-body-split {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.webmail-sidebar-pane {
+    width: 320px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.webmail-folder-pills {
+    display: flex;
+    gap: 4px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+}
+
+.webmail-folder-pill {
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.webmail-folder-pill.active {
+    background: rgba(136, 19, 55, 0.12);
+    color: var(--uom-crimson);
+    font-weight: 800;
+}
+
+[data-theme="dark"] .webmail-folder-pill.active {
+    background: rgba(244, 63, 94, 0.16);
+    color: #fb7185;
+}
+
+.webmail-count-badge {
+    background: var(--uom-crimson);
+    color: #ffffff;
+    font-size: 0.68rem;
+    padding: 1px 6px;
+    border-radius: 999px;
+}
+
+.webmail-inbox-heading {
+    padding: 10px 14px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+}
+
+.webmail-messages-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.webmail-msg-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+}
+
+.webmail-msg-item:hover {
+    background: var(--bg-alt);
+}
+
+.webmail-msg-item.active {
+    background: rgba(136, 19, 55, 0.08);
+    border-left: 3px solid var(--uom-crimson);
+}
+
+[data-theme="dark"] .webmail-msg-item.active {
+    background: rgba(244, 63, 94, 0.12);
+    border-left-color: #fb7185;
+}
+
+.webmail-msg-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    margin-bottom: 3px;
+}
+
+.webmail-msg-sender {
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.webmail-unread-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #0284c7;
+    flex-shrink: 0;
+}
+
+.webmail-msg-time {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.webmail-msg-subject {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.webmail-msg-snippet {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.webmail-reader-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--bg-base);
+    padding: 18px;
+}
+
+.webmail-reader-empty {
+    margin: auto;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px;
+}
+
+.webmail-reader-empty i {
+    font-size: 3rem;
+    color: var(--border);
+    margin-bottom: 12px;
+    display: block;
+}
+
+.webmail-reader-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 16px;
+}
+
+.webmail-reader-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-card);
+}
+
+.webmail-reader-subject {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.webmail-reader-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.webmail-fast-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(16, 185, 129, 0.08));
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.webmail-code-badge {
+    font-family: monospace, Consolas, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #0284c7;
+    background: rgba(2, 132, 199, 0.12);
+    border: 1px dashed #0284c7;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.webmail-copy-code-btn {
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.webmail-copy-code-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+.webmail-insert-code-btn {
+    background: var(--pulse-green);
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.webmail-insert-code-btn:hover {
+    background: var(--pulse-green-hover);
+    transform: translateY(-1px);
+}
+
+.webmail-reader-body-wrap {
+    padding: 20px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .webmail-modal-window {
+        height: 94vh;
+        min-height: auto;
+    }
+    .webmail-body-split {
+        flex-direction: column;
+    }
+    .webmail-sidebar-pane {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
     }
 }
 

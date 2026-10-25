@@ -18,12 +18,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css?v=3.5">
+    <link rel="stylesheet" href="style.css?v=3.6">
     <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
 </head>
 <body>
     <!-- Dedicated First-Page Student Login Portal Screen -->
-    <div class="student-login-portal-screen" id="student-login-page" style="display: none;">
+    <div class="student-login-portal-screen" id="student-login-page">
         <div class="portal-ambient-mesh">
             <div class="portal-glow-orb orb-1"></div>
             <div class="portal-glow-orb orb-2"></div>
@@ -56,9 +56,9 @@
                     <button class="portal-icon-btn" id="portal-theme-btn" onclick="togglePortalTheme()" title="Toggle Dark/Light Mode">
                         <i class="fas fa-moon" id="portal-theme-icon"></i>
                     </button>
-                    <button class="portal-guest-btn" onclick="hideStudentLoginPage()" title="Bypass login and explore as guest">
-                        <span>Continue as Guest</span>
-                        <i class="fas fa-arrow-right"></i>
+                    <button class="portal-webmail-btn" onclick="openUniversityWebmailModal()" title="Open University of Moratuwa Webmail (mail.uom.lk)">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <span>University Webmail</span>
                     </button>
                 </div>
             </header>
@@ -593,6 +593,84 @@
         </div>
     </div>
 
+    <!-- University of Moratuwa Webmail Reader Modal (mail.uom.lk) -->
+    <div class="webmail-modal-overlay" id="webmail-modal" style="display: none;">
+        <div class="webmail-modal-window">
+            <!-- Webmail App Bar -->
+            <div class="webmail-header-bar">
+                <div class="webmail-brand">
+                    <div class="webmail-crest-box">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="webmail-brand-text">
+                        <div class="webmail-service-title">University of Moratuwa Webmail</div>
+                        <div class="webmail-service-subtitle">mail.uom.lk • Official Microsoft 365 Exchange Gateway</div>
+                    </div>
+                </div>
+                <div class="webmail-header-actions">
+                    <button type="button" class="webmail-action-btn" onclick="refreshWebmailInbox()" title="Check for new mail">
+                        <i class="fas fa-rotate" id="webmail-refresh-icon"></i>
+                        <span>Refresh Inbox</span>
+                    </button>
+                    <a href="https://mail.uom.lk" target="_blank" rel="noopener noreferrer" class="webmail-action-btn external" title="Open mail.uom.lk in browser tab">
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                        <span>mail.uom.lk</span>
+                    </a>
+                    <button type="button" class="webmail-close-btn" onclick="closeUniversityWebmailModal()" title="Close Webmail Viewer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Webmail Subnav / Status Strip -->
+            <div class="webmail-status-strip">
+                <div class="webmail-account-info">
+                    <i class="fas fa-circle-user"></i>
+                    <span>Connected Inbox: <strong id="webmail-active-account">student@uom.lk</strong></span>
+                </div>
+                <div class="webmail-security-tag">
+                    <i class="fas fa-shield-halved"></i> UoM Identity Secured (TLS/SSL)
+                </div>
+            </div>
+
+            <!-- Split Mailbox Layout -->
+            <div class="webmail-body-split">
+                <!-- Sidebar Folders & Messages List -->
+                <div class="webmail-sidebar-pane">
+                    <div class="webmail-folder-pills">
+                        <div class="webmail-folder-pill active">
+                            <i class="fas fa-inbox"></i>
+                            <span>Inbox</span>
+                            <span class="webmail-count-badge" id="webmail-unread-count">0</span>
+                        </div>
+                        <div class="webmail-folder-pill">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Sent</span>
+                        </div>
+                        <div class="webmail-folder-pill">
+                            <i class="fas fa-box-archive"></i>
+                            <span>Archive</span>
+                        </div>
+                    </div>
+
+                    <div class="webmail-inbox-heading">
+                        <span>Incoming Messages</span>
+                        <small id="webmail-msg-count-sub">0 total</small>
+                    </div>
+
+                    <div class="webmail-messages-list" id="webmail-messages-list">
+                        <!-- Populated dynamically by renderWebmailList() in app.js -->
+                    </div>
+                </div>
+
+                <!-- Message Reader Pane -->
+                <div class="webmail-reader-pane" id="webmail-reader-pane">
+                    <!-- Populated dynamically by renderWebmailMessage() in app.js -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toast-container"></div>
 
@@ -604,6 +682,6 @@
     <script src="assets/qrcode.min.js"></script>
     
     <!-- Application Logic -->
-    <script src="app.js?v=3.5"></script>
+    <script src="app.js?v=3.6"></script>
 </body>
 </html>

@@ -747,17 +747,9 @@ const AppState = {
     blueprintZonesLayer: null,
     blueprintImageLayer: null,
 
-    // UoM Student Profile & Authentication - Default to Verified student Kavindu Dilupa
-    currentStudent: JSON.parse(localStorage.getItem('spacepulse_student_profile') || 'null') || {
-        email: '210123A@uom.lk',
-        indexNumber: '210123A',
-        name: 'Kavindu Dilupa',
-        department: 'Computer Science & Engineering',
-        batch: 'Batch 21',
-        isVerified: true
-    },
+    // UoM Student Profile & Authentication - Requires University Webmail verification
+    currentStudent: JSON.parse(localStorage.getItem('spacepulse_student_profile') || 'null'),
     pendingOtpEmail: null,
-    pendingOtpCode: null,
     pendingOtpCustomName: null,
     isEnteringOtp: false,
 
@@ -796,12 +788,6 @@ const AppState = {
         ]
     }
 };
-
-// Auto-sanitize legacy cached demo profile in localStorage if needed
-if (AppState.currentStudent && AppState.currentStudent.email === '210123A@uom.lk') {
-    AppState.currentStudent.name = 'Kavindu Dilupa';
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(AppState.currentStudent));
-}
 
 // ==========================================================================
 // 3. UoM Student Profile & Email Parser (Mirroring student_profile.dart)
@@ -3364,6 +3350,10 @@ function showStudentLoginPage() {
 }
 
 function hideStudentLoginPage() {
+    if (!AppState.currentStudent || !AppState.currentStudent.isVerified) {
+        showToast('University Webmail verification is required to access SpacePulse.', true);
+        return;
+    }
     const page = document.getElementById('student-login-page');
     if (page) {
         page.style.display = 'none';
@@ -3387,7 +3377,22 @@ function togglePortalTheme() {
 }
 
 function openStudentAuthModal() {
-    showStudentLoginPage();
+    if (!AppState.currentStudent || !AppState.currentStudent.isVerified) {
+        showStudentLoginPage();
+    } else {
+        const modal = document.getElementById('student-auth-modal');
+        if (modal) {
+            renderStudentAuthModalBody();
+            modal.style.display = 'flex';
+        }
+    }
+}
+
+function closeStudentAuthModal() {
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 function renderPortalAuthBody() {
@@ -3442,11 +3447,11 @@ function renderPortalAuthBody() {
             </div>
         `;
     } else if (!AppState.isEnteringOtp) {
-        // Step 1: Email Form + Domain Chips + One-Click Demo Button + Guest link
+        // Step 1: Email Form + Domain Chips
         body.innerHTML = `
             <div class="portal-section-intro">
-                <h4>Sign in with University Email</h4>
-                <p>Connect your official @uom.lk account to access real-time vacancy tracking and library reservations.</p>
+                <h4>Sign in with University Webmail</h4>
+                <p>Connect your official <strong>@uom.lk</strong> student webmail. A single-use 6-digit verification code will be dispatched to your webmail inbox.</p>
             </div>
 
             <form id="portal-email-form" onsubmit="event.preventDefault(); handlePortalSendOtp();">
@@ -3476,55 +3481,58 @@ function renderPortalAuthBody() {
                     </div>
                 </div>
 
-                <button type="submit" class="portal-submit-btn">
-                    <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code
+                <button type="submit" class="portal-submit-btn" id="portal-send-btn">
+                    <i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code to Webmail
                 </button>
             </form>
 
             <div class="portal-divider">
-                <span>OR INSTANT ONE-CLICK EVALUATION</span>
+                <span>OFFICIAL UNIVERSITY WEBMAIL SERVICE</span>
             </div>
 
-            <button type="button" class="portal-demo-btn" onclick="handlePortalDemoLogin()">
-                <i class="fas fa-bolt" style="color: var(--amber);"></i> One-Click Demo Student Sign In (Kavindu Dilupa • 210123A)
+            <button type="button" class="portal-webmail-btn" style="width: 100%; justify-content: center; padding: 12px;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
+                <i class="fas fa-envelope-open-text" style="color: var(--uom-crimson);"></i> Open University Webmail (mail.uom.lk)
             </button>
-
-            <div class="portal-guest-link-wrap">
-                <a href="javascript:void(0)" onclick="hideStudentLoginPage()" class="portal-guest-link">
-                    Continue to Dashboard as Guest <i class="fas fa-chevron-right"></i>
-                </a>
-            </div>
         `;
     } else {
         // Step 2: OTP Verification
         body.innerHTML = `
             <div style="text-align: center; margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit OTP</h4>
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit Verification Code</h4>
                 <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Verification code sent to <strong>${AppState.pendingOtpEmail}</strong>
+                    Verification code dispatched to <strong>${AppState.pendingOtpEmail}</strong>
                 </p>
             </div>
 
-            <!-- Demo Mode Helper Code Pill -->
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 10px 14px; text-align: center; margin-bottom: 16px;">
-                <span style="font-size: 0.78rem; color: var(--pulse-green); font-weight: 700;">Demo Mode Helper:</span>
-                <button type="button" style="background: transparent; border: none; font-weight: 800; color: var(--pulse-green); cursor: pointer; text-decoration: underline; margin-left: 6px;" onclick="autofillPortalOtp()">
-                    Autofill Demo Code (${AppState.pendingOtpCode})
+            <!-- Webmail Notice & Inbox Launcher -->
+            <div class="webmail-helper-card">
+                <i class="fas fa-envelope-circle-check" style="font-size: 1.8rem; color: #0284c7;"></i>
+                <div style="flex: 1;">
+                    <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
+                    <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is only viewable in your university webmail inbox.</div>
+                </div>
+                <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                    <i class="fas fa-inbox"></i> Open Webmail
                 </button>
             </div>
 
             <form id="portal-otp-form" onsubmit="event.preventDefault(); handlePortalVerifyOtp();">
                 <div class="otp-box-container">
-                    <input type="text" id="portal-otp-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus>
+                    <input type="text" id="portal-otp-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus autocomplete="one-time-code">
                 </div>
 
-                <button type="submit" class="portal-submit-btn" style="margin-bottom: 10px;">
-                    <i class="fas fa-shield-check"></i> Verify & Enter University Dashboard
+                <button type="submit" class="portal-submit-btn" id="portal-verify-btn" style="margin-bottom: 10px;">
+                    <i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse
                 </button>
 
-                <button type="button" class="portal-signout-btn" style="color: var(--text-secondary); border-color: var(--border);" onclick="AppState.isEnteringOtp = false; renderPortalAuthBody();">
-                    <i class="fas fa-arrow-left"></i> Change Email
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="portal-signout-btn" style="color: var(--text-secondary); border-color: var(--border); flex: 1;" onclick="AppState.isEnteringOtp = false; renderPortalAuthBody();">
+                        <i class="fas fa-arrow-left"></i> Change Email
+                    </button>
+                    <button type="button" class="portal-signout-btn" style="color: #0284c7; border-color: rgba(2, 132, 199, 0.4); flex: 1;" onclick="handlePortalSendOtp(true)">
+                        <i class="fas fa-rotate"></i> Resend Code
+                    </button>
+                </div>
             </form>
         `;
     }
@@ -3543,85 +3551,300 @@ function appendPortalDomain(domain) {
     input.focus();
 }
 
-function handlePortalSendOtp() {
+async function handlePortalSendOtp(isResend = false) {
     const emailInput = document.getElementById('portal-email-input');
     const nameInput = document.getElementById('portal-name-input');
-    const email = emailInput ? emailInput.value.trim() : '';
-    const customName = nameInput ? nameInput.value.trim() : '';
+    const email = isResend ? (AppState.pendingOtpEmail || '') : (emailInput ? emailInput.value.trim() : '');
+    const customName = isResend ? (AppState.pendingOtpCustomName || '') : (nameInput ? nameInput.value.trim() : '');
 
     if (!isValidUomEmail(email)) {
         showToast('Please enter a valid @uom.lk or @*.mrt.ac.lk university email.', true);
         return;
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    AppState.pendingOtpEmail = email;
-    AppState.pendingOtpCode = code;
-    AppState.pendingOtpCustomName = customName;
-    AppState.isEnteringOtp = true;
+    const sendBtn = document.getElementById('portal-send-btn');
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatching code to Webmail...';
+    }
 
-    showToast(`Code sent to ${email} (Demo Code: ${code}) 📩`);
-    renderPortalAuthBody();
-    renderStudentAuthModalBody();
-}
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, name: customName })
+        });
+        const data = await resp.json();
 
-function autofillPortalOtp() {
-    const input = document.getElementById('portal-otp-input');
-    if (input && AppState.pendingOtpCode) {
-        input.value = AppState.pendingOtpCode;
-        handlePortalVerifyOtp();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to dispatch verification code.');
+        }
+
+        AppState.pendingOtpEmail = email;
+        AppState.pendingOtpCustomName = customName;
+        AppState.isEnteringOtp = true;
+
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at mail.uom.lk 📩');
+        renderPortalAuthBody();
+        renderStudentAuthModalBody();
+    } catch (err) {
+        showToast(err.message || 'Failed to connect to backend auth service.', true);
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send 6-Digit Verification Code to Webmail';
+        }
     }
 }
 
-function handlePortalVerifyOtp() {
+async function handlePortalVerifyOtp() {
     const input = document.getElementById('portal-otp-input');
-    const entered = input ? input.value.trim() : '';
+    const code = input ? input.value.trim() : '';
 
-    if (entered !== AppState.pendingOtpCode) {
-        showToast('Invalid verification code. Please check and re-enter.', true);
+    if (!code || code.length !== 6) {
+        showToast('Please enter the full 6-digit code from your university webmail.', true);
         return;
     }
 
-    const studentProfile = parseStudentProfileFromEmail(AppState.pendingOtpEmail, AppState.pendingOtpCustomName);
-    AppState.currentStudent = studentProfile;
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+    const verifyBtn = document.getElementById('portal-verify-btn');
+    if (verifyBtn) {
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying with Webmail...';
+    }
 
-    AppState.isEnteringOtp = false;
-    AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: AppState.pendingOtpEmail,
+                code: code,
+                name: AppState.pendingOtpCustomName
+            })
+        });
+        const data = await resp.json();
 
-    showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
-    updateStudentHeaderElements();
-    renderPortalAuthBody();
-    renderStudentAuthModalBody();
-    hideStudentLoginPage();
-    if (AppState.currentTab === 'home') renderHome();
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Invalid or expired verification code.');
+        }
+
+        const studentProfile = data.student;
+        AppState.currentStudent = studentProfile;
+        localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+        if (data.token) {
+            localStorage.setItem('spacepulse_auth_token', data.token);
+        }
+
+        AppState.isEnteringOtp = false;
+        AppState.pendingOtpEmail = null;
+        AppState.pendingOtpCustomName = null;
+
+        showToast(`Welcome, ${studentProfile.name}! Verified via University Webmail 🎓`);
+        updateStudentHeaderElements();
+        renderPortalAuthBody();
+        renderStudentAuthModalBody();
+        hideStudentLoginPage();
+        if (AppState.currentTab === 'home') renderHome();
+    } catch (err) {
+        showToast(err.message || 'Invalid verification code. Please check your webmail.', true);
+        if (verifyBtn) {
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse';
+        }
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    }
 }
 
-function handlePortalDemoLogin() {
-    const studentProfile = {
-        email: '210123A@uom.lk',
-        indexNumber: '210123A',
-        batch: 'Batch 21',
-        department: 'Computer Science & Engineering',
-        name: 'Kavindu Dilupa',
-        isVerified: true,
-        verifiedAt: new Date().toISOString()
-    };
-    AppState.currentStudent = studentProfile;
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
-    AppState.isEnteringOtp = false;
-    AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+// ==========================================================================
+// University of Moratuwa Webmail Service (mail.uom.lk) Interface
+// ==========================================================================
 
-    showToast(`Welcome, Kavindu Dilupa! Verified as CSE Undergraduate 🎓`);
-    updateStudentHeaderElements();
-    renderPortalAuthBody();
-    renderStudentAuthModalBody();
-    hideStudentLoginPage();
-    if (AppState.currentTab === 'home') renderHome();
+let activeWebmailMessages = [];
+let selectedWebmailMessageId = null;
+
+function openUniversityWebmailModal(email) {
+    const modal = document.getElementById('webmail-modal');
+    if (!modal) return;
+    const targetEmail = email || AppState.pendingOtpEmail || (AppState.currentStudent ? AppState.currentStudent.email : 'student@uom.lk');
+    const accountEl = document.getElementById('webmail-active-account');
+    if (accountEl) accountEl.textContent = targetEmail;
+
+    modal.style.display = 'flex';
+    refreshWebmailInbox(targetEmail);
 }
 
+function closeUniversityWebmailModal() {
+    const modal = document.getElementById('webmail-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function refreshWebmailInbox(filterEmail) {
+    const listEl = document.getElementById('webmail-messages-list');
+    const readerEl = document.getElementById('webmail-reader-pane');
+    const unreadEl = document.getElementById('webmail-unread-count');
+    const countSubEl = document.getElementById('webmail-msg-count-sub');
+    const icon = document.getElementById('webmail-refresh-icon');
+
+    if (icon) icon.classList.add('fa-spin');
+    if (listEl) {
+        listEl.innerHTML = `
+            <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
+                <i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Checking mail.uom.lk...
+            </div>
+        `;
+    }
+
+    try {
+        const emailQuery = filterEmail ? `?email=${encodeURIComponent(filterEmail.trim().toLowerCase())}` : '';
+        const resp = await fetch(`http://127.0.0.1:8000/api/webmail/inbox${emailQuery}`);
+        const messages = await resp.json();
+        activeWebmailMessages = Array.isArray(messages) ? messages : [];
+
+        if (unreadEl) {
+            const unreadCount = activeWebmailMessages.filter(m => !m.is_read).length;
+            unreadEl.textContent = unreadCount;
+        }
+        if (countSubEl) {
+            countSubEl.textContent = `${activeWebmailMessages.length} message${activeWebmailMessages.length === 1 ? '' : 's'}`;
+        }
+
+        renderWebmailInboxList();
+
+        if (activeWebmailMessages.length > 0) {
+            selectWebmailMessage(activeWebmailMessages[0].id);
+        } else {
+            if (readerEl) {
+                readerEl.innerHTML = `
+                    <div class="webmail-reader-empty">
+                        <i class="fas fa-inbox"></i>
+                        <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 6px;">Your Webmail Inbox is Empty</h4>
+                        <p style="font-size: 0.84rem; max-width: 360px; margin: 0 auto 16px auto;">Enter your @uom.lk email on the SpacePulse login screen and click "Send Verification Code" to receive your code here.</p>
+                    </div>
+                `;
+            }
+        }
+    } catch (err) {
+        if (listEl) {
+            listEl.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: var(--danger); font-size: 0.8rem;">
+                    <i class="fas fa-triangle-exclamation"></i> Could not connect to University Webmail store. Ensure backend is running.
+                </div>
+            `;
+        }
+    } finally {
+        if (icon) icon.classList.remove('fa-spin');
+    }
+}
+
+function renderWebmailInboxList() {
+    const listEl = document.getElementById('webmail-messages-list');
+    if (!listEl) return;
+
+    if (activeWebmailMessages.length === 0) {
+        listEl.innerHTML = `
+            <div style="padding: 24px 16px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+                No messages found for this account.
+            </div>
+        `;
+        return;
+    }
+
+    listEl.innerHTML = activeWebmailMessages.map(msg => {
+        const isSelected = msg.id === selectedWebmailMessageId;
+        return `
+            <div class="webmail-msg-item ${isSelected ? 'active' : ''} ${!msg.is_read ? 'unread' : ''}" onclick="selectWebmailMessage('${msg.id}')">
+                <div class="webmail-msg-top">
+                    <span class="webmail-msg-sender">
+                        ${!msg.is_read ? '<span class="webmail-unread-dot"></span>' : ''}
+                        ${msg.sender.split('<')[0].trim()}
+                    </span>
+                    <span class="webmail-msg-time">${msg.date_str.split('-')[1] || msg.date_str}</span>
+                </div>
+                <div class="webmail-msg-subject">${msg.subject}</div>
+                <div class="webmail-msg-snippet">${msg.body_text || 'SpacePulse verification code inside...'}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function selectWebmailMessage(msgId) {
+    selectedWebmailMessageId = msgId;
+    const msg = activeWebmailMessages.find(m => m.id === msgId);
+    if (msg) {
+        msg.is_read = true;
+        renderWebmailInboxList();
+        renderWebmailMessageDetail(msg);
+    }
+}
+
+function renderWebmailMessageDetail(msg) {
+    const readerEl = document.getElementById('webmail-reader-pane');
+    if (!readerEl || !msg) return;
+
+    const code = msg.code || (msg.subject.match(/(\d{3}\s?\d{3})/)?.[1]?.replace(/\s+/g, '') || '');
+
+    readerEl.innerHTML = `
+        <div class="webmail-reader-card">
+            <div class="webmail-reader-head">
+                <div class="webmail-reader-subject">${msg.subject}</div>
+                <div class="webmail-reader-meta">
+                    <div>
+                        <strong>From:</strong> ${msg.sender} &nbsp;•&nbsp;
+                        <strong>To:</strong> ${msg.recipient}
+                    </div>
+                    <div><i class="fas fa-clock"></i> ${msg.date_str}</div>
+                </div>
+            </div>
+
+            ${code ? `
+                <div class="webmail-fast-actions-bar">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: var(--text-secondary);">Your Code:</span>
+                        <span class="webmail-code-badge">${code.slice(0,3)} ${code.slice(3)}</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="webmail-copy-code-btn" onclick="copyWebmailCode('${code}')">
+                            <i class="fas fa-copy"></i> Copy Code
+                        </button>
+                        <button type="button" class="webmail-insert-code-btn" onclick="insertWebmailCodeAndVerify('${code}')">
+                            <i class="fas fa-arrow-right-to-bracket"></i> Insert Code & Log In
+                        </button>
+                    </div>
+                </div>
+            ` : ''}
+
+            <div class="webmail-reader-body-wrap">
+                ${msg.body_html || `<pre style="font-family: inherit;">${msg.body_text}</pre>`}
+            </div>
+        </div>
+    `;
+}
+
+function copyWebmailCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        showToast(`Verification code ${code} copied to clipboard! 📋`);
+    }).catch(() => {
+        showToast(`Code: ${code}`);
+    });
+}
+
+function insertWebmailCodeAndVerify(code) {
+    const input = document.getElementById('portal-otp-input');
+    if (input) {
+        input.value = code;
+    }
+    const modalInput = document.getElementById('otp-code-input');
+    if (modalInput) {
+        modalInput.value = code;
+    }
+    closeUniversityWebmailModal();
+    showToast('Code inserted from Webmail! Verifying student identity... 🚀');
+    handlePortalVerifyOtp();
+}
+
+// Student Auth Modal (Header Modal) Handlers
 function renderStudentAuthModalBody() {
     const body = document.getElementById('student-modal-body');
     if (!body) return;
@@ -3671,7 +3894,7 @@ function renderStudentAuthModalBody() {
     } else if (!AppState.isEnteringOtp) {
         body.innerHTML = `
             <div style="margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Email</h4>
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Connect Your UoM Student Webmail</h4>
                 <p style="font-size: 0.84rem; color: var(--text-secondary);">
                     Enter your official university email to unlock 30-minute desk reservations and personalized university telemetry.
                 </p>
@@ -3705,16 +3928,20 @@ function renderStudentAuthModalBody() {
     } else {
         body.innerHTML = `
             <div style="text-align: center; margin-bottom: 16px;">
-                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit OTP</h4>
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit Verification Code</h4>
                 <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Verification code sent to <strong>${AppState.pendingOtpEmail}</strong>
+                    Verification code dispatched to <strong>${AppState.pendingOtpEmail}</strong>
                 </p>
             </div>
 
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 10px 14px; text-align: center; margin-bottom: 16px;">
-                <span style="font-size: 0.78rem; color: var(--pulse-green); font-weight: 700;">Demo Mode Helper:</span>
-                <button type="button" style="background: transparent; border: none; font-weight: 800; color: var(--pulse-green); cursor: pointer; text-decoration: underline; margin-left: 6px;" onclick="autofillDemoOtp()">
-                    Autofill Demo Code (${AppState.pendingOtpCode})
+            <div class="webmail-helper-card" style="margin-bottom: 14px;">
+                <i class="fas fa-envelope-open-text" style="font-size: 1.5rem; color: #0284c7;"></i>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.82rem;">Delivered to Webmail</div>
+                    <div style="font-size: 0.72rem; color: var(--text-secondary);">Open your University Webmail to retrieve your code.</div>
+                </div>
+                <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                    <i class="fas fa-inbox"></i> Webmail
                 </button>
             </div>
 
@@ -3748,7 +3975,7 @@ function appendDomainToInput(domain) {
     input.focus();
 }
 
-function handleSendOtp() {
+async function handleSendOtp() {
     const email = document.getElementById('uom-email-input').value.trim();
     const customName = document.getElementById('uom-name-input').value.trim();
 
@@ -3757,59 +3984,88 @@ function handleSendOtp() {
         return;
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    AppState.pendingOtpEmail = email;
-    AppState.pendingOtpCode = code;
-    AppState.pendingOtpCustomName = customName;
-    AppState.isEnteringOtp = true;
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, name: customName })
+        });
+        const data = await resp.json();
 
-    showToast(`Code sent to ${email} (Demo Code: ${code}) 📩`);
-    renderStudentAuthModalBody();
-    renderPortalAuthBody();
-}
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Failed to dispatch verification code.');
+        }
 
-function autofillDemoOtp() {
-    const input = document.getElementById('otp-code-input');
-    if (input && AppState.pendingOtpCode) {
-        input.value = AppState.pendingOtpCode;
-        handleVerifyOtp();
+        AppState.pendingOtpEmail = email;
+        AppState.pendingOtpCustomName = customName;
+        AppState.isEnteringOtp = true;
+
+        showToast('Verification code dispatched to your University Webmail. Check your inbox at mail.uom.lk 📩');
+        renderStudentAuthModalBody();
+        renderPortalAuthBody();
+    } catch (err) {
+        showToast(err.message || 'Failed to connect to backend auth service.', true);
     }
 }
 
-function handleVerifyOtp() {
+async function handleVerifyOtp() {
     const input = document.getElementById('otp-code-input');
-    const entered = input ? input.value.trim() : '';
+    const code = input ? input.value.trim() : '';
 
-    if (entered !== AppState.pendingOtpCode) {
-        showToast('Invalid verification code. Please check and re-enter.', true);
+    if (!code || code.length !== 6) {
+        showToast('Please enter the 6-digit verification code from your webmail.', true);
         return;
     }
 
-    const studentProfile = parseStudentProfileFromEmail(AppState.pendingOtpEmail, AppState.pendingOtpCustomName);
-    AppState.currentStudent = studentProfile;
-    localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+    try {
+        const resp = await fetch('http://127.0.0.1:8000/api/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: AppState.pendingOtpEmail,
+                code: code,
+                name: AppState.pendingOtpCustomName
+            })
+        });
+        const data = await resp.json();
 
-    AppState.isEnteringOtp = false;
-    AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+        if (!resp.ok) {
+            throw new Error(data.detail || 'Invalid or expired verification code.');
+        }
 
-    showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
-    updateStudentHeaderElements();
-    renderStudentAuthModalBody();
-    renderPortalAuthBody();
-    const modal = document.getElementById('student-auth-modal');
-    if (modal) modal.style.display = 'none';
-    if (AppState.currentTab === 'home') renderHome();
+        const studentProfile = data.student;
+        AppState.currentStudent = studentProfile;
+        localStorage.setItem('spacepulse_student_profile', JSON.stringify(studentProfile));
+        if (data.token) {
+            localStorage.setItem('spacepulse_auth_token', data.token);
+        }
+
+        AppState.isEnteringOtp = false;
+        AppState.pendingOtpEmail = null;
+        AppState.pendingOtpCustomName = null;
+
+        showToast(`Welcome, ${studentProfile.name}! Verified as ${studentProfile.department} 🎓`);
+        updateStudentHeaderElements();
+        renderStudentAuthModalBody();
+        renderPortalAuthBody();
+        const modal = document.getElementById('student-auth-modal');
+        if (modal) modal.style.display = 'none';
+        hideStudentLoginPage();
+        if (AppState.currentTab === 'home') renderHome();
+    } catch (err) {
+        showToast(err.message || 'Invalid verification code. Please check your webmail.', true);
+    }
 }
 
 function signOutStudent() {
     AppState.currentStudent = null;
     localStorage.removeItem('spacepulse_student_profile');
+    localStorage.removeItem('spacepulse_auth_token');
     AppState.isEnteringOtp = false;
     AppState.pendingOtpEmail = null;
-    AppState.pendingOtpCode = null;
+    AppState.pendingOtpCustomName = null;
 
-    showToast('Signed out of student account.');
+    showToast('Signed out of student account. Login required.');
     updateStudentHeaderElements();
     renderStudentAuthModalBody();
     renderPortalAuthBody();
@@ -5001,6 +5257,11 @@ document.addEventListener('DOMContentLoaded', () => {
     navigateTo('home');
     checkInitialDeepLink();
     initBackendSync();
+
+    // Mandatory University Webmail Login Gate
+    if (!AppState.currentStudent || !AppState.currentStudent.isVerified) {
+        showStudentLoginPage();
+    }
 });
 
 // ==========================================================================

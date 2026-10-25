@@ -95,3 +95,45 @@ class HealthResponse(BaseModel):
     active_seat_count: int
     telemetry_packets_received: int
     last_telemetry_timestamp: Optional[float] = None
+
+class SendOtpRequest(BaseModel):
+    email: str
+    name: Optional[str] = None
+
+class SendOtpResponse(BaseModel):
+    status: str
+    message: str
+    email: str
+
+class VerifyOtpRequest(BaseModel):
+    email: str
+    code: str
+    name: Optional[str] = None
+
+class StudentProfile(BaseModel):
+    email: str
+    indexNumber: str
+    batch: str
+    department: str
+    name: str
+    isVerified: bool = True
+    verifiedAt: str
+
+class VerifyOtpResponse(BaseModel):
+    status: str
+    message: str
+    student: StudentProfile
+    token: str
+
+class WebmailMessageResponse(BaseModel):
+    id: str
+    sender: str
+    recipient: str
+    subject: str
+    code: Optional[str] = None
+    body_text: str
+    body_html: str
+    timestamp: float
+    date_str: str
+    is_read: bool = False
+

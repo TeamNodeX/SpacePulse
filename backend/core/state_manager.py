@@ -14,8 +14,11 @@ Features:
 """
 import time
 import threading
+import random
+import re
 from typing import Dict, List, Optional, Callable, Any
 from .config import settings
+from .email_service import email_service
 from ..models.schemas import (
     SeatState, OccupancySummary, FloorSummary, OccupancyResponse, TelemetryItem
 )
@@ -99,6 +102,7 @@ class StateManager:
         self._jitter_rejections: int = 0
         self._start_time: float = time.time()
         self._last_telemetry_time: Optional[float] = None
+        self._otp_store: Dict[str, Dict[str, Any]] = {}
         
         # Dynamic hysteresis & debounce settings (configurable via Page 11 showcase)
         self.occupy_debounce_sec: float = 2.0
@@ -569,6 +573,129 @@ class StateManager:
                 "last_telemetry": self._last_telemetry_time,
                 "jitter_rejections": self._jitter_rejections
             }
+
+    # -------------------------------------------------------------
+    # University Webmail & Student Authentication
+    # -------------------------------------------------------------
+    def send_auth_otp(self, email: str, custom_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Generates a 6-digit verification code, stores it with 10-minute expiry,
+        and dispatches it to the student's University Webmail inbox.
+        Note: The code is NEVER exposed in the API response or client payload.
+        """
+        clean_email = email.strip().lower()
+        if not clean_email or "@" not in clean_email:
+            raise ValueError("A valid university webmail address is required.")
+
+        code = f"{random.randint(100000, 999999)}"
+        expires_at = time.time() + 600.0  # 10 minutes
+
+        with self._lock:
+            self._otp_store[clean_email] = {
+                "code": code,
+                "expires_at": expires_at,
+                "name": (custom_name or "").strip(),
+                "created_at": time.time(),
+                "attempts": 0
+            }
+
+        # Deliver to University Webmail
+        email_service.send_verification_code(
+            to_email=clean_email,
+            code=code,
+            student_name=(custom_name or "").strip()
+        )
+
+        return {
+            "status": "ok",
+            "message": "Verification code dispatched to your University Webmail.",
+            "email": clean_email
+        }
+
+    def verify_auth_otp(self, email: str, code: str, custom_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Verifies the 6-digit code against the University Webmail store.
+        Returns the student profile upon valid authentication.
+        """
+        clean_email = email.strip().lower()
+        clean_code = code.strip()
+
+        with self._lock:
+            record = self._otp_store.get(clean_email)
+            if not record:
+                raise ValueError("No pending verification found for this email. Please request a new code.")
+
+            if time.time() > record["expires_at"]:
+                del self._otp_store[clean_email]
+                raise ValueError("Verification code has expired. Please request a new code to your webmail.")
+
+            record["attempts"] = record.get("attempts", 0) + 1
+            if record["attempts"] > 5:
+                del self._otp_store[clean_email]
+                raise ValueError("Too many failed attempts. Please request a fresh verification code.")
+
+            if record["code"] != clean_code:
+                raise ValueError("Invalid verification code. Please check your University Webmail inbox.")
+
+            # OTP verified successfully - consume the code
+            name = (custom_name or "").strip() or record.get("name", "")
+            del self._otp_store[clean_email]
+
+        student_profile = self.parse_student_profile(clean_email, name)
+        token = f"uom_auth_{int(time.time())}_{random.randint(1000, 9999)}"
+
+        return {
+            "status": "ok",
+            "message": "Student identity verified successfully via University Webmail.",
+            "student": student_profile,
+            "token": token
+        }
+
+    def parse_student_profile(self, email: str, custom_name: Optional[str] = None) -> Dict[str, Any]:
+        """Infers student batch, department, index number, and display name from UoM webmail."""
+        clean_email = email.strip().lower()
+        local_part = clean_email.split("@")[0]
+
+        # Extract index number if present (e.g. 210123A or 204011B)
+        index_match = re.search(r"(\d{6}[a-zA-Z])", clean_email)
+        batch_match = re.search(r"(?:^|\.)(\d{2})", local_part)
+        
+        index_num = index_match.group(1).upper() if index_match else f"{local_part.upper()[:8]}"
+        batch = f"Batch {batch_match.group(1)}" if batch_match else "Undergraduate"
+
+        # Department inference
+        domain_and_local = clean_email
+        if "cse" in domain_and_local or "cs" in domain_and_local:
+            dept = "Computer Science & Engineering"
+        elif "entc" in domain_and_local or "elect" in domain_and_local:
+            dept = "Electronic & Telecommunication"
+        elif "mech" in domain_and_local:
+            dept = "Mechanical Engineering"
+        elif "civil" in domain_and_local:
+            dept = "Civil Engineering"
+        elif "it" in domain_and_local:
+            dept = "Information Technology"
+        elif "archi" in domain_and_local:
+            dept = "Architecture & Design"
+        else:
+            dept = "Faculty of Engineering"
+
+        # Display name
+        if custom_name and custom_name.strip():
+            display_name = custom_name.strip()
+        else:
+            cleaned = re.sub(r"[0-9_.]+", " ", local_part).strip().title()
+            display_name = cleaned if cleaned else f"Student {index_num}"
+
+        return {
+            "email": clean_email,
+            "indexNumber": index_num,
+            "batch": batch,
+            "department": dept,
+            "name": display_name,
+            "isVerified": True,
+            "verifiedAt": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
 
 # Global singleton instance for Mihin's state manager
 state_manager = StateManager()
