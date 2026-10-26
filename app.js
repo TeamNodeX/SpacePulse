@@ -3548,9 +3548,12 @@ function renderPortalAuthBody() {
                 <span>OFFICIAL UNIVERSITY WEBMAIL SERVICE</span>
             </div>
 
-            <div style="margin-top: 10px;">
-                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="width: 100%; justify-content: center; padding: 12px; text-decoration: none; box-sizing: border-box;">
-                    <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> Open University Webmail (web.mail.uom.lk) ↗
+            <div style="margin-top: 10px; display: flex; gap: 8px;">
+                <button type="button" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.4); background: rgba(2, 132, 199, 0.08); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
+                    <i class="fas fa-inbox"></i> Webmail Inbox
+                </button>
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; text-decoration: none; box-sizing: border-box;">
+                    <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> web.mail.uom.lk ↗
                 </a>
             </div>
         `;
@@ -3564,18 +3567,31 @@ function renderPortalAuthBody() {
                 </p>
             </div>
 
-            <!-- Webmail Notice & External Link -->
+            <!-- Webmail Notice & Viewer Options -->
             <div class="webmail-helper-card" style="margin-bottom: 16px; background: rgba(2, 132, 199, 0.08); border: 1.5px solid rgba(2, 132, 199, 0.35); border-radius: 12px; padding: 14px 16px;">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                     <i class="fas fa-envelope-circle-check" style="font-size: 1.8rem; color: #0284c7;"></i>
                     <div style="flex: 1;">
                         <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
-                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">Check your <strong>Inbox</strong> or <strong>Junk / Spam</strong> folder at web.mail.uom.lk, and manually type your 6-digit code below:</div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">Check your <strong>Inbox</strong> or <strong>Junk / Spam</strong> folder, or view your verification email right inside the In-App Webmail Viewer:</div>
                     </div>
                 </div>
-                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="primary-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; font-size: 0.84rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700;">
-                    <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (web.mail.uom.lk) ↗
-                </a>
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="primary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; font-size: 0.88rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-inbox"></i> Open In-App Webmail Viewer 📬
+                    </button>
+                </div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 6px;">
+                    <i class="fas fa-info-circle"></i> Checking external web.mail.uom.lk? Automated emails may arrive in <strong>Junk / Spam</strong>:
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.4); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Webmail Inbox ↗
+                    </a>
+                    <a href="https://web.mail.uom.lk/#/mailbox/Junk" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #881337; border: 1px solid rgba(136, 19, 55, 0.3); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-folder-open"></i> Webmail Junk ↗
+                    </a>
+                </div>
             </div>
 
             <form id="portal-otp-form" onsubmit="event.preventDefault(); handlePortalVerifyOtp();" autocomplete="off">
@@ -3709,14 +3725,19 @@ async function handlePortalVerifyOtp() {
         }
     } catch (err) {
         // Backend unreachable or offline: fallback to local verification with exact match
-        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+        const localMatch = (AppState.localAuthOtp && code === AppState.localAuthOtp) || (Array.isArray(activeWebmailMessages) && activeWebmailMessages.some(m => m.code === code));
+        if (localMatch) {
             verifiedStudent = parseStudentProfileFromEmail(
                 AppState.pendingOtpEmail || 'student@uom.lk',
                 AppState.pendingOtpCustomName || ''
             );
             localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
-        } else if (!AppState.localAuthOtp) {
-            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+        } else {
+            const isFetchErr = err && (err.name === 'TypeError' || String(err.message).toLowerCase().includes('fetch'));
+            const errorMsg = isFetchErr
+                ? 'Backend service is offline. Please launch start_backend.bat or check your verification code.'
+                : (err.message || 'Verification failed. Please check your webmail code.');
+            showToast(errorMsg, true);
             if (verifyBtn) {
                 verifyBtn.disabled = false;
                 verifyBtn.innerHTML = '<i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse';
@@ -4003,9 +4024,12 @@ function renderFrontPageBody() {
                 </button>
             </form>
 
-            <div style="margin-top: 14px; text-align: center;">
-                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="display: flex; justify-content: center; padding: 11px; text-decoration: none;">
-                    <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (web.mail.uom.lk) ↗
+            <div style="margin-top: 14px; display: flex; gap: 8px;">
+                <button type="button" class="webmail-link-btn" style="flex: 1; justify-content: center; padding: 11px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.4); background: rgba(2, 132, 199, 0.08); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('uom-email-input')?.value)">
+                    <i class="fas fa-inbox"></i> Webmail Inbox
+                </button>
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="flex: 1; justify-content: center; padding: 11px; text-decoration: none;">
+                    <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
                 </a>
             </div>
         `;
@@ -4023,13 +4047,26 @@ function renderFrontPageBody() {
                     <i class="fas fa-envelope-open-text" style="font-size: 1.6rem; color: #0284c7;"></i>
                     <div style="flex: 1;">
                         <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
-                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">A 6-digit code was sent to your webmail. Check your <strong>Inbox</strong> or <strong>Junk / Spam</strong> folder, then manually type your code below:</div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">Check your <strong>Inbox</strong> or <strong>Junk / Spam</strong> folder, or view your verification email right inside the In-App Webmail Viewer:</div>
                     </div>
                 </div>
 
-                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="primary-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; font-size: 0.84rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
-                    <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (web.mail.uom.lk/#/mailbox/INBOX) ↗
-                </a>
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="primary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; font-size: 0.88rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-inbox"></i> Open In-App Webmail Viewer 📬
+                    </button>
+                </div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 6px;">
+                    <i class="fas fa-info-circle"></i> Checking external web.mail.uom.lk? Automated emails may arrive in <strong>Junk / Spam</strong>:
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.4); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Webmail Inbox ↗
+                    </a>
+                    <a href="https://web.mail.uom.lk/#/mailbox/Junk" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #881337; border: 1px solid rgba(136, 19, 55, 0.3); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-folder-open"></i> Webmail Junk ↗
+                    </a>
+                </div>
             </div>
 
             <form id="student-otp-form" onsubmit="event.preventDefault(); handleVerifyOtp();" autocomplete="off">
@@ -4113,7 +4150,7 @@ async function handleSendOtp() {
         setTimeout(() => {
             const otpInput = document.getElementById('otp-code-input') || document.getElementById('portal-otp-input');
             if (otpInput) {
-                input.focus();
+                otpInput.focus();
             }
         }, 80);
     }
@@ -4151,14 +4188,19 @@ async function handleVerifyOtp() {
         }
     } catch (err) {
         // Backend unreachable or offline: fallback to local verification with exact match
-        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+        const localMatch = (AppState.localAuthOtp && code === AppState.localAuthOtp) || (Array.isArray(activeWebmailMessages) && activeWebmailMessages.some(m => m.code === code));
+        if (localMatch) {
             verifiedStudent = parseStudentProfileFromEmail(
                 AppState.pendingOtpEmail || 'student@uom.lk',
                 AppState.pendingOtpCustomName || ''
             );
             localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
-        } else if (!AppState.localAuthOtp) {
-            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+        } else {
+            const isFetchErr = err && (err.name === 'TypeError' || String(err.message).toLowerCase().includes('fetch'));
+            const errorMsg = isFetchErr
+                ? 'Backend service is offline. Please launch start_backend.bat or check your verification code.'
+                : (err.message || 'Verification failed. Please check your webmail code.');
+            showToast(errorMsg, true);
             return;
         }
     }
@@ -4516,9 +4558,14 @@ function showToast(msg, isDanger = false) {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
+    let displayMsg = String(msg || '');
+    if (displayMsg.toLowerCase().includes('failed to fetch') || displayMsg.toLowerCase() === 'fetch failed') {
+        displayMsg = 'Cannot connect to SpacePulse backend service. Please run start_backend.bat or check port 8000.';
+    }
+
     const toast = document.createElement('div');
     toast.className = 'toast' + (isDanger ? ' danger' : '');
-    toast.innerHTML = `<i class="fas ${isDanger ? 'fa-triangle-exclamation' : 'fa-bell'}"></i> <span>${msg}</span>`;
+    toast.innerHTML = `<i class="fas ${isDanger ? 'fa-triangle-exclamation' : 'fa-bell'}"></i> <span>${displayMsg}</span>`;
 
     container.appendChild(toast);
     setTimeout(() => {
@@ -5975,6 +6022,10 @@ function initBackendSync() {
         occupancyWs.onmessage = (event) => {
             try {
                 const msg = JSON.parse(event.data);
+                if (msg.type === 'reload' || msg.type === 'refresh') {
+                    window.location.reload();
+                    return;
+                }
                 if (msg.type === 'occupancy_update' || msg.floors) {
                     if (msg.floors) {
                         msg.floors.forEach(f => {

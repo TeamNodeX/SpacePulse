@@ -344,3 +344,11 @@ async def clear_webmail_inbox():
     email_service.inbox_store.clear()
     return {"status": "ok", "message": "University Webmail inbox cleared."}
 
+@router.get("/refresh")
+@router.post("/refresh")
+async def refresh_clients():
+    """Broadcasts a live refresh event to all connected SpacePulse web app tabs."""
+    await ws_manager.broadcast({"type": "reload"})
+    return {"status": "ok", "message": "Refresh command broadcasted to all active web clients."}
+
+

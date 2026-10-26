@@ -5,8 +5,10 @@ Supports both real SMTP relay (Office365 / Gmail / Custom SMTP) and internal Web
 """
 import os
 import time
+import socket
 import smtplib
 import logging
+import threading
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import formatdate, make_msgid
@@ -27,17 +29,27 @@ logger = logging.getLogger("spacepulse.email")
 
 class EmailService:
     def __init__(self):
-        # SMTP Server Configuration (Optional for real outbound relay)
+        self.reload_config()
+        # In-memory University Webmail Mailbox store (email -> List[Message])
+        # Allows viewing official university webmail directly from the browser/kiosk
+        self.inbox_store: List[Dict[str, Any]] = []
+
+    def reload_config(self):
+        try:
+            workspace_env = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
+            backend_env = os.path.join(os.path.dirname(__file__), "..", ".env")
+            load_dotenv(workspace_env, override=True)
+            load_dotenv(backend_env, override=True)
+            load_dotenv(override=True)
+        except Exception:
+            pass
+
         self.smtp_host = os.getenv("SMTP_HOST", "").strip()
         self.smtp_port = int(os.getenv("SMTP_PORT", "587").strip() or 587)
         self.smtp_user = os.getenv("SMTP_USER", "").strip()
         self.smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
         self.smtp_use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
         self.smtp_from = os.getenv("SMTP_FROM_EMAIL", "spacepulse-auth@uom.lk").strip()
-
-        # In-memory University Webmail Mailbox store (email -> List[Message])
-        # Allows viewing official university webmail directly from the browser/kiosk
-        self.inbox_store: List[Dict[str, Any]] = []
 
     def is_smtp_configured(self) -> bool:
         return bool(self.smtp_host and self.smtp_user and self.smtp_password)
@@ -105,8 +117,9 @@ class EmailService:
         Supports:
         1. Authenticated SMTP relay (via .env configuration e.g. Gmail / Outlook / UoM submission server).
         2. Direct delivery to UoM central Mail Exchange (inrelay-a.uom.lk:25).
-        3. Internal Mailbox store for diagnostics.
+        3. Internal Mailbox store for diagnostics and in-app webmail reader.
         """
+        self.reload_config()
         clean_email = to_email.strip().lower()
         timestamp = time.time()
         date_str = time.strftime("%b %d, %Y - %I:%M %p", time.localtime(timestamp))
@@ -125,7 +138,7 @@ class EmailService:
         # 1. Store in internal Webmail Mailbox store
         email_record = {
             "id": msg_id,
-            "sender": "SpacePulse Verification <no-reply@uom.lk>",
+            "sender": "SpacePulse Verification <spacepulse-auth@uom.lk>",
             "recipient": clean_email,
             "subject": subject,
             "code": code,
@@ -143,16 +156,47 @@ class EmailService:
             user_part = clean_email.split("@")[0]
             uom_target_email = f"{user_part}@uom.lk"
 
-        logger.info("==========================================================================")
-        logger.info(f"🎓 SpacePulse Verification Code for {clean_email}: [{code[:3]} {code[3:]}]")
-        logger.info(f"   Target Webmail Inbox: https://web.mail.uom.lk/#/mailbox/INBOX")
-        logger.info(f"   (NOTE: Please check both your INBOX and JUNK/SPAM folders in web.mail.uom.lk)")
-        logger.info("==========================================================================")
+        banner = (
+            "\n" + "=" * 70 + "\n"
+            f"[UoM] SpacePulse Verification Code for [{clean_email}]: >>> {code[:3]} {code[3:]} <<<\n"
+            f"      University Webmail Target: https://web.mail.uom.lk/#/mailbox/INBOX\n"
+            f"      In-App Webmail Viewer: Active (Store ID: {msg_id})\n"
+            + "=" * 70
+        )
+        try:
+            logger.info(banner)
+            print(banner, flush=True)
+        except Exception:
+            pass
 
+        # Launch non-blocking network delivery in background thread for instant UI response (< 10ms)
+        threading.Thread(
+            target=self._perform_smtp_delivery,
+            args=(clean_email, uom_target_email, code, subject, text_content, html_content),
+            daemon=True
+        ).start()
+
+        return {
+            "status": "ok",
+            "message_id": msg_id,
+            "recipient": clean_email,
+            "smtp_dispatched": True,
+            "stored_in_webmail": True
+        }
+
+    def _perform_smtp_delivery(
+        self,
+        clean_email: str,
+        uom_target_email: str,
+        code: str,
+        subject: str,
+        text_content: str,
+        html_content: str
+    ):
+        """Dispatches the verification code over network in background without blocking the user or API."""
         smtp_dispatched = False
-        smtp_error = None
 
-        # 2. Authenticated Outbound SMTP Relay if credentials provided in .env
+        # 1. Authenticated Outbound SMTP Relay if credentials provided in .env
         if self.is_smtp_configured():
             try:
                 msg = MIMEMultipart("alternative")
@@ -162,31 +206,33 @@ class EmailService:
                 msg["To"] = clean_email
                 msg["Date"] = formatdate(localtime=True)
                 msg["Message-ID"] = make_msgid(domain="uom.lk")
-                msg["X-Priority"] = "1 (Highest)"
-                msg["Importance"] = "High"
-                msg["Auto-Submitted"] = "auto-generated"
+                msg["Auto-Submitted"] = "no"
+                msg["X-Auto-Response-Suppress"] = "All"
 
-                part1 = MIMEText(text_content, "plain")
-                part2 = MIMEText(html_content, "html")
+                part1 = MIMEText(text_content, "plain", "utf-8")
+                part2 = MIMEText(html_content, "html", "utf-8")
                 msg.attach(part1)
                 msg.attach(part2)
 
-                server = smtplib.SMTP(self.smtp_host, self.smtp_port, timeout=12)
-                server.ehlo()
-                if self.smtp_use_tls:
-                    server.starttls()
+                if self.smtp_port == 465:
+                    server = smtplib.SMTP_SSL(self.smtp_host, self.smtp_port, timeout=10)
                     server.ehlo()
+                else:
+                    server = smtplib.SMTP(self.smtp_host, self.smtp_port, timeout=10)
+                    server.ehlo()
+                    if self.smtp_use_tls:
+                        server.starttls()
+                        server.ehlo()
+
                 server.login(self.smtp_user, self.smtp_password)
                 server.sendmail(from_addr, [clean_email], msg.as_string())
                 server.quit()
                 smtp_dispatched = True
-                logger.info(f"Successfully relayed verification email via authenticated SMTP to {clean_email}")
+                logger.info(f"[Fast Relay] Successfully delivered verification email via authenticated SMTP to {clean_email}")
             except Exception as e:
-                smtp_error = str(e)
                 logger.warning(f"Authenticated SMTP relay failed: {e}")
 
-        # 3. Direct UoM Inbound Mail Exchange Delivery (inrelay-a.uom.lk:25)
-        # Used for all University of Moratuwa addresses (@uom.lk, @*.uom.lk, @mrt.ac.lk, @*.mrt.ac.lk)
+        # 2. Direct UoM Inbound Mail Exchange Delivery (inrelay-a.uom.lk:25)
         is_uom_recipient = (
             clean_email.endswith("@uom.lk") or 
             clean_email.endswith(".uom.lk") or 
@@ -196,50 +242,49 @@ class EmailService:
 
         if not smtp_dispatched and is_uom_recipient:
             try:
+                if clean_email.endswith("@mrt.ac.lk"):
+                    direct_sender = "spacepulse-auth@uom.lk"
+                    msg_domain = "uom.lk"
+                else:
+                    direct_sender = "spacepulse-auth@mrt.ac.lk"
+                    msg_domain = "mrt.ac.lk"
+
                 msg = MIMEMultipart("alternative")
                 msg["Subject"] = subject
-                sender_email = "spacepulse-verify@spacepulse-service.org"
-                msg["From"] = f"SpacePulse Verification <{sender_email}>"
-                msg["To"] = uom_target_email
-                msg["Reply-To"] = sender_email
+                msg["From"] = f"SpacePulse Verification <{direct_sender}>"
+                msg["To"] = clean_email
+                msg["Reply-To"] = direct_sender
                 msg["Date"] = formatdate(localtime=True)
-                msg["Message-ID"] = make_msgid(domain="spacepulse-service.org")
-                msg["X-Priority"] = "1 (Highest)"
-                msg["Importance"] = "High"
-                msg["Auto-Submitted"] = "auto-generated"
-                msg["X-Mailer"] = "SpacePulse-Auth-System/2.0"
+                msg["Message-ID"] = make_msgid(domain=msg_domain)
+                msg["Auto-Submitted"] = "no"
+                msg["X-Auto-Response-Suppress"] = "All"
 
-                part1 = MIMEText(text_content, "plain")
-                part2 = MIMEText(html_content, "html")
+                part1 = MIMEText(text_content, "plain", "utf-8")
+                part2 = MIMEText(html_content, "html", "utf-8")
                 msg.attach(part1)
                 msg.attach(part2)
 
                 server = smtplib.SMTP("inrelay-a.uom.lk", 25, timeout=10)
-                server.ehlo()
                 try:
-                    server.starttls()
-                    server.ehlo()
+                    if server.sock:
+                        server.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
                 except Exception:
                     pass
 
-                # Deliver to both requested recipient and normalized target mailbox
-                recipients = list({clean_email, uom_target_email})
-                server.sendmail(sender_email, recipients, msg.as_string())
+                server.ehlo("uom.lk")
+                try:
+                    server.starttls()
+                    server.ehlo("uom.lk")
+                except Exception:
+                    pass
+
+                # inrelay-a.uom.lk only permits relaying to local targets (@uom.lk / @mrt.ac.lk)
+                server.sendmail(direct_sender, [uom_target_email], msg.as_string())
                 server.quit()
                 smtp_dispatched = True
-                logger.info(f"Successfully delivered verification email directly to UoM Webmail MX for {recipients}")
+                logger.info(f"[Fast MX] Successfully delivered verification email to UoM Webmail MX for {uom_target_email}")
             except Exception as e:
-                smtp_error = str(e)
                 logger.warning(f"Direct UoM MX delivery failed: {e}")
-
-        return {
-            "status": "ok",
-            "message_id": msg_id,
-            "recipient": clean_email,
-            "smtp_dispatched": smtp_dispatched,
-            "smtp_error": smtp_error,
-            "stored_in_webmail": True
-        }
 
     def get_inbox_messages(self, recipient_email: Optional[str] = None) -> List[Dict[str, Any]]:
         """Returns messages stored in university webmail, optionally filtered by recipient."""

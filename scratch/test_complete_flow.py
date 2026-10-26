@@ -67,7 +67,7 @@ def run_tests():
         return False
 
     # B. Send OTP
-    test_email = "student@uom.lk"
+    test_email = "username@uom.lk"
     test_name = "Kavindu Dilupa"
     send_payload = json.dumps({"email": test_email, "name": test_name}).encode("utf-8")
 
