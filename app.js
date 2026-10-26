@@ -3522,30 +3522,20 @@ function renderPortalAuthBody() {
                 <p>Connect your official <strong>@uom.lk</strong> student webmail. A single-use 6-digit verification code will be dispatched to your webmail inbox.</p>
             </div>
 
-            <form id="portal-email-form" onsubmit="event.preventDefault(); handlePortalSendOtp();">
-                <div class="portal-form-group">
+            <form id="portal-email-form" onsubmit="event.preventDefault(); handlePortalSendOtp();" autocomplete="off">
+                <div class="portal-form-group" style="margin-bottom: 16px;">
                     <label for="portal-email-input">Official Student Email Address</label>
                     <div class="portal-input-wrap">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" id="portal-email-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
+                        <input type="email" id="portal-email-input" placeholder="e.g. student@uom.lk" required value="${AppState.pendingOtpEmail || ''}" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
                     </div>
                 </div>
 
-                <!-- Domain Shortcut Chips -->
-                <div class="domain-chips-grid" style="margin-top: 4px; margin-bottom: 14px;">
-                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@uom.lk')">@uom.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendPortalDomain('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
-                </div>
-
-                <div class="portal-form-group">
+                <div class="portal-form-group" style="margin-bottom: 20px;">
                     <label for="portal-name-input">Full Name (Optional)</label>
                     <div class="portal-input-wrap">
                         <i class="fas fa-user-graduate"></i>
-                        <input type="text" id="portal-name-input" placeholder="e.g. Kavindu Dilupa" value="${AppState.pendingOtpCustomName || ''}">
+                        <input type="text" id="portal-name-input" placeholder="e.g. Student Name" value="${AppState.pendingOtpCustomName || ''}" autocomplete="off">
                     </div>
                 </div>
 
@@ -3558,13 +3548,13 @@ function renderPortalAuthBody() {
                 <span>OFFICIAL UNIVERSITY WEBMAIL SERVICE</span>
             </div>
 
-            <div style="display: flex; gap: 8px;">
-                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; text-decoration: none;">
+            <div style="margin-top: 10px; display: flex; gap: 8px;">
+                <button type="button" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.4); background: rgba(2, 132, 199, 0.08); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
+                    <i class="fas fa-inbox"></i> Webmail Inbox
+                </button>
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px; text-decoration: none; box-sizing: border-box;">
                     <i class="fas fa-arrow-up-right-from-square" style="color: var(--uom-crimson);"></i> web.mail.uom.lk ↗
                 </a>
-                <button type="button" class="portal-webmail-btn" style="flex: 1; justify-content: center; padding: 12px;" onclick="openUniversityWebmailModal(document.getElementById('portal-email-input')?.value)">
-                    <i class="fas fa-inbox" style="color: var(--primary-blue);"></i> Webmail Inbox
-                </button>
             </div>
         `;
     } else {
@@ -3573,30 +3563,40 @@ function renderPortalAuthBody() {
             <div style="text-align: center; margin-bottom: 16px;">
                 <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">Enter 6-Digit Verification Code</h4>
                 <p style="font-size: 0.84rem; color: var(--text-secondary);">
-                    Verification code dispatched to <strong>${AppState.pendingOtpEmail}</strong>
+                    Verification code dispatched to: <strong style="color: var(--primary-blue);">${AppState.pendingOtpEmail}</strong>
                 </p>
             </div>
 
-            <!-- Webmail Notice & Inbox Launcher -->
-            <div class="webmail-helper-card">
-                <i class="fas fa-envelope-circle-check" style="font-size: 1.8rem; color: #0284c7;"></i>
-                <div style="flex: 1;">
-                    <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
-                    <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is only viewable in your university webmail inbox.</div>
+            <!-- Webmail Notice & Viewer Options -->
+            <div class="webmail-helper-card" style="margin-bottom: 16px; background: rgba(2, 132, 199, 0.08); border: 1.5px solid rgba(2, 132, 199, 0.35); border-radius: 12px; padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <i class="fas fa-envelope-circle-check" style="font-size: 1.8rem; color: #0284c7;"></i>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">Check your <strong>Inbox</strong> or <strong>Junk / Spam</strong> folder, or view your verification email right inside the In-App Webmail Viewer:</div>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 6px; flex-shrink: 0;">
-                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-open-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
-                    </a>
-                    <button type="button" class="webmail-open-action-btn" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
-                        <i class="fas fa-inbox"></i> Inbox
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="primary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; font-size: 0.88rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-inbox"></i> Open In-App Webmail Viewer 📬
                     </button>
+                </div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 6px;">
+                    <i class="fas fa-info-circle"></i> Checking external web.mail.uom.lk? Automated emails may arrive in <strong>Junk / Spam</strong>:
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.4); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Webmail Inbox ↗
+                    </a>
+                    <a href="https://web.mail.uom.lk/#/mailbox/Junk" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #881337; border: 1px solid rgba(136, 19, 55, 0.3); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-folder-open"></i> Webmail Junk ↗
+                    </a>
                 </div>
             </div>
 
-            <form id="portal-otp-form" onsubmit="event.preventDefault(); handlePortalVerifyOtp();">
+            <form id="portal-otp-form" onsubmit="event.preventDefault(); handlePortalVerifyOtp();" autocomplete="off">
                 <div class="otp-box-container">
-                    <input type="text" id="portal-otp-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus autocomplete="one-time-code">
+                    <input type="text" id="portal-otp-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus value="" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
                 </div>
 
                 <button type="submit" class="portal-submit-btn" id="portal-verify-btn" style="margin-bottom: 10px;">
@@ -3725,14 +3725,19 @@ async function handlePortalVerifyOtp() {
         }
     } catch (err) {
         // Backend unreachable or offline: fallback to local verification with exact match
-        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+        const localMatch = (AppState.localAuthOtp && code === AppState.localAuthOtp) || (Array.isArray(activeWebmailMessages) && activeWebmailMessages.some(m => m.code === code));
+        if (localMatch) {
             verifiedStudent = parseStudentProfileFromEmail(
                 AppState.pendingOtpEmail || 'student@uom.lk',
                 AppState.pendingOtpCustomName || ''
             );
             localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
-        } else if (!AppState.localAuthOtp) {
-            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+        } else {
+            const isFetchErr = err && (err.name === 'TypeError' || String(err.message).toLowerCase().includes('fetch'));
+            const errorMsg = isFetchErr
+                ? 'Backend service is offline. Please launch start_backend.bat or check your verification code.'
+                : (err.message || 'Verification failed. Please check your webmail code.');
+            showToast(errorMsg, true);
             if (verifyBtn) {
                 verifyBtn.disabled = false;
                 verifyBtn.innerHTML = '<i class="fas fa-shield-check"></i> Verify Code & Enter SpacePulse';
@@ -4003,24 +4008,15 @@ function renderFrontPageBody() {
                 </p>
             </div>
 
-            <form id="front-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
-                <div class="form-group" style="margin-bottom: 10px;">
+            <form id="front-email-form" onsubmit="event.preventDefault(); handleSendOtp();" autocomplete="off">
+                <div class="form-group" style="margin-bottom: 16px;">
                     <label for="uom-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
-                    <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required value="${AppState.pendingOtpEmail || ''}">
-                </div>
-
-                <div class="domain-chips-grid">
-                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@uom.lk')">@uom.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
-                    <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
+                    <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. student@uom.lk" required value="${AppState.pendingOtpEmail || ''}" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 22px;">
                     <label for="uom-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
-                    <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Kavindu Dilupa" value="${AppState.pendingOtpCustomName || ''}">
+                    <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Student Name" value="${AppState.pendingOtpCustomName || ''}" autocomplete="off">
                 </div>
 
                 <button type="submit" class="primary-btn uom-btn">
@@ -4028,13 +4024,13 @@ function renderFrontPageBody() {
                 </button>
             </form>
 
-            <div style="display: flex; gap: 8px; margin-top: 12px;">
-                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px;">
-                    <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
-                </a>
-                <button type="button" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.35); background: rgba(2, 132, 199, 0.05); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('uom-email-input')?.value)">
+            <div style="margin-top: 14px; display: flex; gap: 8px;">
+                <button type="button" class="webmail-link-btn" style="flex: 1; justify-content: center; padding: 11px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.4); background: rgba(2, 132, 199, 0.08); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('uom-email-input')?.value)">
                     <i class="fas fa-inbox"></i> Webmail Inbox
                 </button>
+                <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="flex: 1; justify-content: center; padding: 11px; text-decoration: none;">
+                    <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
+                </a>
             </div>
         `;
     } else {
@@ -4050,24 +4046,32 @@ function renderFrontPageBody() {
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                     <i class="fas fa-envelope-open-text" style="font-size: 1.6rem; color: #0284c7;"></i>
                     <div style="flex: 1;">
-                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Delivered to University Webmail Inbox</div>
-                        <div style="font-size: 0.76rem; color: var(--text-secondary);">Your verification code is in your webmail inbox. Check the email and manually enter your 6-digit code below:</div>
+                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-primary);">Check University Webmail</div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">Check your <strong>Inbox</strong> or <strong>Junk / Spam</strong> folder, or view your verification email right inside the In-App Webmail Viewer:</div>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 8px; flex-direction: column;">
-                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="primary-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; font-size: 0.84rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
-                        <i class="fas fa-inbox"></i> Open University Webmail Inbox (web.mail.uom.lk/#/mailbox/INBOX) ↗
-                    </a>
-                    <button type="button" class="secondary-btn" style="padding: 8px 12px; font-size: 0.80rem; color: #0284c7; border-color: rgba(2, 132, 199, 0.4); background: #ffffff;" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
-                        <i class="fas fa-envelope-open"></i> Open In-App Webmail Reader
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="primary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; font-size: 0.88rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);" onclick="openUniversityWebmailModal('${AppState.pendingOtpEmail}')">
+                        <i class="fas fa-inbox"></i> Open In-App Webmail Viewer 📬
                     </button>
+                </div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 6px;">
+                    <i class="fas fa-info-circle"></i> Checking external web.mail.uom.lk? Automated emails may arrive in <strong>Junk / Spam</strong>:
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.4); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Webmail Inbox ↗
+                    </a>
+                    <a href="https://web.mail.uom.lk/#/mailbox/Junk" target="_blank" rel="noopener noreferrer" class="secondary-btn" style="flex: 1; min-width: 130px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; font-size: 0.78rem; color: #881337; border: 1px solid rgba(136, 19, 55, 0.3); background: #ffffff; border-radius: 6px; font-weight: 700;">
+                        <i class="fas fa-folder-open"></i> Webmail Junk ↗
+                    </a>
                 </div>
             </div>
 
-            <form id="student-otp-form" onsubmit="event.preventDefault(); handleVerifyOtp();">
+            <form id="student-otp-form" onsubmit="event.preventDefault(); handleVerifyOtp();" autocomplete="off">
                 <div class="otp-box-container">
-                    <input type="text" id="otp-code-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus value="">
+                    <input type="text" id="otp-code-input" class="otp-input-field" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required autofocus value="" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
                 </div>
 
                 <button type="submit" class="primary-btn uom-btn" style="margin-bottom: 12px;">
@@ -4146,7 +4150,7 @@ async function handleSendOtp() {
         setTimeout(() => {
             const otpInput = document.getElementById('otp-code-input') || document.getElementById('portal-otp-input');
             if (otpInput) {
-                input.focus();
+                otpInput.focus();
             }
         }, 80);
     }
@@ -4184,14 +4188,19 @@ async function handleVerifyOtp() {
         }
     } catch (err) {
         // Backend unreachable or offline: fallback to local verification with exact match
-        if (AppState.localAuthOtp && code === AppState.localAuthOtp) {
+        const localMatch = (AppState.localAuthOtp && code === AppState.localAuthOtp) || (Array.isArray(activeWebmailMessages) && activeWebmailMessages.some(m => m.code === code));
+        if (localMatch) {
             verifiedStudent = parseStudentProfileFromEmail(
                 AppState.pendingOtpEmail || 'student@uom.lk',
                 AppState.pendingOtpCustomName || ''
             );
             localStorage.setItem('spacepulse_auth_token', 'local_token_' + Date.now());
-        } else if (!AppState.localAuthOtp) {
-            showToast(err.message || 'Verification failed. Please check your webmail code.', true);
+        } else {
+            const isFetchErr = err && (err.name === 'TypeError' || String(err.message).toLowerCase().includes('fetch'));
+            const errorMsg = isFetchErr
+                ? 'Backend service is offline. Please launch start_backend.bat or check your verification code.'
+                : (err.message || 'Verification failed. Please check your webmail code.');
+            showToast(errorMsg, true);
             return;
         }
     }
@@ -4549,9 +4558,14 @@ function showToast(msg, isDanger = false) {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
+    let displayMsg = String(msg || '');
+    if (displayMsg.toLowerCase().includes('failed to fetch') || displayMsg.toLowerCase() === 'fetch failed') {
+        displayMsg = 'Cannot connect to SpacePulse backend service. Please run start_backend.bat or check port 8000.';
+    }
+
     const toast = document.createElement('div');
     toast.className = 'toast' + (isDanger ? ' danger' : '');
-    toast.innerHTML = `<i class="fas ${isDanger ? 'fa-triangle-exclamation' : 'fa-bell'}"></i> <span>${msg}</span>`;
+    toast.innerHTML = `<i class="fas ${isDanger ? 'fa-triangle-exclamation' : 'fa-bell'}"></i> <span>${displayMsg}</span>`;
 
     container.appendChild(toast);
     setTimeout(() => {
@@ -6008,6 +6022,10 @@ function initBackendSync() {
         occupancyWs.onmessage = (event) => {
             try {
                 const msg = JSON.parse(event.data);
+                if (msg.type === 'reload' || msg.type === 'refresh') {
+                    window.location.reload();
+                    return;
+                }
                 if (msg.type === 'occupancy_update' || msg.floors) {
                     if (msg.floors) {
                         msg.floors.forEach(f => {

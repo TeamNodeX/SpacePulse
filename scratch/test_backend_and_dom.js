@@ -71,7 +71,7 @@ if (!appJsContent.includes('function openChatbot()') || !appJsContent.includes('
 async function testApi() {
     console.log("Testing backend OTP dispatch and verification endpoints...");
 
-    const email = "210088X@uom.lk";
+    const email = "student@uom.lk";
     const name = "Kavindu Dilupa";
 
     // Step A: Send OTP

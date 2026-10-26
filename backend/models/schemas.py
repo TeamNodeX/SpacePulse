@@ -104,6 +104,8 @@ class SendOtpResponse(BaseModel):
     status: str
     message: str
     email: str
+    smtp_dispatched: bool = False
+    stored_in_webmail: bool = True
 
 class VerifyOtpRequest(BaseModel):
     email: str
@@ -113,6 +115,7 @@ class VerifyOtpRequest(BaseModel):
 class StudentProfile(BaseModel):
     email: str
     indexNumber: str
+    username: str = ""
     batch: str
     department: str
     name: str

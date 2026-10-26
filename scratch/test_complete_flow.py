@@ -67,7 +67,7 @@ def run_tests():
         return False
 
     # B. Send OTP
-    test_email = "210088X@uom.lk"
+    test_email = "username@uom.lk"
     test_name = "Kavindu Dilupa"
     send_payload = json.dumps({"email": test_email, "name": test_name}).encode("utf-8")
 
@@ -110,11 +110,11 @@ def run_tests():
         print(f"PASS: /api/auth/verify-otp successfully verified student: {student['name']} ({student['department']})")
 
     # 5. Validate Frontend HTTP Server
-    print("\n--- Testing Frontend Server (http://localhost:8080) ---")
+    print("\n--- Testing Frontend Server (http://127.0.0.1:8000) ---")
     try:
-        with urllib.request.urlopen("http://localhost:8080/index.html", timeout=5) as resp:
+        with urllib.request.urlopen("http://127.0.0.1:8000/", timeout=5) as resp:
             assert resp.status == 200
-            print("PASS: Frontend HTTP server running and serving index.html on port 8080")
+            print("PASS: SpacePulse Web App is running and serving index.html on port 8000")
     except Exception as e:
         print(f"FAIL: Frontend server check failed: {e}")
         return False

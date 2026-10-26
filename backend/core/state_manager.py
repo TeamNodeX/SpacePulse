@@ -600,7 +600,7 @@ class StateManager:
             }
 
         # Deliver to University Webmail
-        email_service.send_verification_code(
+        dispatch_res = email_service.send_verification_code(
             to_email=clean_email,
             code=code,
             student_name=(custom_name or "").strip()
@@ -609,7 +609,9 @@ class StateManager:
         return {
             "status": "ok",
             "message": "Verification code dispatched to your University Webmail.",
-            "email": clean_email
+            "email": clean_email,
+            "smtp_dispatched": dispatch_res.get("smtp_dispatched", False),
+            "stored_in_webmail": dispatch_res.get("stored_in_webmail", True)
         }
 
     def verify_auth_otp(self, email: str, code: str, custom_name: Optional[str] = None) -> Dict[str, Any]:
@@ -656,12 +658,19 @@ class StateManager:
         clean_email = email.strip().lower()
         local_part = clean_email.split("@")[0]
 
-        # Extract index number if present (e.g. 210123A or 204011B)
-        index_match = re.search(r"(\d{6}[a-zA-Z])", clean_email)
-        batch_match = re.search(r"(?:^|\.)(\d{2})", local_part)
+        # Official UoM index format check: 6 digits ending with a check letter (e.g. 210123A or 214050T)
+        index_match = re.match(r"^(\d{6}[a-zA-Z])$", local_part)
+        batch_match = re.search(r"(?:^|\.)(\d{2})$", local_part)
         
-        index_num = index_match.group(1).upper() if index_match else f"{local_part.upper()[:8]}"
-        batch = f"Batch {batch_match.group(1)}" if batch_match else "Undergraduate"
+        if index_match:
+            index_num = index_match.group(1).upper()
+            username = local_part.lower()
+            batch = f"Batch {index_num[:2]}"
+        else:
+            index_num = ""
+            # Username is strictly the email without the @uom.lk / domain part
+            username = local_part.lower()
+            batch = f"Batch {batch_match.group(1)}" if batch_match else "Undergraduate"
 
         # Department inference
         domain_and_local = clean_email
@@ -685,11 +694,12 @@ class StateManager:
             display_name = custom_name.strip()
         else:
             cleaned = re.sub(r"[0-9_.]+", " ", local_part).strip().title()
-            display_name = cleaned if cleaned else f"Student {index_num}"
+            display_name = cleaned if cleaned else f"Student {index_num or username}"
 
         return {
             "email": clean_email,
             "indexNumber": index_num,
+            "username": username,
             "batch": batch,
             "department": dept,
             "name": display_name,

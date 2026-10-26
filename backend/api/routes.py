@@ -291,7 +291,9 @@ async def send_auth_otp(req: SendOtpRequest):
         return SendOtpResponse(
             status="ok",
             message="Verification code has been dispatched to your University Webmail.",
-            email=res["email"]
+            email=res["email"],
+            smtp_dispatched=res.get("smtp_dispatched", False),
+            stored_in_webmail=res.get("stored_in_webmail", True)
         )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -341,4 +343,12 @@ async def clear_webmail_inbox():
     """Clears the simulated university webmail inbox."""
     email_service.inbox_store.clear()
     return {"status": "ok", "message": "University Webmail inbox cleared."}
+
+@router.get("/refresh")
+@router.post("/refresh")
+async def refresh_clients():
+    """Broadcasts a live refresh event to all connected SpacePulse web app tabs."""
+    await ws_manager.broadcast({"type": "reload"})
+    return {"status": "ok", "message": "Refresh command broadcasted to all active web clients."}
+
 
