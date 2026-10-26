@@ -42,24 +42,15 @@
                     </p>
                 </div>
 
-                <form id="front-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
-                    <div class="form-group" style="margin-bottom: 10px;">
+                <form id="front-email-form" onsubmit="event.preventDefault(); handleSendOtp();" autocomplete="off">
+                    <div class="form-group" style="margin-bottom: 16px;">
                         <label for="uom-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
-                        <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required>
-                    </div>
-
-                    <div class="domain-chips-grid">
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@uom.lk')">@uom.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
+                        <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. student@uom.lk" required autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 22px;">
                         <label for="uom-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
-                        <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Kavindu Dilupa">
+                        <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Student Name" autocomplete="off">
                     </div>
 
                     <button type="submit" class="primary-btn uom-btn">
@@ -67,13 +58,10 @@
                     </button>
                 </form>
 
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
-                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px;">
-                        <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
+                <div style="margin-top: 14px; text-align: center;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="display: flex; justify-content: center; padding: 11px; text-decoration: none;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (web.mail.uom.lk) ↗
                     </a>
-                    <button type="button" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.35); background: rgba(2, 132, 199, 0.05); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('uom-email-input')?.value)">
-                        <i class="fas fa-inbox"></i> Webmail Inbox
-                    </button>
                 </div>
             </div>
         </div>
@@ -273,24 +261,15 @@
                     </p>
                 </div>
 
-                <form id="student-email-form" onsubmit="event.preventDefault(); handleSendOtp();">
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <label for="uom-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
-                        <input type="email" id="uom-email-input" class="auth-input" placeholder="e.g. 210123A@uom.lk or name.21@cse.mrt.ac.lk" required>
-                    </div>
-
-                    <div class="domain-chips-grid">
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@uom.lk')">@uom.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@cse.mrt.ac.lk')">@cse.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@itfac.mrt.ac.lk')">@itfac.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@mech.mrt.ac.lk')">@mech.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@civil.mrt.ac.lk')">@civil.mrt.ac.lk</button>
-                        <button type="button" class="domain-chip" onclick="appendDomainToInput('@ent.mrt.ac.lk')">@ent.mrt.ac.lk</button>
+                <form id="student-email-form" onsubmit="event.preventDefault(); handleSendOtp();" autocomplete="off">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label for="modal-email-input" class="auth-label">STUDENT EMAIL ADDRESS</label>
+                        <input type="email" id="modal-email-input" class="auth-input" placeholder="e.g. student@uom.lk" required autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 22px;">
-                        <label for="uom-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
-                        <input type="text" id="uom-name-input" class="auth-input" placeholder="e.g. Kavindu Dilupa">
+                        <label for="modal-name-input" class="auth-label">FULL NAME (OPTIONAL)</label>
+                        <input type="text" id="modal-name-input" class="auth-input" placeholder="e.g. Student Name" autocomplete="off">
                     </div>
 
                     <button type="submit" class="primary-btn uom-btn">
@@ -298,13 +277,10 @@
                     </button>
                 </form>
 
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
-                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px;">
-                        <i class="fas fa-arrow-up-right-from-square"></i> web.mail.uom.lk ↗
+                <div style="margin-top: 14px; text-align: center;">
+                    <a href="https://web.mail.uom.lk/#/mailbox/INBOX" target="_blank" rel="noopener noreferrer" class="webmail-link-btn" style="display: flex; justify-content: center; padding: 11px; text-decoration: none;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Open University Webmail (web.mail.uom.lk) ↗
                     </a>
-                    <button type="button" class="webmail-link-btn" style="flex: 1; margin: 0; justify-content: center; padding: 11px; cursor: pointer; border: 1.5px solid rgba(2, 132, 199, 0.35); background: rgba(2, 132, 199, 0.05); color: #0284c7;" onclick="openUniversityWebmailModal(document.getElementById('uom-email-input')?.value)">
-                        <i class="fas fa-inbox"></i> Webmail Inbox
-                    </button>
                 </div>
             </div>
         </div>
